@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certificate — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="certificates" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Certificate" data-sub="Preview and download"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="row-between no-print">
+        <a class="btn btn-ghost btn-sm" href="certificates.html"><span data-icon="chevronLeft"></span> All certificates</a>
+        <div class="row row-tight">
+          <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('Verification link copied to clipboard.')"><span data-icon="globe"></span> Copy verification link</button>
+          <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('Certificate shared with your educational supervisor.')"><span data-icon="send"></span> Share</button>
+          <button class="btn btn-primary btn-sm" type="button" onclick="window.print()"><span data-icon="download"></span> Download PDF</button>
+        </div>
+      </section>
+
+      <section class="grid grid-sidebar">
+
+        <!-- Certificate -->
+        <div>
+          <div class="certificate" id="cert">
+            <div class="cert-inner">
+              <div class="row row-tight" style="justify-content:center;color:var(--blue-700)">
+                <span style="width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--blue-600),var(--teal-500))" data-icon="pulse"></span>
+                <span style="font-weight:800;font-size:1.05rem;letter-spacing:-.02em">EM Hub</span>
+              </div>
+              <div class="cert-sub" style="margin-top:8px">Emergency Medicine Education</div>
+              <div class="cert-title">Certificate of Completion</div>
+
+              <div class="cert-body" style="margin-top:10px">This is to certify that</div>
+              <div class="cert-name" id="certName">Dr Ravi Krishnan</div>
+              <div class="cert-body">has successfully completed the programme of study</div>
+              <div class="cert-course" id="certCourse">Critical Appraisal &amp; Evidence-Based Medicine</div>
+              <div class="cert-body" id="certBlurb">
+                comprising 18 chapters, 780 assessed questions and a final examination,
+                achieving an overall score of <strong id="certScore">88%</strong>.
+              </div>
+
+              <div class="cert-foot">
+                <div style="text-align:left">
+                  <div class="sig-line" style="font-family:cursive;font-size:1.05rem;color:var(--slate-900);border:0;padding:0;margin-bottom:2px">A. Rahman</div>
+                  <div class="sig-line"><span class="sig-name">Dr Aisha Rahman</span><br>Programme Director, EM Hub</div>
+                </div>
+                <div class="cert-seal">EM HUB<br>VERIFIED<br>2026</div>
+                <div style="text-align:right">
+                  <div id="qrHost"></div>
+                  <div style="font-size:.58rem;color:var(--slate-600);margin-top:4px" class="mono" id="certNumber">EMH-CA-2026-04817</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-pad mt-3 no-print">
+            <h4>Certificate details</h4>
+            <div class="grid grid-2 grid-gap-sm mt-2" id="certDetails"></div>
+          </div>
+        </div>
+
+        <!-- Side panel -->
+        <aside class="stack no-print">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Verification</h3><span class="badge badge-green badge-dot">Valid</span></div>
+            <div class="card-body">
+              <p class="text-sm">This certificate can be verified by anyone, without an EM Hub account, using the QR code or the number below.</p>
+              <div class="panel mono text-sm text-center" id="verifyCode">EMH-CA-2026-04817</div>
+              <div class="text-xs text-subtle text-center mt-1">emhub.example/verify</div>
+              <div class="divider-text">Record</div>
+              <div id="verifyRecord"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Portfolio evidence</h3></div>
+            <div class="card-body">
+              <p class="text-sm">Suggested wording for your ARCP or CPD portfolio.</p>
+              <div class="panel text-sm" id="portfolioText"></div>
+              <button class="btn btn-outline btn-sm btn-block mt-2" type="button" onclick="EM.toast('Wording copied to clipboard.')">Copy wording</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Other certificates</h3></div>
+            <div class="card-body" id="otherCerts"></div>
+          </div>
+        </aside>
+
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+
+  var id = EM.qs("id") || C.certificates[0].id;
+  var cert = C.certificates.filter(function (c) { return c.id === id; })[0] || C.certificates[0];
+
+  document.getElementById("certName").textContent = C.name;
+  document.getElementById("certCourse").textContent = cert.course;
+  document.getElementById("certScore").textContent = cert.score;
+  document.getElementById("certNumber").textContent = cert.id;
+  document.getElementById("verifyCode").textContent = cert.id;
+  document.getElementById("qrHost").innerHTML = EM.qrSvg(74);
+
+  document.getElementById("certDetails").innerHTML = [
+    ["Candidate name", C.name],
+    ["Course name", cert.course],
+    ["Completion date", cert.date],
+    ["Certificate number", cert.id],
+    ["Final score", cert.score],
+    ["Issuing body", "EM Hub Medical Education Ltd"],
+    ["Verification", "QR code and public record"],
+    ["Status", cert.status]
+  ].map(function (d) {
+    return '<div class="panel"><div class="text-xs text-subtle">' + d[0] + "</div>" +
+      "<div class='fw-700 text-sm" + (d[0].indexOf("number") > -1 ? " mono" : "") + "'>" + d[1] + "</div></div>";
+  }).join("");
+
+  document.getElementById("verifyRecord").innerHTML = [
+    ["Holder", C.name], ["Course", cert.course], ["Completed", cert.date],
+    ["Issued", cert.date], ["Status", "Valid — no revocation"]
+  ].map(function (r) {
+    return '<div class="row-between text-sm" style="padding:6px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="text-subtle">' + r[0] + '</span><span class="fw-700" style="text-align:right">' + r[1] + "</span></div>";
+  }).join("");
+
+  document.getElementById("portfolioText").innerHTML =
+    "Completed the EM Hub <strong>" + cert.course + "</strong> programme on " + cert.date +
+    ", achieving a final assessed score of " + cert.score + ". Certificate number " +
+    "<span class='mono'>" + cert.id + "</span>, verifiable at emhub.example/verify.";
+
+  document.getElementById("otherCerts").innerHTML = C.certificates.filter(function (c) {
+    return c.id !== cert.id;
+  }).map(function (c) {
+    return '<div class="list-row"><span class="icon-tile icon-tile-green">' + I("certificate") + "</span>" +
+      "<div class='grow'><div class='fw-700 text-sm'>" + c.course + "</div>" +
+      "<div class='text-xs text-subtle mono'>" + c.id + "</div></div>" +
+      '<a class="btn btn-outline btn-xs" href="certificate.html?id=' + c.id + '">View</a></div>';
+  }).join("") || '<p class="text-sm text-subtle mb-0">No other certificates yet.</p>';
+}
+</script>
+</body>
+</html>

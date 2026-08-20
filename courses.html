@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Courses — EM Hub</title>
+<meta name="description" content="MRCEM Primary, MRCEM SBA, MRCEM OSCE, FRCEM Final SBA, FRCEM Final OSCE, DNB Emergency Medicine and Critical Appraisal preparation courses.">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header data-header data-active="courses" data-prefix=""></header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a><span class="sep">/</span><span>Courses</span>
+      </nav>
+      <h1>Emergency medicine exam courses</h1>
+      <p>Seven specialist programmes covering the UK and Indian emergency medicine certification pathways. Every course includes the full question bank, structured notes, video library, unlimited timed mocks and performance analytics.</p>
+    </div>
+  </section>
+
+  <section class="section-sm" style="border-bottom:1px solid var(--border)">
+    <div class="container">
+      <div class="row-between">
+        <div class="row row-tight" id="courseFilters">
+          <span class="chip is-active" data-value="all">All courses <span class="text-subtle">7</span></span>
+          <span class="chip" data-value="Clinical">Clinical</span>
+          <span class="chip" data-value="Basic Sciences">Basic sciences</span>
+          <span class="chip" data-value="Practical">OSCE / practical</span>
+          <span class="chip" data-value="India">India pathway</span>
+          <span class="chip" data-value="Skills">Skills</span>
+        </div>
+        <div class="row row-tight text-sm text-subtle">
+          <span data-icon="info"></span> Prices shown are the lowest monthly equivalent
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-3" id="courseGrid"></div>
+    </div>
+  </section>
+
+  <section class="section section-subtle">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Compare</span>
+        <h2>Course comparison at a glance</h2>
+        <p>Question volume, study hours and chapter count for every programme.</p>
+      </div>
+      <div class="card card-flush">
+        <div class="table-wrap">
+          <table class="table" id="compareTable">
+            <thead>
+              <tr>
+                <th>Course</th><th>Pathway</th><th>Questions</th><th>Study hours</th>
+                <th>Chapters</th><th>Videos</th><th>Rating</th><th>From</th><th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:center;gap:48px">
+        <div>
+          <span class="eyebrow">Not sure where to start?</span>
+          <h2>Take the two-minute pathway check</h2>
+          <p class="lead">Tell us which examination you are sitting, when, and how much time you have each week. We will recommend a course, a subscription length and a week-by-week study plan.</p>
+          <div class="row mt-3">
+            <a class="btn btn-primary btn-lg" href="contact.html">Get a recommendation</a>
+            <a class="btn btn-outline btn-lg" href="question-bank-sample.html">Try 25 free questions</a>
+          </div>
+        </div>
+        <div class="card card-pad" id="pathwayCard"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-footer data-prefix=""></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("courseGrid").innerHTML = D.COURSES.map(function (c) {
+    return '<article class="card card-hover course-card reveal" data-tag="' + c.tag + '">' +
+      '<div class="course-top">' +
+        '<span class="icon-tile' + toneCls(c.tagTone) + '">' + I("stethoscope") + "</span>" +
+        '<span class="badge badge-' + c.tagTone + '">' + c.tag + "</span>" +
+      "</div>" +
+      '<div class="course-body">' +
+        "<h3>" + c.title + "</h3>" +
+        '<p class="course-desc">' + c.short + "</p>" +
+        '<div class="row row-tight" style="margin-bottom:14px">' +
+          c.subjects.slice(0, 3).map(function (s) { return '<span class="badge">' + s + "</span>"; }).join("") +
+          (c.subjects.length > 3 ? '<span class="badge">+' + (c.subjects.length - 3) + " more</span>" : "") +
+        "</div>" +
+        '<div class="course-meta">' +
+          "<span>" + I("flask") + c.questions.toLocaleString() + " questions</span>" +
+          "<span>" + I("clock") + c.hours + " h</span>" +
+          "<span>" + I("users") + c.students.toLocaleString() + "</span>" +
+        "</div>" +
+        '<div class="text-xs text-subtle mt-2">Durations: 1 · 2 · 3 · 4 · 6 months</div>' +
+      "</div>" +
+      '<div class="course-foot">' +
+        '<div class="price"><span><span class="from">From</span><span class="amount">£' + c.priceFrom + "</span></span>" +
+        '<span class="per">/ month</span></div>' +
+        '<a class="btn btn-primary btn-sm" href="course-detail.html?course=' + c.id + '">Explore</a>' +
+      "</div></article>";
+  }).join("");
+
+  function toneCls(t) {
+    return t === "teal" ? " icon-tile-teal" : t === "violet" ? " icon-tile-violet" :
+           t === "amber" ? " icon-tile-amber" : "";
+  }
+
+  /* Chip filtering over the card grid */
+  var grid = document.getElementById("courseGrid");
+  document.querySelectorAll("#courseFilters .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#courseFilters .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      var v = chip.getAttribute("data-value");
+      grid.querySelectorAll("[data-tag]").forEach(function (card) {
+        card.style.display = (v === "all" || card.getAttribute("data-tag") === v) ? "" : "none";
+      });
+    });
+  });
+
+  /* Comparison table */
+  document.querySelector("#compareTable tbody").innerHTML = D.COURSES.map(function (c) {
+    return "<tr><td><strong>" + c.title + "</strong><div class='text-xs text-subtle'>" + c.code + "</div></td>" +
+      '<td><span class="badge badge-' + c.tagTone + '">' + c.tag + "</span></td>" +
+      "<td>" + c.questions.toLocaleString() + "</td><td>" + c.hours + "</td><td>" + c.chapters + "</td><td>" + c.videos + "</td>" +
+      '<td><span class="row row-tight" style="gap:4px;color:var(--warning);font-weight:700">' +
+        '<span style="display:inline-flex;width:14px;height:14px">' + EM.iconFilled("star") + "</span>" + c.rating + "</span></td>" +
+      "<td><strong>£" + c.priceFrom + "</strong></td>" +
+      '<td class="cell-actions"><a class="btn btn-soft btn-xs" href="course-detail.html?course=' + c.id + '">View</a></td></tr>';
+  }).join("");
+
+  /* Pathway helper card */
+  document.getElementById("pathwayCard").innerHTML =
+    '<h4 style="margin-bottom:16px">Which exam are you sitting?</h4>' +
+    '<div class="field"><label class="label" for="pwExam">Examination</label>' +
+      '<select class="select" id="pwExam">' +
+        D.COURSES.map(function (c) { return "<option>" + c.title + "</option>"; }).join("") +
+      "</select></div>" +
+    '<div class="form-grid">' +
+      '<div class="field"><label class="label" for="pwDate">Exam date</label><input class="input" id="pwDate" type="month" value="2026-11"></div>' +
+      '<div class="field"><label class="label" for="pwHours">Hours per week</label>' +
+        '<select class="select" id="pwHours"><option>Under 5</option><option selected>5 – 10</option><option>10 – 20</option><option>20+</option></select></div>' +
+    "</div>" +
+    '<div class="alert alert-info"><span data-icon="zap"></span><p class="mb-0"><strong>Suggested:</strong> 3 Month Plan — roughly 34 questions and one chapter per study day, with three full mocks in the final fortnight.</p></div>' +
+    '<a class="btn btn-primary btn-block mt-2" href="courses.html">See the matching plan</a>';
+
+}
+</script>
+</body>
+</html>

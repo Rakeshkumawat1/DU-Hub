@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="admin" data-active="dashboard" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Admin Dashboard" data-sub="Platform overview · Monday, 16 August 2026"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-5" id="kpis"></section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Revenue</h3><div class="text-xs text-subtle">Gross bookings by month, £ thousands</div></div>
+            <div class="row row-tight">
+              <span class="badge badge-green">▲ 11.4% MoM</span>
+              <select class="select" style="width:auto" id="revRange"><option>Last 7 months</option><option>Last 12 months</option><option>Year to date</option></select>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="revenueChart"></div>
+            <div class="grid grid-4 grid-gap-sm mt-3" id="revStats"></div>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Revenue by course</h3></div>
+            <div class="card-body">
+              <div class="text-center mb-3"><div class="donut" id="courseDonut"></div></div>
+              <div id="courseRevList"></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="grid grid-3">
+        <div class="card">
+          <div class="card-head"><h3>New registrations</h3><span class="badge badge-green">+412 in Aug</span></div>
+          <div class="card-body" id="signupChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Conversion funnel</h3><span class="text-xs text-subtle">Last 90 days</span></div>
+          <div class="card-body" id="funnel"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Candidates by country</h3><span class="text-xs text-subtle">42 countries</span></div>
+          <div class="card-body" id="countries"></div>
+        </div>
+      </section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head">
+            <h3>Recent activity</h3>
+            <div class="row row-tight">
+              <a class="btn btn-ghost btn-sm" href="users.html">Users <span data-icon="chevronRight"></span></a>
+              <a class="btn btn-ghost btn-sm" href="subscriptions.html">Subscriptions <span data-icon="chevronRight"></span></a>
+            </div>
+          </div>
+          <div class="card-body card-flush">
+            <div class="table-wrap"><table class="table" id="recentTable">
+              <thead><tr><th>Reference</th><th>User</th><th>Course</th><th>Duration</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Platform health</h3><span class="badge badge-green badge-dot">All systems normal</span></div>
+            <div class="card-body" id="health"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Needs attention</h3><span class="badge badge-amber">4</span></div>
+            <div class="card-body stack-sm" id="adminAlerts"></div>
+          </div>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, A = D.ADMIN, I = EM.icon;
+
+  document.getElementById("kpis").innerHTML = A.kpis.map(function (k) {
+    var tone = k.tone ? "icon-tile-" + k.tone : "";
+    return '<div class="stat-card"><span class="icon-tile ' + tone + '">' + I(k.icon) + "</span>" +
+      '<div><div class="stat-value">' + k.value + '</div><div class="stat-label">' + k.label + "</div></div>" +
+      '<div class="row row-tight"><span class="stat-delta ' + (k.up ? "up" : "down") + '">' +
+      (k.up ? "▲" : "▼") + " " + k.delta + '</span><span class="text-xs text-subtle">' + k.note + "</span></div></div>";
+  }).join("");
+
+  document.getElementById("revenueChart").innerHTML = EM.lineChart(
+    A.revenueByMonth.map(function (r) { return r.v; }),
+    { labels: A.revenueByMonth.map(function (r) { return r.m; }), min: 280, max: 520, height: 250 }
+  );
+
+  document.getElementById("revStats").innerHTML = [
+    ["Month to date", "£486,240"], ["Year to date", "£2,787,000"],
+    ["Average order", "£142.60"], ["Refund rate", "0.9%"]
+  ].map(function (s) {
+    return '<div class="panel text-center"><div class="fw-700">' + s[1] + "</div>" +
+      '<div class="text-xs text-subtle">' + s[0] + "</div></div>";
+  }).join("");
+
+  var palette = ["var(--blue-600)", "var(--teal-500)", "var(--blue-400)", "var(--teal-300)",
+                 "var(--violet-500)", "var(--amber-500)", "var(--slate-400)"];
+  document.getElementById("courseDonut").innerHTML =
+    EM.pieRing(A.revenueByCourse.map(function (c, i) {
+      return { pct: c.pct, color: palette[i % palette.length] };
+    }), 160, 22) +
+    '<div class="donut-center"><div class="v" style="font-size:1.2rem">£486k</div><div class="l">MTD</div></div>';
+
+  document.getElementById("courseRevList").innerHTML = A.revenueByCourse.map(function (c, i) {
+    return '<div class="row-between text-sm" style="padding:6px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="row row-tight"><i style="width:10px;height:10px;border-radius:3px;background:' + palette[i % palette.length] + '"></i>' +
+      c.name + "</span><span class='fw-700'>£" + c.v + "k</span></div>";
+  }).join("");
+
+  document.getElementById("signupChart").innerHTML = EM.barChart(A.signups, { teal: true });
+
+  document.getElementById("funnel").innerHTML = A.funnel.map(function (f, i) {
+    var tones = ["is-teal", "is-teal", "is-green", "is-amber", "is-red"];
+    return '<div style="margin-bottom:13px">' +
+      '<div class="row-between text-sm" style="margin-bottom:4px">' +
+        '<span class="fw-600">' + f.stage + "</span>" +
+        '<span class="text-xs"><strong>' + f.v.toLocaleString() + "</strong> · " + f.pct + "%</span></div>" +
+      '<div class="progress"><div class="progress-bar ' + tones[i] + '" data-pct="' + f.pct + '" style="width:0%"></div></div></div>';
+  }).join("") +
+  '<p class="text-xs text-subtle mb-0">Registration to purchase is 39.5%, up from 34.1% since the free sample was extended to 25 questions.</p>';
+
+  document.getElementById("countries").innerHTML = EM.hbars(A.countries.map(function (c) {
+    return { label: c.name, pct: c.pct, tone: "teal" };
+  }));
+
+  document.querySelector("#recentTable tbody").innerHTML = A.subscriptions.map(function (s) {
+    var tone = s.status === "Active" ? "green" : s.status === "Expiring" ? "amber" : s.status === "Renewed" ? "blue" : "red";
+    return "<tr><td class='mono'>" + s.ref + "</td><td><strong>" + s.user + "</strong></td>" +
+      "<td>" + s.course + "</td><td>" + s.duration + "</td><td><strong>" + s.amount + "</strong></td>" +
+      '<td><span class="badge badge-' + tone + ' badge-dot">' + s.status + "</span></td>" +
+      '<td class="cell-actions"><a class="btn btn-soft btn-xs" href="subscriptions.html">View</a></td></tr>';
+  }).join("");
+
+  document.getElementById("health").innerHTML = [
+    ["Uptime (30 days)", "99.98%", "green"],
+    ["Median page load", "412 ms", "green"],
+    ["Failed payments (24h)", "3", "amber"],
+    ["Support tickets open", "17", ""],
+    ["Content items pending review", "26", "amber"],
+    ["Storage used", "1.84 TB of 4 TB", ""]
+  ].map(function (h) {
+    return '<div class="row-between text-sm" style="padding:7px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="text-subtle">' + h[0] + "</span>" +
+      '<span class="fw-700' + (h[2] === "green" ? " text-success" : h[2] === "amber" ? " text-warning" : "") + '">' + h[1] + "</span></div>";
+  }).join("");
+
+  document.getElementById("adminAlerts").innerHTML = [
+    ["alert", "icon-tile-red", "3 failed payments", "Cards declined in the last 24 hours. Access preserved for 72 hours.", "subscriptions.html"],
+    ["clock", "icon-tile-amber", "184 subscriptions expiring in 14 days", "Renewal reminders scheduled for Monday.", "subscriptions.html"],
+    ["book", "icon-tile-violet", "26 content items awaiting review", "Oldest is 9 days old against a 5-day target.", "courses.html"],
+    ["users", "icon-tile-teal", "2 faculty applications", "Paediatric EM author and OSCE examiner.", "faculty.html"]
+  ].map(function (a) {
+    return '<a class="row" href="' + a[4] + '" style="align-items:flex-start;gap:11px;padding:9px;border-radius:var(--r-sm)">' +
+      '<span class="icon-tile ' + a[1] + '" style="width:34px;height:34px">' + I(a[0]) + "</span>" +
+      "<span><span class='fw-700 text-sm' style='display:block;color:var(--text)'>" + a[2] + "</span>" +
+      "<span class='text-xs text-subtle'>" + a[3] + "</span></span></a>";
+  }).join("");
+
+  document.getElementById("revRange").addEventListener("change", function () {
+    EM.toast("Range updated: " + this.value);
+  });
+}
+</script>
+</body>
+</html>

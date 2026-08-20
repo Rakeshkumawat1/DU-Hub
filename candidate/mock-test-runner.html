@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock exam in progress — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body style="background:var(--bg-subtle)">
+<a class="skip-link" href="#examMain">Skip to question</a>
+
+<!-- ============ EXAM BAR ============ -->
+<div class="exam-bar">
+  <div class="row row-tight">
+    <span class="brand-mark" style="width:30px;height:30px;border-radius:8px" data-icon="pulse"></span>
+    <div>
+      <div class="fw-700 text-sm">MRCEM SBA — Full Mock #8</div>
+      <div class="text-xs text-subtle" id="examModeLabel">Exam mode · explanations withheld until submission</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="row row-tight">
+    <span class="badge badge-green" id="answeredCount">0 answered</span>
+    <span class="badge badge-amber" id="flaggedCount">0 flagged</span>
+  </div>
+  <div class="timer" id="timer" role="timer" aria-live="off">
+    <span data-icon="clock"></span><span id="timerText">03:00:00</span>
+  </div>
+  <button class="btn btn-outline btn-sm" type="button" id="pauseBtn">Pause</button>
+  <button class="btn btn-primary btn-sm" type="button" data-modal-open="#submitModal">Submit exam</button>
+  <button class="btn btn-ghost btn-icon" data-theme-toggle type="button"></button>
+</div>
+
+<div class="container" style="max-width:1240px;padding-block:24px">
+  <div class="grid grid-sidebar" style="gap:24px;align-items:start">
+
+    <main id="examMain">
+      <div class="card card-pad mb-3">
+        <div class="row-between">
+          <div class="text-sm"><span class="fw-700" id="posLabel">Question 1 of 180</span></div>
+          <div class="progress progress-sm" style="width:220px"><div class="progress-bar" id="examBar" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div id="questionHost"></div>
+
+      <div class="row-between mt-3">
+        <button class="btn btn-outline" type="button" id="prevQ"><span data-icon="chevronLeft"></span> Previous</button>
+        <div class="row row-tight">
+          <button class="btn btn-ghost" type="button" id="clearQ">Clear response</button>
+          <button class="btn btn-outline" type="button" id="flagQ"><span data-icon="flag"></span> Flag for review</button>
+        </div>
+        <button class="btn btn-primary" type="button" id="nextQ">Next <span data-icon="arrowRight"></span></button>
+      </div>
+    </main>
+
+    <aside class="stack">
+      <div class="card">
+        <div class="card-head"><h3 style="font-size:1rem">Question palette</h3>
+          <span class="text-xs text-subtle" id="paletteCount">0 / 20</span></div>
+        <div class="card-body">
+          <div class="palette-grid mb-2" id="palette"></div>
+          <div class="palette-legend">
+            <span><i style="background:var(--success)"></i>Answered</span>
+            <span><i style="background:var(--warning)"></i>Flagged</span>
+            <span><i style="background:var(--surface);border:1px solid var(--border-strong)"></i>Not seen</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3 style="font-size:1rem">Pacing</h3></div>
+        <div class="card-body">
+          <div class="row-between text-sm"><span class="text-subtle">Time elapsed</span><span class="fw-700 mono" id="elapsed">00:00:00</span></div>
+          <div class="row-between text-sm mt-1"><span class="text-subtle">Average per question</span><span class="fw-700 mono" id="avgPer">—</span></div>
+          <div class="row-between text-sm mt-1"><span class="text-subtle">Projected finish</span><span class="fw-700" id="projected">On pace</span></div>
+          <hr>
+          <p class="text-xs text-subtle mb-0">Exam pace is 60 seconds per question. The bar below turns amber if you fall behind.</p>
+          <div class="progress progress-sm mt-2"><div class="progress-bar is-green" id="paceBar" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="alert alert-warning">
+        <span data-icon="alert"></span>
+        <p class="mb-0 text-sm">This is a prototype. The timer is accelerated and the paper contains 20 sample questions rather than the full set.</p>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- ============ SUBMIT MODAL ============ -->
+<div class="modal-backdrop" id="submitModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="submitTitle">
+    <div class="card-head">
+      <h3 id="submitTitle">Submit your exam?</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <div class="card-body">
+      <p>Once submitted you cannot return to the paper. Your score, breakdown and full explanations become available immediately.</p>
+      <div class="grid grid-3 grid-gap-sm mt-2" id="submitSummary"></div>
+      <div class="alert alert-warning mt-3" id="unansweredWarn" hidden>
+        <span data-icon="alert"></span>
+        <p class="mb-0 text-sm"><strong><span id="unansweredN">0</span> questions unanswered.</strong> Unanswered questions score zero — there is no negative marking, so guess rather than leave blank.</p>
+      </div>
+    </div>
+    <div class="card-foot row" style="justify-content:flex-end">
+      <button class="btn btn-outline" data-modal-close type="button">Return to paper</button>
+      <a class="btn btn-primary" href="result.html" id="confirmSubmit">Submit and see results</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAUSE OVERLAY ============ -->
+<div class="modal-backdrop" id="pauseModal">
+  <div class="modal" style="max-width:420px;text-align:center">
+    <div class="card-body" style="padding:36px">
+      <span class="icon-tile icon-tile-lg icon-tile-amber" style="margin:0 auto 16px" data-icon="clock"></span>
+      <h3>Exam paused</h3>
+      <p>The timer has stopped. In the real examination you cannot pause — use this only for genuine interruptions.</p>
+      <button class="btn btn-primary btn-lg btn-block" type="button" id="resumeBtn">Resume exam</button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/questions.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+  var requested = parseInt(EM.qs("n") || "180", 10);
+  var mode = EM.qs("mode") || "exam";
+
+  /* Build a 20-question paper by cycling the sample bank. */
+  var TOTAL = 20;
+  var pool = [];
+  for (var i = 0; i < TOTAL; i++) pool.push(D.QUESTIONS[i % D.QUESTIONS.length]);
+
+  var state = pool.map(function () { return { picked: [], flagged: false }; });
+  var idx = 0;
+  var totalSeconds = requested * 60;
+  var remaining = totalSeconds;
+  var elapsed = 0;
+  var paused = false;
+
+  document.getElementById("examModeLabel").textContent = mode === "practice"
+    ? "Practice mode · explanations shown immediately"
+    : "Exam mode · explanations withheld until submission";
+  document.querySelector(".exam-bar .fw-700").textContent = "MRCEM SBA — " + requested + "-question mock";
+
+  var host = document.getElementById("questionHost");
+
+  function show() {
+    var q = pool[idx];
+    host.innerHTML = EMQ.render(q, {
+      index: idx + 1, total: TOTAL, mode: mode,
+      showMeta: mode === "practice", flagged: state[idx].flagged
+    });
+    // restore selections
+    state[idx].picked.forEach(function (k) {
+      var o = host.querySelector('.option[data-key="' + k + '"]');
+      if (o) o.classList.add("is-selected");
+    });
+    if (mode === "practice" && state[idx].picked.length) {
+      EMQ.reveal(host.querySelector(".question-card"), q, state[idx].picked, true);
+    }
+    document.getElementById("posLabel").textContent = "Question " + (idx + 1) + " of " + TOTAL;
+    document.getElementById("prevQ").disabled = idx === 0;
+    document.getElementById("flagQ").classList.toggle("btn-soft", state[idx].flagged);
+    paint();
+  }
+
+  host.addEventListener("click", function (e) {
+    var opt = e.target.closest(".option");
+    if (opt && !opt.disabled) {
+      var q = pool[idx], k = opt.getAttribute("data-key");
+      if (q.type === "multi") {
+        opt.classList.toggle("is-selected");
+        state[idx].picked = [].map.call(host.querySelectorAll(".option.is-selected"), function (o) { return o.getAttribute("data-key"); });
+      } else {
+        host.querySelectorAll(".option").forEach(function (o) { o.classList.remove("is-selected"); });
+        opt.classList.add("is-selected");
+        state[idx].picked = [k];
+        if (mode === "practice") EMQ.reveal(host.querySelector(".question-card"), q, [k], true);
+      }
+      paint();
+      return;
+    }
+    if (e.target.closest(".play-btn")) {
+      host.querySelectorAll(".wave span").forEach(function (b, i) { setTimeout(function () { b.classList.add("on"); }, i * 40); });
+      EM.toast("Audio playback is simulated in this prototype.");
+    }
+    if (e.target.closest(".play-overlay")) EM.toast("Video playback is simulated in this prototype.");
+  });
+
+  function paint() {
+    var answered = state.filter(function (s) { return s.picked.length; }).length;
+    var flagged = state.filter(function (s) { return s.flagged; }).length;
+    document.getElementById("answeredCount").textContent = answered + " answered";
+    document.getElementById("flaggedCount").textContent = flagged + " flagged";
+    document.getElementById("examBar").style.width = Math.round((answered / TOTAL) * 100) + "%";
+    document.getElementById("paletteCount").textContent = answered + " / " + TOTAL;
+
+    document.getElementById("palette").innerHTML = state.map(function (s, i) {
+      var cls = "palette-btn";
+      if (s.picked.length) cls += " answered";
+      if (s.flagged) cls += " flagged";
+      if (i === idx) cls += " current";
+      return '<button class="' + cls + '" type="button" data-jump="' + i + '" aria-label="Question ' + (i + 1) + '">' + (i + 1) + "</button>";
+    }).join("");
+  }
+
+  document.getElementById("palette").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-jump]");
+    if (b) { idx = +b.getAttribute("data-jump"); show(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  });
+
+  document.getElementById("nextQ").addEventListener("click", function () {
+    if (idx < TOTAL - 1) { idx++; show(); } else EM.toast("This is the last question. Submit when you are ready.");
+  });
+  document.getElementById("prevQ").addEventListener("click", function () { if (idx > 0) { idx--; show(); } });
+  document.getElementById("clearQ").addEventListener("click", function () {
+    state[idx].picked = [];
+    host.querySelectorAll(".option").forEach(function (o) { o.classList.remove("is-selected"); });
+    paint();
+    EM.toast("Response cleared.");
+  });
+  document.getElementById("flagQ").addEventListener("click", function () {
+    state[idx].flagged = !state[idx].flagged;
+    this.classList.toggle("btn-soft", state[idx].flagged);
+    paint();
+  });
+
+  /* ---------- Timer ---------- */
+  function fmt(s) {
+    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    return [h, m, sec].map(function (v) { return String(v).padStart(2, "0"); }).join(":");
+  }
+
+  var timerEl = document.getElementById("timer");
+  setInterval(function () {
+    if (paused || remaining <= 0) return;
+    remaining--; elapsed++;
+    document.getElementById("timerText").textContent = fmt(remaining);
+    document.getElementById("elapsed").textContent = fmt(elapsed);
+    timerEl.classList.toggle("is-low", remaining < totalSeconds * 0.1);
+
+    var answered = state.filter(function (s) { return s.picked.length; }).length;
+    if (answered) {
+      var per = elapsed / answered;
+      document.getElementById("avgPer").textContent = fmt(Math.round(per)).slice(3);
+      var projectedTotal = per * TOTAL;
+      var onPace = projectedTotal <= totalSeconds;
+      var pj = document.getElementById("projected");
+      pj.textContent = onPace ? "On pace" : "Behind pace";
+      pj.className = "fw-700 " + (onPace ? "text-success" : "text-danger");
+      var bar = document.getElementById("paceBar");
+      bar.style.width = Math.min(100, Math.round((projectedTotal / totalSeconds) * 100)) + "%";
+      bar.className = "progress-bar " + (onPace ? "is-green" : "is-red");
+    }
+
+    if (remaining === 0) {
+      EM.toast("Time is up — your paper has been submitted automatically.");
+      setTimeout(function () { window.location.href = "result.html"; }, 1200);
+    }
+  }, 1000);
+  document.getElementById("timerText").textContent = fmt(remaining);
+
+  document.getElementById("pauseBtn").addEventListener("click", function () {
+    paused = true;
+    document.getElementById("pauseModal").classList.add("is-open");
+  });
+  document.getElementById("resumeBtn").addEventListener("click", function () {
+    paused = false;
+    document.getElementById("pauseModal").classList.remove("is-open");
+  });
+
+  /* ---------- Submit ---------- */
+  document.querySelector('[data-modal-open="#submitModal"]').addEventListener("click", function () {
+    var answered = state.filter(function (s) { return s.picked.length; }).length;
+    var flagged = state.filter(function (s) { return s.flagged; }).length;
+    document.getElementById("submitSummary").innerHTML = [
+      ["Answered", answered, "green"], ["Unanswered", TOTAL - answered, "red"], ["Flagged", flagged, "amber"]
+    ].map(function (s) {
+      return '<div class="panel text-center"><div style="font-size:1.7rem;font-weight:800" class="text-' +
+        (s[2] === "green" ? "success" : s[2] === "red" ? "danger" : "warning") + '">' + s[1] + "</div>" +
+        '<div class="text-xs text-subtle fw-600">' + s[0] + "</div></div>";
+    }).join("");
+    document.getElementById("unansweredWarn").hidden = answered === TOTAL;
+    document.getElementById("unansweredN").textContent = TOTAL - answered;
+  });
+
+  document.getElementById("confirmSubmit").addEventListener("click", function () {
+    var right = 0;
+    state.forEach(function (s, i) {
+      var correct = pool[i].answers || [pool[i].answer];
+      if (s.picked.length === correct.length && correct.every(function (k) { return s.picked.indexOf(k) > -1; })) right++;
+    });
+    try {
+      sessionStorage.setItem("emhub-last-result", JSON.stringify({
+        total: TOTAL, correct: right, elapsed: elapsed, mode: mode, requested: requested
+      }));
+    } catch (e) {}
+  });
+
+  /* Keyboard shortcuts, as in the real interface */
+  document.addEventListener("keydown", function (e) {
+    if (e.target.matches("input, textarea")) return;
+    if (e.key === "ArrowRight") document.getElementById("nextQ").click();
+    if (e.key === "ArrowLeft") document.getElementById("prevQ").click();
+    if (e.key.toLowerCase() === "f") document.getElementById("flagQ").click();
+    var n = "abcde".indexOf(e.key.toLowerCase());
+    if (n > -1) {
+      var o = host.querySelectorAll(".option")[n];
+      if (o) o.click();
+    }
+  });
+
+  show();
+}
+</script>
+</body>
+</html>

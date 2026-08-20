@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Courses — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="my-courses" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="My Courses" data-sub="Three active subscriptions"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="courseStats"></section>
+
+      <section>
+        <div class="row-between mb-3">
+          <div class="row row-tight" id="courseFilter">
+            <span class="chip is-active" data-value="active">Active <span class="text-subtle">3</span></span>
+            <span class="chip" data-value="expired">Expired <span class="text-subtle">1</span></span>
+            <span class="chip" data-value="all">All</span>
+          </div>
+          <a class="btn btn-primary btn-sm" href="../courses.html"><span data-icon="plus"></span> Add another course</a>
+        </div>
+        <div class="grid grid-3" id="courseCards"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Recommended next steps</h3>
+          <span class="text-xs text-subtle">Generated from your last 30 days of activity</span>
+        </div>
+        <div class="card-body">
+          <div class="grid grid-3 grid-gap-sm" id="nextSteps"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h3>Available to add</h3>
+          <a class="btn btn-ghost btn-sm" href="../courses.html">Browse all <span data-icon="chevronRight"></span></a></div>
+        <div class="card-body">
+          <div class="grid grid-2 grid-gap-sm" id="upsell"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+
+  document.getElementById("courseStats").innerHTML = [
+    ["book", "", "3", "Active courses"],
+    ["flask", "icon-tile-teal", "2,292", "Questions answered"],
+    ["clock", "icon-tile-amber", "86 h", "Study time logged"],
+    ["target", "icon-tile-green", "74%", "Average accuracy"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div></div>";
+  }).join("");
+
+  var expired = {
+    id: "critical-appraisal-old", title: "Foundation in Emergency Medicine",
+    progress: 100, expiry: "02 May 2026", daysLeft: 0, lastTopic: "Course complete",
+    questionsDone: 480, questionsTotal: 480, accuracy: 91, state: "expired"
+  };
+  var all = C.enrolled.map(function (c) { return Object.assign({ state: "active" }, c); }).concat([expired]);
+
+  function card(c) {
+    var course = D.courseById(c.id) || {};
+    var isExpired = c.state === "expired";
+    return '<article class="card card-hover course-card" data-state="' + c.state + '">' +
+      '<div class="course-top">' +
+        '<span class="icon-tile' + (isExpired ? "" : " icon-tile-teal") + '">' + I("book") + "</span>" +
+        '<span class="badge badge-' + (isExpired ? "red" : c.daysLeft < 90 ? "amber" : "green") + '">' +
+          (isExpired ? "Expired" : c.daysLeft + " days left") + "</span>" +
+      "</div>" +
+      '<div class="course-body">' +
+        "<h3 style='font-size:1.05rem'>" + c.title + "</h3>" +
+        "<div class='text-xs text-subtle mb-2'>Last topic: " + c.lastTopic + "</div>" +
+        '<div class="progress"><div class="progress-bar' + (c.progress === 100 ? " is-green" : "") + '" data-pct="' + c.progress + '" style="width:0%"></div></div>' +
+        '<div class="row-between text-xs text-subtle mt-1"><span>' + c.progress + "% complete</span>" +
+        "<span>" + c.accuracy + "% accuracy</span></div>" +
+        '<div class="grid grid-2 grid-gap-sm mt-3">' +
+          statBit("Questions", c.questionsDone.toLocaleString() + " / " + c.questionsTotal.toLocaleString()) +
+          statBit("Expiry", c.expiry) +
+        "</div>" +
+      "</div>" +
+      '<div class="course-foot">' +
+        (isExpired
+          ? '<a class="btn btn-outline btn-sm btn-block" href="../checkout.html">Renew access</a>'
+          : '<a class="btn btn-ghost btn-sm" href="progress.html">Progress</a>' +
+            '<a class="btn btn-primary btn-sm" href="learn.html?course=' + c.id + '">Continue learning</a>') +
+      "</div></article>";
+  }
+
+  function statBit(l, v) {
+    return "<div><div class='text-xs text-subtle'>" + l + "</div><div class='fw-700 text-sm'>" + v + "</div></div>";
+  }
+
+  var grid = document.getElementById("courseCards");
+  grid.innerHTML = all.map(card).join("");
+
+  document.querySelectorAll("#courseFilter .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#courseFilter .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      var v = chip.getAttribute("data-value");
+      grid.querySelectorAll("[data-state]").forEach(function (el) {
+        el.style.display = (v === "all" || el.getAttribute("data-state") === v) ? "" : "none";
+      });
+    });
+  });
+  grid.querySelectorAll('[data-state="expired"]').forEach(function (el) { el.style.display = "none"; });
+
+  document.getElementById("nextSteps").innerHTML = [
+    ["alert", "icon-tile-red", "Drill Musculoskeletal", "49% accuracy across 128 questions — your weakest subject by 8 points.", "question-bank.html?subject=Musculoskeletal", "Start 30-question drill"],
+    ["monitor", "icon-tile-teal", "Sit Full Mock #8", "Your last full mock was 12 days ago. Weekly mocks correlate strongly with first-attempt passes.", "mock-tests.html", "Start 180-question mock"],
+    ["book", "icon-tile-amber", "Finish Neurology chapter", "Three topics remain, including Status Epilepticus — a reliable examinable area.", "learn.html", "Resume chapter"]
+  ].map(function (s) {
+    return '<div class="panel"><div class="row row-tight mb-2"><span class="icon-tile ' + s[1] + '" style="width:38px;height:38px">' + I(s[0]) + "</span>" +
+      "<div class='fw-700 text-sm'>" + s[2] + "</div></div>" +
+      "<p class='text-sm'>" + s[3] + "</p>" +
+      '<a class="btn btn-outline btn-sm btn-block" href="' + s[4] + '">' + s[5] + "</a></div>";
+  }).join("");
+
+  var owned = C.enrolled.map(function (c) { return c.id; });
+  document.getElementById("upsell").innerHTML = D.COURSES.filter(function (c) {
+    return owned.indexOf(c.id) === -1;
+  }).slice(0, 4).map(function (c) {
+    return '<div class="panel row" style="align-items:center;gap:14px">' +
+      '<span class="icon-tile">' + I("stethoscope") + "</span>" +
+      "<div class='grow'><div class='fw-700 text-sm'>" + c.title + "</div>" +
+      "<div class='text-xs text-subtle'>" + c.questions.toLocaleString() + " questions · from £" + c.priceFrom + "/month</div></div>" +
+      '<a class="btn btn-soft btn-sm" href="../course-detail.html?course=' + c.id + '">View</a></div>';
+  }).join("");
+}
+</script>
+</body>
+</html>

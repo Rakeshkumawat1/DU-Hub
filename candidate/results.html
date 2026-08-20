@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Results — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="results" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Test Results" data-sub="Every assessment you have attempted"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="rStats"></section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Score history</h3><div class="text-xs text-subtle">All assessments, oldest to newest</div></div>
+            <span class="badge badge-green">▲ 21.6 points since baseline</span>
+          </div>
+          <div class="card-body" id="historyChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3 style="font-size:1rem">Readiness projection</h3></div>
+          <div class="card-body text-center">
+            <div class="donut" id="projDonut"></div>
+            <p class="text-sm mt-2">At your current rate of improvement you reach the <strong>78% comfort threshold</strong> around <strong>28 September 2026</strong> — four weeks before your sitting.</p>
+            <div class="panel text-left">
+              <div class="row-between text-sm"><span class="text-subtle">Current</span><span class="fw-700">73.3%</span></div>
+              <div class="row-between text-sm mt-1"><span class="text-subtle">Trajectory</span><span class="fw-700 text-success">+1.6 pts / mock</span></div>
+              <div class="row-between text-sm mt-1"><span class="text-subtle">Mocks remaining</span><span class="fw-700">9 planned</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h3>All attempts</h3>
+            <div class="text-xs text-subtle"><span id="rowCount">7</span> assessments</div>
+          </div>
+          <div class="row row-tight">
+            <div class="row row-tight" data-chip-group="#resultsTable">
+              <span class="chip is-active" data-value="">All</span>
+              <span class="chip" data-value="Exam">Exam mode</span>
+              <span class="chip" data-value="Practice">Practice mode</span>
+            </div>
+            <div class="search-box">
+              <span data-icon="search"></span>
+              <input type="search" placeholder="Search results" data-filter-input="#resultsTable" data-filter-count="#rowCount" aria-label="Search results">
+            </div>
+          </div>
+        </div>
+        <div class="card-body card-flush">
+          <div class="table-wrap">
+            <table class="table" id="resultsTable">
+              <thead>
+                <tr><th>Assessment</th><th>Course</th><th>Date</th><th>Mode</th><th>Questions</th><th>Score</th><th>Percentage</th><th>Time</th><th></th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-foot row-between">
+          <span class="text-xs text-subtle">Results are retained for the life of your subscription plus 12 months.</span>
+          <div class="pagination">
+            <button type="button">Previous</button>
+            <button type="button" class="is-active">1</button>
+            <button type="button">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Accuracy by question format</h3></div>
+          <div class="card-body" id="byFormat"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Accuracy by difficulty</h3></div>
+          <div class="card-body" id="byDifficulty"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+
+  document.getElementById("rStats").innerHTML = [
+    ["monitor", "", "7", "Assessments taken"],
+    ["chart", "icon-tile-teal", "70.1%", "Mean score"],
+    ["award", "icon-tile-green", "88.3%", "Best score"],
+    ["clock", "icon-tile-amber", "11h 37m", "Total time under exam conditions"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div></div>";
+  }).join("");
+
+  document.getElementById("historyChart").innerHTML =
+    EM.lineChart(C.scoreTrend, {
+      labels: C.testHistory.slice().reverse().map(function (t) { return t.date.split(" ").slice(0, 2).join(" "); }),
+      min: 45, max: 92, height: 240
+    });
+
+  document.getElementById("projDonut").innerHTML =
+    EM.donut(73, 150, 15) + '<div class="donut-center"><div class="v">73%</div><div class="l">Now</div></div>';
+
+  document.querySelector("#resultsTable tbody").innerHTML = C.testHistory.map(function (t) {
+    var tone = t.pct >= 75 ? "green" : t.pct >= 62 ? "amber" : "red";
+    return '<tr data-tags="' + t.mode + '">' +
+      "<td><strong>" + t.name + "</strong><div class='text-xs text-subtle mono'>" + t.id + "</div></td>" +
+      "<td>" + t.course + "</td><td>" + t.date + "</td>" +
+      '<td><span class="badge badge-' + (t.mode === "Exam" ? "blue" : "teal") + '">' + t.mode + "</span></td>" +
+      "<td>" + t.qs + "</td><td>" + t.score + " / " + t.qs + "</td>" +
+      '<td><div class="row row-tight"><span class="badge badge-' + tone + '">' + t.pct + "%</span>" +
+      '<span class="progress progress-sm" style="width:60px"><span class="progress-bar is-' +
+      (tone === "green" ? "green" : tone === "amber" ? "amber" : "red") + '" data-pct="' + t.pct + '" style="width:0%"></span></span></div></td>' +
+      "<td class='mono'>" + t.time + "</td>" +
+      '<td class="cell-actions"><a class="btn btn-soft btn-xs" href="result.html">Report</a> ' +
+      '<a class="btn btn-ghost btn-xs" href="result-detail.html?id=' + t.id + '">Review</a></td></tr>';
+  }).join("");
+
+  document.getElementById("byFormat").innerHTML = EM.hbars([
+    { label: "Single Best Answer", pct: 74, tone: "green" },
+    { label: "Multiple Correct",   pct: 58, tone: "amber" },
+    { label: "Image-Based",        pct: 69, tone: "teal" },
+    { label: "Audio",              pct: 52, tone: "red" },
+    { label: "Video",              pct: 71, tone: "green" }
+  ]) + '<p class="text-sm text-subtle mt-2 mb-0">Multiple-correct and audio items are your weakest formats. Both reward slower, more systematic reading — worth practising deliberately rather than at speed.</p>';
+
+  document.getElementById("byDifficulty").innerHTML = EM.hbars([
+    { label: "Easy",     pct: 89, tone: "green" },
+    { label: "Moderate", pct: 72, tone: "teal" },
+    { label: "Hard",     pct: 46, tone: "red" }
+  ]) + '<p class="text-sm text-subtle mt-2 mb-0">Your easy and moderate performance is comfortably at pass standard. Hard items are where the remaining marks sit — these are disproportionately in Musculoskeletal and Neurology.</p>';
+}
+</script>
+</body>
+</html>

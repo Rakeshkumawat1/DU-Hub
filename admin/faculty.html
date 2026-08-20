@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faculty Management — EM Hub Admin</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="admin" data-active="faculty" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Faculty Management" data-sub="16 faculty members · 2 applications pending"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="facKpis"></section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><h3>Faculty members</h3><div class="text-xs text-subtle"><span id="fCount">8</span> shown</div></div>
+          <div class="row row-tight">
+            <div class="search-box">
+              <span data-icon="search"></span>
+              <input type="search" placeholder="Search faculty" data-filter-input="#facTable" data-filter-count="#fCount" aria-label="Search faculty">
+            </div>
+            <button class="btn btn-primary btn-sm" type="button" data-modal-open="#addFacModal"><span data-icon="plus"></span> Add faculty</button>
+          </div>
+        </div>
+        <div class="card-body card-flush">
+          <div class="table-wrap"><table class="table" id="facTable">
+            <thead><tr><th>Name</th><th>Role</th><th>Specialism</th><th>Courses</th><th>Questions</th><th>Students</th><th>Reply time</th><th>Status</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Authoring output</h3><span class="text-xs text-subtle">Questions authored this cycle</span></div>
+          <div class="card-body" id="outputChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Coverage by specialism</h3></div>
+          <div class="card-body">
+            <div id="coverage"></div>
+            <div class="alert alert-warning mt-3">
+              <span data-icon="alert"></span>
+              <p class="mb-0 text-sm"><strong>Paediatric EM is thinly covered</strong> — two faculty against 14% of the blueprint. An author role is open.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head"><h3>Applications</h3><span class="badge badge-amber">2 pending</span></div>
+          <div class="card-body" id="applications"></div>
+        </div>
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Open roles</h3></div>
+            <div class="card-body" id="openRoles"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Service levels</h3></div>
+            <div class="card-body" id="sla"></div>
+          </div>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="modal-backdrop" id="addFacModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="afTitle">
+    <div class="card-head">
+      <h3 id="afTitle">Add a faculty member</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <form class="card-body" data-demo-form="Faculty member invited. They will set their own password.">
+      <div class="form-grid">
+        <div class="field"><label class="label" for="afName">Full name</label><input class="input" id="afName" required></div>
+        <div class="field"><label class="label" for="afEmail">Email</label><input class="input" id="afEmail" type="email" required></div>
+        <div class="field"><label class="label" for="afQual">Qualifications</label><input class="input" id="afQual" placeholder="MBBS, MRCEM"></div>
+        <div class="field"><label class="label" for="afSpec">Specialism</label><input class="input" id="afSpec" placeholder="e.g. Paediatric Emergency Medicine"></div>
+        <div class="field"><label class="label" for="afRole">EM Hub role</label>
+          <select class="select" id="afRole"><option>Question author</option><option>Content author</option><option>Reviewer</option><option>OSCE examiner</option><option>Subject lead</option></select></div>
+        <div class="field"><label class="label" for="afCourse">Assign to course</label><select class="select" id="afCourse"></select></div>
+      </div>
+      <div class="field"><label class="label">Permissions</label>
+        <label class="check"><input type="checkbox" checked><span>Author content and questions</span></label>
+        <label class="check"><input type="checkbox" checked><span>Review and approve other authors' items</span></label>
+        <label class="check"><input type="checkbox" checked><span>View student analytics for assigned courses</span></label>
+        <label class="check"><input type="checkbox"><span>Publish directly without second review</span></label>
+      </div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn btn-outline" data-modal-close type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Send invitation</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("facKpis").innerHTML = [
+    ["badge", "", "16", "Faculty members", "+2 in August"],
+    ["flask", "icon-tile-teal", "12,850", "Questions authored", "across all courses"],
+    ["clock", "icon-tile-green", "9h 40m", "Median reply time", "target 24 hours"],
+    ["star", "icon-tile-amber", "4.7", "Mean item rating", "from 2,140 ratings"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  var afc = document.getElementById("afCourse");
+  D.COURSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; afc.appendChild(o); });
+
+  var authored = [1908, 1420, 640, 1180, 810, 1560, 920, 740];
+  var students = [1284, 962, 848, 1180, 1420, 1104, 690, 812];
+  var replies = ["6h 12m", "11h 04m", "8h 40m", "14h 22m", "5h 48m", "9h 16m", "12h 30m", "7h 55m"];
+
+  document.querySelector("#facTable tbody").innerHTML = D.FACULTY.map(function (f, i) {
+    return "<tr><td><div class='row row-tight'><span class='avatar avatar-sm'>" + f.initials + "</span>" +
+      "<div><strong>" + f.name + "</strong><div class='text-xs text-subtle'>" + f.qual + "</div></div></div></td>" +
+      '<td><span class="badge badge-violet">' + f.role + "</span></td>" +
+      "<td>" + f.spec + "</td>" +
+      "<td>" + f.courses.map(function (c) { return '<span class="badge">' + c + "</span>"; }).join(" ") + "</td>" +
+      "<td>" + authored[i].toLocaleString() + "</td><td>" + students[i].toLocaleString() + "</td>" +
+      "<td class='mono text-xs'>" + replies[i] + "</td>" +
+      '<td><span class="badge badge-green badge-dot">Active</span></td>' +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Faculty profile opened.\')">View</button> ' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Permissions editor opened.\')">Permissions</button>' +
+      "</td></tr>";
+  }).join("");
+
+  document.getElementById("outputChart").innerHTML = EM.hbars(D.FACULTY.map(function (f, i) {
+    return { label: f.name.replace("Dr ", ""), pct: Math.round((authored[i] / 1908) * 100), tone: "teal" };
+  }));
+
+  document.getElementById("coverage").innerHTML = EM.hbars([
+    { label: "Resuscitation (5 faculty)", pct: 92, tone: "green" },
+    { label: "Trauma (3 faculty)", pct: 84, tone: "green" },
+    { label: "Cardiology (3 faculty)", pct: 80, tone: "green" },
+    { label: "Toxicology (2 faculty)", pct: 66, tone: "teal" },
+    { label: "Neurology (2 faculty)", pct: 61, tone: "teal" },
+    { label: "Paediatric EM (2 faculty)", pct: 44, tone: "red" },
+    { label: "Governance (2 faculty)", pct: 58, tone: "amber" }
+  ]);
+
+  document.getElementById("applications").innerHTML = [
+    ["Dr Nadia Hussain", "NH", "MBBS, MRCPCH, MRCEM", "Paediatric Emergency Medicine", "London, UK", 10,
+     "Dual-trained paediatrician and emergency physician. Currently PEM consultant at a tertiary children's hospital, with six years of teaching on the regional PEM course. Applying for the paediatric question author role.", "New"],
+    ["Dr Marcus Ellery", "ME", "MBChB, FRCEM", "Emergency Medicine / OSCE", "Glasgow, UK", 13,
+     "RCEM OSCE examiner since 2021 and clinical lead for simulation at a large teaching hospital. Applying for the OSCE circuit examiner role.", "Interview scheduled"]
+  ].map(function (a) {
+    return '<div class="panel" style="margin-bottom:12px">' +
+      '<div class="row-between mb-2"><div class="row row-tight">' +
+        '<span class="avatar">' + a[1] + "</span>" +
+        "<div><div class='fw-700'>" + a[0] + "</div>" +
+        "<div class='text-xs text-primary fw-600'>" + a[2] + "</div>" +
+        "<div class='text-xs text-subtle'>" + a[3] + " · " + a[4] + " · " + a[5] + " years</div></div></div>" +
+        '<span class="badge badge-' + (a[7] === "New" ? "amber" : "blue") + '">' + a[7] + "</span></div>" +
+      "<p class='text-sm mb-2'>" + a[6] + "</p>" +
+      '<div class="row row-tight">' +
+        '<button class="btn btn-primary btn-xs" type="button" onclick="EM.toast(\'Application approved — invitation sent.\')">Approve</button>' +
+        '<button class="btn btn-outline btn-xs" type="button" onclick="EM.toast(\'Interview invitation sent.\')">Invite to interview</button>' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Application declined with feedback.\')">Decline</button>' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'CV opened.\')">View CV</button>' +
+      "</div></div>";
+  }).join("");
+
+  document.getElementById("openRoles").innerHTML = [
+    ["Paediatric EM question author", "40 questions per cycle", "2 applicants"],
+    ["OSCE circuit examiner", "Monthly live circuits", "1 applicant"],
+    ["Critical Appraisal reviewer", "Second-review cover", "0 applicants"]
+  ].map(function (r) {
+    return '<div class="panel" style="margin-bottom:8px"><div class="fw-700 text-sm">' + r[0] + "</div>" +
+      "<div class='text-xs text-subtle'>" + r[1] + "</div>" +
+      '<div class="row-between mt-1"><span class="badge badge-teal">' + r[2] + "</span>" +
+      '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Role posting opened.\')">Edit</button></div></div>';
+  }).join("");
+
+  document.getElementById("sla").innerHTML = [
+    ["Candidate questions", "88%", "within 24 h", "green"],
+    ["Item review turnaround", "74%", "within 5 days", "amber"],
+    ["Content publication", "91%", "within 10 days", "green"],
+    ["Flagged item resolution", "62%", "within 7 days", "red"]
+  ].map(function (s) {
+    return '<div style="margin-bottom:12px"><div class="row-between text-sm" style="margin-bottom:4px">' +
+      '<span class="fw-600">' + s[0] + "</span>" +
+      '<span class="fw-700 text-' + (s[3] === "green" ? "success" : s[3] === "amber" ? "warning" : "danger") + '">' + s[1] + "</span></div>" +
+      '<div class="progress progress-sm"><div class="progress-bar is-' + s[3] + '" data-pct="' + parseInt(s[1], 10) + '" style="width:0%"></div></div>' +
+      "<div class='text-xs text-subtle mt-1'>" + s[2] + "</div></div>";
+  }).join("");
+}
+</script>
+</body>
+</html>

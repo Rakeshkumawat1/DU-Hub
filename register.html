@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create your account — EM Hub</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="auth-wrap">
+  <section class="auth-panel">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" data-icon="pulse"></span>
+      <span class="brand-text"><span class="brand-name">EM Hub</span><span class="brand-sub">Emergency Medicine</span></span>
+    </a>
+    <div style="margin-top:auto;position:relative;z-index:1">
+      <h2 style="font-size:2rem;max-width:440px">Start with 25 free questions</h2>
+      <p style="max-width:440px;font-size:1.05rem">Full explanations, real exam interface, two sample chapters of notes. No card details required.</p>
+      <div class="stack mt-4" id="authFeatures"></div>
+    </div>
+    <div style="margin-top:auto;padding-top:36px;position:relative;z-index:1">
+      <div class="row" style="gap:32px;opacity:.92">
+        <div><div style="font-size:1.6rem;font-weight:800">12,400+</div><div style="font-size:.8rem;opacity:.75">doctors prepared</div></div>
+        <div><div style="font-size:1.6rem;font-weight:800">94%</div><div style="font-size:.8rem;opacity:.75">first-attempt pass rate</div></div>
+        <div><div style="font-size:1.6rem;font-weight:800">42</div><div style="font-size:.8rem;opacity:.75">countries</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-form-side" id="main">
+    <div class="auth-form">
+      <div class="row-between mb-3">
+        <a class="btn btn-ghost btn-sm" href="index.html"><span data-icon="chevronLeft"></span> Back to site</a>
+        <button class="btn btn-ghost btn-icon" data-theme-toggle type="button"></button>
+      </div>
+
+      <h1 style="font-size:1.9rem;margin-bottom:6px">Create your account</h1>
+      <p>Free to register. Choose a subscription later, or never.</p>
+
+      <form data-demo-form="Account created. Check your inbox to verify your email." data-redirect="verify-email.html">
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="rFirst">First name</label>
+            <input class="input" id="rFirst" type="text" placeholder="Ravi" required>
+          </div>
+          <div class="field">
+            <label class="label" for="rLast">Last name</label>
+            <input class="input" id="rLast" type="text" placeholder="Krishnan" required>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="rEmail">Email address</label>
+          <div class="input-group">
+            <span data-icon="mail"></span>
+            <input class="input" id="rEmail" type="email" placeholder="you@example.com" required>
+          </div>
+          <span class="hint">Use the address you check most often — verification is sent here.</span>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="rCountry">Country</label>
+            <select class="select" id="rCountry" required><option value="">Select</option></select>
+          </div>
+          <div class="field">
+            <label class="label" for="rExam">Exam of interest</label>
+            <select class="select" id="rExam" required><option value="">Select</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="rPass">Password</label>
+          <div class="input-group">
+            <span data-icon="lock"></span>
+            <input class="input" id="rPass" type="password" placeholder="At least 8 characters" required minlength="8">
+          </div>
+          <div class="progress progress-sm mt-1"><div class="progress-bar is-amber" id="pwBar" style="width:0%"></div></div>
+          <span class="hint" id="pwHint">Use eight or more characters with a mix of letters and numbers.</span>
+        </div>
+        <label class="check mb-2"><input type="checkbox" required><span>I agree to the Terms of Service and Privacy Policy.</span></label>
+        <label class="check mb-3"><input type="checkbox"><span>Email me guideline updates and new content notes. No more than monthly.</span></label>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Create free account</button>
+      </form>
+
+      <p class="text-center text-sm mt-3">Already registered? <a href="login.html" class="fw-600">Sign in</a></p>
+    </div>
+  </section>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("authFeatures").innerHTML = [
+    ["checkCircle", "25 free questions", "Full explanations and exam-technique notes on every one."],
+    ["note", "Two sample chapters", "Read the actual revision notes before you decide."],
+    ["monitor", "Try the mock interface", "Sit a short timed paper in the real exam layout."],
+    ["lock", "No card details", "Nothing to cancel, because nothing starts."]
+  ].map(function (f) {
+    return '<div class="auth-feature">' + I(f[0]) +
+      "<div><div class='t'>" + f[1] + "</div><div class='d'>" + f[2] + "</div></div></div>";
+  }).join("");
+
+  var countries = ["United Kingdom", "India", "Ireland", "United Arab Emirates", "Nigeria", "Pakistan",
+    "Egypt", "Saudi Arabia", "Malaysia", "Singapore", "Australia", "South Africa", "Other"];
+  var cs = document.getElementById("rCountry");
+  countries.forEach(function (c) { var o = document.createElement("option"); o.textContent = c; cs.appendChild(o); });
+
+  var es = document.getElementById("rExam");
+  D.COURSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; es.appendChild(o); });
+
+  var pw = document.getElementById("rPass"), bar = document.getElementById("pwBar"), hint = document.getElementById("pwHint");
+  pw.addEventListener("input", function () {
+    var v = pw.value, score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    var pct = [0, 30, 55, 80, 100][score];
+    bar.style.width = pct + "%";
+    bar.className = "progress-bar " + (score <= 1 ? "is-red" : score === 2 ? "is-amber" : score === 3 ? "is-teal" : "is-green");
+    hint.textContent = ["Too short.", "Weak password.", "Fair — add a number or symbol.", "Good password.", "Strong password."][score];
+  });
+}
+</script>
+</body>
+</html>

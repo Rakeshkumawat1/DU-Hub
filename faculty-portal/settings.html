@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faculty Settings — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="faculty" data-active="settings" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Settings" data-sub="Your faculty profile, teaching allocation and notifications"></div>
+
+    <main class="app-content" id="main">
+
+      <div class="tabs" data-tabs="#fPanels" role="tablist">
+        <button class="tab is-active" data-tab="profile">Public profile</button>
+        <button class="tab" data-tab="teaching">Teaching allocation</button>
+        <button class="tab" data-tab="notify">Notifications</button>
+      </div>
+
+      <div id="fPanels">
+
+        <div class="tab-panel is-active" data-panel="profile">
+          <div class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head"><h3>Public faculty profile</h3><span class="text-xs text-subtle">Shown on the website faculty page</span></div>
+              <form class="card-body" data-demo-form="Faculty profile updated.">
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="fName">Display name</label><input class="input" id="fName" value="Dr Aisha Rahman"></div>
+                  <div class="field"><label class="label" for="fQual">Qualifications</label><input class="input" id="fQual" value="MBBS, MRCEM, FRCEM"></div>
+                  <div class="field"><label class="label" for="fRole">Role at EM Hub</label><input class="input" id="fRole" value="Programme Director"></div>
+                  <div class="field"><label class="label" for="fSpec">Specialism</label><input class="input" id="fSpec" value="Resuscitation &amp; Critical Care"></div>
+                  <div class="field"><label class="label" for="fYears">Years in practice</label><input class="input" id="fYears" type="number" value="16"></div>
+                  <div class="field"><label class="label" for="fLoc">Location</label><input class="input" id="fLoc" value="Manchester, UK"></div>
+                  <div class="field full"><label class="label" for="fShort">Short biography</label>
+                    <textarea class="textarea" id="fShort" style="min-height:90px">Consultant in Emergency Medicine at a major trauma centre and RCEM examiner for eight years. Aisha designed the EM Hub blueprint mapping and leads the resuscitation curriculum.</textarea>
+                    <span class="hint">Shown on faculty cards. Aim for two sentences.</span></div>
+                  <div class="field full"><label class="label" for="fLong">Full biography</label>
+                    <textarea class="textarea" id="fLong" style="min-height:150px">Aisha has supervised more than 900 candidates through the MRCEM and FRCEM pathways. Her teaching focuses on decision-making under uncertainty — the skill that separates a borderline candidate from a comfortable pass. She sits on two national resuscitation working groups and publishes regularly on human factors in the resus room.</textarea></div>
+                </div>
+                <label class="check mb-2"><input type="checkbox" checked><span>Show my profile on the public faculty page</span></label>
+                <label class="check mb-3"><input type="checkbox" checked><span>Allow candidates to direct questions to me</span></label>
+                <button class="btn btn-primary" type="submit">Save profile</button>
+              </form>
+            </div>
+            <aside class="stack">
+              <div class="card card-pad text-center">
+                <span class="avatar avatar-xl" style="margin:0 auto 14px">AR</span>
+                <h4 style="margin-bottom:2px">Dr Aisha Rahman</h4>
+                <div class="text-sm text-subtle">Faculty since 18 March 2024</div>
+                <button class="btn btn-outline btn-sm mt-3" type="button" onclick="EM.toast('Photo upload is disabled in this prototype.')">Change photo</button>
+              </div>
+              <div class="card card-pad">
+                <h4>Contribution</h4>
+                <div class="stack-sm mt-2" id="contrib"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-panel="teaching">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Courses you teach on</h3></div>
+              <div class="card-body" id="allocation"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Authoring commitment</h3></div>
+              <div class="card-body">
+                <p class="text-sm">Your agreed output per examination cycle. Progress resets after each sitting.</p>
+                <div id="commitment"></div>
+                <div class="field mt-3"><label class="label" for="tCapacity">Available hours per week</label>
+                  <select class="select" id="tCapacity"><option>Under 4</option><option selected>4 – 8</option><option>8 – 12</option><option>More than 12</option></select></div>
+                <label class="check mb-2"><input type="checkbox" checked><span>Available to score live mock OSCE circuits</span></label>
+                <label class="check mb-3"><input type="checkbox"><span>Available for 1:1 candidate coaching calls</span></label>
+                <button class="btn btn-primary" type="button" onclick="EM.toast('Availability updated.')">Save availability</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-panel="notify">
+          <div class="card" style="max-width:820px">
+            <div class="card-head"><h3>Notification preferences</h3></div>
+            <form class="card-body" data-demo-form="Notification preferences saved.">
+              <div id="fNotify"></div>
+              <button class="btn btn-primary mt-3" type="submit">Save preferences</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("contrib").innerHTML = [
+    ["Questions authored", "1,908"], ["Content items", "342"],
+    ["Students taught", "1,284"], ["Average item rating", "4.7 / 5"],
+    ["Reviews completed", "612"], ["Median reply time", "6 h 12 m"]
+  ].map(function (r) {
+    return '<div class="row-between text-sm" style="padding:6px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="text-subtle">' + r[0] + '</span><span class="fw-700">' + r[1] + "</span></div>";
+  }).join("");
+
+  document.getElementById("allocation").innerHTML = [
+    ["MRCEM SBA (Intermediate)", "Lead author", 4260, true],
+    ["FRCEM Final SBA", "Contributing author", 2470, true],
+    ["MRCEM Primary", "Reviewer", 3180, true],
+    ["MRCEM OSCE", "Examiner", 1890, true],
+    ["DNB Emergency Medicine", "Not allocated", 2960, false],
+    ["Critical Appraisal & EBM", "Not allocated", 5140, false]
+  ].map(function (a) {
+    return '<label class="check" style="padding:11px 0;border-bottom:1px solid var(--border)">' +
+      '<input type="checkbox"' + (a[3] ? " checked" : "") + ">" +
+      "<span class='grow'><span class='fw-700 text-sm' style='display:block;color:var(--text)'>" + a[0] + "</span>" +
+      "<span class='text-xs text-subtle'>" + a[1] + " · " + a[2].toLocaleString() + " candidates enrolled</span></span></label>";
+  }).join("");
+
+  document.getElementById("commitment").innerHTML = EM.hbars([
+    { label: "Questions (target 120)", pct: 82, tone: "green" },
+    { label: "Reviews (target 200)", pct: 64, tone: "teal" },
+    { label: "Topics (target 20)", pct: 45, tone: "amber" },
+    { label: "Videos (target 12)", pct: 25, tone: "red" }
+  ]);
+
+  document.getElementById("fNotify").innerHTML = [
+    ["Candidate questions", "When a candidate asks a question on your content", true],
+    ["Review requests", "When an item is assigned to you for clinical review", true],
+    ["Flagged items", "When analytics flag one of your questions", true],
+    ["Guideline changes", "When a change affects content you own", true],
+    ["Cohort alerts", "When more than 10% of your students fall behind", false],
+    ["Publication confirmations", "When your content goes live", true],
+    ["Weekly faculty digest", "Summary of your students and content performance", true]
+  ].map(function (n) {
+    return '<label class="check" style="padding:11px 0;border-bottom:1px solid var(--border)">' +
+      '<input type="checkbox"' + (n[2] ? " checked" : "") + ">" +
+      "<span><span class='fw-700 text-sm' style='display:block;color:var(--text)'>" + n[0] + "</span>" +
+      "<span class='text-xs text-subtle'>" + n[1] + "</span></span></label>";
+  }).join("");
+}
+</script>
+</body>
+</html>

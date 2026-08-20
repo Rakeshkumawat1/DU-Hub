@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certificates — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="certificates" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Certificates" data-sub="Two issued · one in progress"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="alert alert-info">
+        <span data-icon="info"></span>
+        <p class="mb-0">Certificates are issued automatically once you complete <strong>80% of a course</strong>. Each carries a unique number and a QR code linking to a public verification record, so it can be included in your training portfolio or ARCP evidence.</p>
+      </section>
+
+      <section class="grid grid-3" id="certGrid"></section>
+
+      <section class="card">
+        <div class="card-head"><h3>Verification</h3></div>
+        <div class="card-body">
+          <div class="grid grid-sidebar" style="gap:32px;align-items:center">
+            <div>
+              <p class="lead">Anyone can verify an EM Hub certificate without an account.</p>
+              <ol>
+                <li>Scan the QR code on the certificate, or visit the verification page directly.</li>
+                <li>Enter the certificate number printed at the foot of the document.</li>
+                <li>The record returns the holder's name, course, completion date and issue status.</li>
+              </ol>
+              <p class="text-sm text-subtle mb-0">Verification records are permanent and are not affected by your subscription lapsing.</p>
+            </div>
+            <div class="card card-pad">
+              <div class="field">
+                <label class="label" for="verifyInput">Verify a certificate number</label>
+                <div class="row row-tight row-nowrap">
+                  <input class="input mono" id="verifyInput" placeholder="EMH-CA-2026-04817">
+                  <button class="btn btn-primary" type="button" id="verifyBtn">Verify</button>
+                </div>
+              </div>
+              <div id="verifyResult"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+
+  var pending = {
+    id: "—", course: "MRCEM SBA (Intermediate)", date: "Locked",
+    score: "68% complete", status: "In progress", pct: 68
+  };
+
+  var all = C.certificates.map(function (c) { return Object.assign({ pct: 100 }, c); }).concat([pending]);
+
+  document.getElementById("certGrid").innerHTML = all.map(function (c) {
+    var issued = c.status === "Issued";
+    return '<article class="card card-hover" style="overflow:hidden">' +
+      '<div style="padding:22px;background:' +
+        (issued ? "linear-gradient(135deg,var(--primary-soft),transparent 70%)" : "var(--surface-2)") + '">' +
+        '<div class="row-between mb-3">' +
+          '<span class="icon-tile ' + (issued ? "icon-tile-green" : "icon-tile-amber") + '">' +
+            I(issued ? "certificate" : "lock") + "</span>" +
+          '<span class="badge badge-' + (issued ? "green" : "amber") + '">' + c.status + "</span>" +
+        "</div>" +
+        "<h3 style='font-size:1.05rem'>" + c.course + "</h3>" +
+        "<div class='text-xs text-subtle mono'>" + c.id + "</div>" +
+      "</div>" +
+      '<div class="card-body">' +
+        '<div class="row-between text-sm mb-1"><span class="text-subtle">' +
+          (issued ? "Issued" : "Progress") + '</span><span class="fw-700">' + c.date + "</span></div>" +
+        '<div class="row-between text-sm"><span class="text-subtle">' +
+          (issued ? "Final score" : "Completion") + '</span><span class="fw-700">' + c.score + "</span></div>" +
+        (issued ? "" :
+          '<div class="progress progress-sm mt-2"><div class="progress-bar is-amber" data-pct="' + c.pct + '" style="width:0%"></div></div>' +
+          '<div class="text-xs text-subtle mt-1">Unlocks at 80% — 372 questions to go</div>') +
+      "</div>" +
+      '<div class="card-foot row" style="justify-content:' + (issued ? "space-between" : "center") + '">' +
+        (issued
+          ? '<a class="btn btn-outline btn-sm" href="certificate.html?id=' + c.id + '">View</a>' +
+            '<a class="btn btn-primary btn-sm" href="certificate.html?id=' + c.id + '"><span data-icon="download"></span> Download</a>'
+          : '<a class="btn btn-outline btn-sm btn-block" href="learn.html">Continue course</a>') +
+      "</div></article>";
+  }).join("");
+
+  document.getElementById("verifyBtn").addEventListener("click", function () {
+    var v = document.getElementById("verifyInput").value.trim().toUpperCase();
+    var hit = C.certificates.filter(function (c) { return c.id === v; })[0];
+    var out = document.getElementById("verifyResult");
+    if (!v) { EM.toast("Enter a certificate number."); return; }
+    if (hit) {
+      out.innerHTML = '<div class="alert alert-success mt-2"><span style="width:18px;height:18px;flex:none">' + I("checkCircle") + "</span>" +
+        "<div><p class='mb-0'><strong>Valid certificate.</strong></p>" +
+        "<p class='mb-0 text-sm'>" + C.name + " — " + hit.course + "<br>Completed " + hit.date + " · Score " + hit.score + "</p></div></div>";
+    } else {
+      out.innerHTML = '<div class="alert alert-danger mt-2"><span style="width:18px;height:18px;flex:none">' + I("xCircle") + "</span>" +
+        "<p class='mb-0'><strong>No record found</strong> for that certificate number. Check for transcription errors.</p></div>";
+    }
+  });
+}
+</script>
+</body>
+</html>

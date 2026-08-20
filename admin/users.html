@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User Management — EM Hub Admin</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="admin" data-active="users" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="User Management" data-sub="12,486 candidates · 16 faculty · 4 administrators"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="userStats"></section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><h3>All users</h3><div class="text-xs text-subtle"><span id="uCount">10</span> shown of 12,506</div></div>
+          <div class="row row-tight">
+            <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('User list exported as CSV.')"><span data-icon="download"></span> Export</button>
+            <button class="btn btn-primary btn-sm" type="button" data-modal-open="#inviteModal"><span data-icon="plus"></span> Invite user</button>
+          </div>
+        </div>
+
+        <div class="card-body" style="border-bottom:1px solid var(--border)">
+          <div class="row-between">
+            <div class="row row-tight" data-chip-group="#userTable">
+              <span class="chip is-active" data-value="">All roles</span>
+              <span class="chip" data-value="Candidate">Candidates</span>
+              <span class="chip" data-value="Faculty">Faculty</span>
+              <span class="chip" data-value="Admin">Admins</span>
+            </div>
+            <div class="row row-tight">
+              <select class="select" style="width:auto" id="statusFilter">
+                <option value="">Any status</option><option>Active</option><option>Expiring</option><option>Expired</option>
+              </select>
+              <select class="select" style="width:auto" id="countryFilter">
+                <option value="">Any country</option>
+              </select>
+              <div class="search-box">
+                <span data-icon="search"></span>
+                <input type="search" placeholder="Search name or email" data-filter-input="#userTable" data-filter-count="#uCount" aria-label="Search users">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body card-flush">
+          <div class="table-wrap"><table class="table" id="userTable">
+            <thead><tr>
+              <th style="width:34px"><input type="checkbox" aria-label="Select all" id="selectAll"></th>
+              <th>User</th><th>Role</th><th>Country</th><th>Plan</th><th>Status</th><th>Joined</th><th>Lifetime spend</th><th></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+
+        <div class="card-foot row-between">
+          <div class="row row-tight">
+            <span class="text-xs text-subtle"><span id="selCount">0</span> selected</span>
+            <button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast('Bulk email queued.')">Email</button>
+            <button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast('Access extended by 30 days for the selected users.')">Extend access</button>
+            <button class="btn btn-ghost btn-xs text-danger" type="button" onclick="EM.toast('Suspension requires a second administrator to approve.')">Suspend</button>
+          </div>
+          <div class="pagination">
+            <button type="button">Previous</button>
+            <button type="button" class="is-active">1</button>
+            <button type="button">2</button>
+            <button type="button">3</button>
+            <button type="button">…</button>
+            <button type="button">1,251</button>
+            <button type="button">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-3">
+        <div class="card">
+          <div class="card-head"><h3>Registrations over time</h3></div>
+          <div class="card-body" id="regChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Users by country</h3></div>
+          <div class="card-body" id="userCountries"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Account status</h3></div>
+          <div class="card-body text-center">
+            <div class="donut" id="statusDonut"></div>
+            <div class="chart-legend mt-3" style="justify-content:center" id="statusLegend"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="modal-backdrop" id="inviteModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="invTitle">
+    <div class="card-head">
+      <h3 id="invTitle">Invite a user</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <form class="card-body" data-demo-form="Invitation sent.">
+      <div class="form-grid">
+        <div class="field"><label class="label" for="ivName">Full name</label><input class="input" id="ivName" required></div>
+        <div class="field"><label class="label" for="ivEmail">Email</label><input class="input" id="ivEmail" type="email" required></div>
+        <div class="field"><label class="label" for="ivRole">Role</label>
+          <select class="select" id="ivRole"><option>Candidate</option><option>Faculty</option><option>Administrator</option></select></div>
+        <div class="field"><label class="label" for="ivCourse">Grant access to</label>
+          <select class="select" id="ivCourse"></select></div>
+        <div class="field full"><label class="label" for="ivMessage">Personal message</label>
+          <textarea class="textarea" id="ivMessage" style="min-height:80px" placeholder="Optional — included in the invitation email."></textarea></div>
+      </div>
+      <label class="check mb-2"><input type="checkbox" checked><span>Grant complimentary 1-month access</span></label>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn btn-outline" data-modal-close type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Send invitation</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, A = D.ADMIN, I = EM.icon;
+
+  document.getElementById("userStats").innerHTML = [
+    ["users", "", "12,486", "Total candidates", "+412 this month"],
+    ["checkCircle", "icon-tile-green", "4,932", "With active access", "39.5% of candidates"],
+    ["badge", "icon-tile-violet", "16", "Faculty members", "+2 in August"],
+    ["globe", "icon-tile-teal", "42", "Countries", "68% outside the UK"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  var cf = document.getElementById("countryFilter");
+  A.countries.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.name; cf.appendChild(o); });
+  var ivc = document.getElementById("ivCourse");
+  D.COURSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; ivc.appendChild(o); });
+
+  document.querySelector("#userTable tbody").innerHTML = A.users.map(function (u) {
+    var tone = u.status === "Active" ? "green" : u.status === "Expiring" ? "amber" : "red";
+    var roleTone = u.role === "Admin" ? "violet" : u.role === "Faculty" ? "teal" : "blue";
+    return '<tr data-tags="' + u.role + " " + u.status + " " + u.country + '">' +
+      '<td><input type="checkbox" class="rowSel" aria-label="Select ' + u.name + '"></td>' +
+      "<td><div class='row row-tight'><span class='avatar avatar-sm'>" + u.initials + "</span>" +
+      "<div><strong>" + u.name + "</strong><div class='text-xs text-subtle'>" + u.email + "</div></div></div></td>" +
+      '<td><span class="badge badge-' + roleTone + '">' + u.role + "</span></td>" +
+      "<td>" + u.country + "</td><td>" + u.plan + "</td>" +
+      '<td><span class="badge badge-' + tone + ' badge-dot">' + u.status + "</span></td>" +
+      "<td>" + u.joined + "</td><td><strong>" + u.spend + "</strong></td>" +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'User profile opened.\')">View</button> ' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Edit form opened.\')">Edit</button>' +
+      "</td></tr>";
+  }).join("");
+
+  /* Selection */
+  function updateSel() {
+    document.getElementById("selCount").textContent =
+      document.querySelectorAll(".rowSel:checked").length;
+  }
+  document.getElementById("selectAll").addEventListener("change", function () {
+    var on = this.checked;
+    document.querySelectorAll(".rowSel").forEach(function (c) { c.checked = on; });
+    updateSel();
+  });
+  document.querySelector("#userTable tbody").addEventListener("change", function (e) {
+    if (e.target.classList.contains("rowSel")) updateSel();
+  });
+
+  /* Secondary filters compose with the chip filter */
+  function applySecondary() {
+    var st = document.getElementById("statusFilter").value;
+    var co = document.getElementById("countryFilter").value;
+    var shown = 0;
+    document.querySelectorAll("#userTable tbody tr").forEach(function (tr) {
+      var tags = tr.getAttribute("data-tags");
+      var on = (!st || tags.indexOf(st) > -1) && (!co || tags.indexOf(co) > -1);
+      tr.style.display = on ? "" : "none";
+      if (on) shown++;
+    });
+    document.getElementById("uCount").textContent = shown;
+  }
+  document.getElementById("statusFilter").addEventListener("change", applySecondary);
+  document.getElementById("countryFilter").addEventListener("change", applySecondary);
+
+  document.getElementById("regChart").innerHTML = EM.barChart(A.signups);
+
+  document.getElementById("userCountries").innerHTML = EM.hbars(A.countries.map(function (c) {
+    return { label: c.name + " (" + c.users.toLocaleString() + ")", pct: c.pct, tone: "teal" };
+  }));
+
+  var segs = [
+    { pct: 39.5, color: "var(--success)", label: "Active" },
+    { pct: 8.2, color: "var(--warning)", label: "Expiring" },
+    { pct: 44.1, color: "var(--danger)", label: "Expired" },
+    { pct: 8.2, color: "var(--slate-400)", label: "Never purchased" }
+  ];
+  document.getElementById("statusDonut").innerHTML =
+    EM.pieRing(segs, 170, 22) +
+    '<div class="donut-center"><div class="v" style="font-size:1.2rem">12.5k</div><div class="l">Users</div></div>';
+  document.getElementById("statusLegend").innerHTML = segs.map(function (s) {
+    return '<span><i style="background:' + s.color + '"></i>' + s.label + " " + s.pct + "%</span>";
+  }).join("");
+}
+</script>
+</body>
+</html>

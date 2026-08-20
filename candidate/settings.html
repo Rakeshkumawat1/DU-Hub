@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="settings" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Settings" data-sub="Profile, study preferences, notifications and accessibility"></div>
+
+    <main class="app-content" id="main">
+
+      <div class="tabs" data-tabs="#settingsPanels" role="tablist">
+        <button class="tab is-active" data-tab="profile">Profile</button>
+        <button class="tab" data-tab="study">Study preferences</button>
+        <button class="tab" data-tab="notify">Notifications</button>
+        <button class="tab" data-tab="access">Accessibility</button>
+        <button class="tab" data-tab="security">Security</button>
+      </div>
+
+      <div id="settingsPanels">
+
+        <!-- PROFILE -->
+        <div class="tab-panel is-active" data-panel="profile">
+          <div class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head"><h3>Personal details</h3></div>
+              <form class="card-body" data-demo-form="Profile updated.">
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="sFirst">First name</label><input class="input" id="sFirst" value="Ravi"></div>
+                  <div class="field"><label class="label" for="sLast">Last name</label><input class="input" id="sLast" value="Krishnan"></div>
+                  <div class="field"><label class="label" for="sEmail">Email address</label><input class="input" id="sEmail" type="email" value="ravi.krishnan@example.com"></div>
+                  <div class="field"><label class="label" for="sPhone">Telephone</label><input class="input" id="sPhone" type="tel" value="+91 98450 12345"></div>
+                  <div class="field"><label class="label" for="sCountry">Country</label>
+                    <select class="select" id="sCountry"><option selected>India</option><option>United Kingdom</option><option>Ireland</option><option>United Arab Emirates</option><option>Other</option></select></div>
+                  <div class="field"><label class="label" for="sGrade">Current grade</label>
+                    <select class="select" id="sGrade"><option>Foundation</option><option selected>Registrar / Specialty trainee</option><option>Staff grade</option><option>Consultant</option></select></div>
+                  <div class="field full"><label class="label" for="sExam">Target examination and sitting</label>
+                    <div class="row row-tight row-nowrap">
+                      <select class="select" id="sExam"><option selected>MRCEM SBA (Intermediate)</option><option>MRCEM OSCE</option><option>FRCEM Final SBA</option></select>
+                      <input class="input" type="month" value="2026-11" style="max-width:180px" aria-label="Sitting month">
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Save changes</button>
+              </form>
+            </div>
+
+            <aside class="stack">
+              <div class="card card-pad text-center">
+                <span class="avatar avatar-xl" style="margin:0 auto 14px">RK</span>
+                <h4 style="margin-bottom:2px">Dr Ravi Krishnan</h4>
+                <div class="text-sm text-subtle">Member since 12 February 2026</div>
+                <button class="btn btn-outline btn-sm mt-3" type="button" onclick="EM.toast('Photo upload is disabled in this prototype.')">Change photo</button>
+              </div>
+              <div class="card card-pad">
+                <h4>Account summary</h4>
+                <div class="stack-sm mt-2" id="acctSummary"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- STUDY -->
+        <div class="tab-panel" data-panel="study">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Default session settings</h3></div>
+              <form class="card-body" data-demo-form="Study preferences saved.">
+                <div class="field"><label class="label" for="pMode">Default mode</label>
+                  <select class="select" id="pMode"><option selected>Practice — show answers immediately</option><option>Exam — results at the end</option></select></div>
+                <div class="field"><label class="label" for="pLength">Default session length</label>
+                  <select class="select" id="pLength"><option>10 questions</option><option selected>30 questions</option><option>60 questions</option></select></div>
+                <div class="field"><label class="label" for="pPool">Default question pool</label>
+                  <select class="select" id="pPool"><option selected>Unseen questions preferred</option><option>All questions</option><option>Previously incorrect only</option></select></div>
+                <div class="field"><label class="label" for="pTarget">Weekly question target</label>
+                  <input class="input" id="pTarget" type="number" value="420" min="0" step="10"></div>
+                <label class="check mb-2"><input type="checkbox" checked><span>Automatically flag questions I answer in under 20 seconds</span></label>
+                <label class="check mb-3"><input type="checkbox" checked><span>Re-surface incorrect questions at 3, 10 and 28 days</span></label>
+                <button class="btn btn-primary" type="submit">Save preferences</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>Study plan</h3></div>
+              <div class="card-body">
+                <p class="text-sm">Your plan is generated from your sitting date, weekly availability and current readiness. It rebuilds itself after every mock.</p>
+                <div class="panel">
+                  <div class="row-between text-sm"><span class="text-subtle">Sitting</span><span class="fw-700">November 2026</span></div>
+                  <div class="row-between text-sm mt-1"><span class="text-subtle">Weeks remaining</span><span class="fw-700">10</span></div>
+                  <div class="row-between text-sm mt-1"><span class="text-subtle">Questions per study day</span><span class="fw-700">34</span></div>
+                  <div class="row-between text-sm mt-1"><span class="text-subtle">Chapters per week</span><span class="fw-700">5</span></div>
+                  <div class="row-between text-sm mt-1"><span class="text-subtle">Mocks scheduled</span><span class="fw-700">9</span></div>
+                </div>
+                <div class="field mt-3"><label class="label" for="pDays">Study days</label>
+                  <div class="row row-tight" id="dayChips"></div>
+                </div>
+                <button class="btn btn-outline btn-block mt-2" type="button" onclick="EM.toast('Study plan regenerated.')">Regenerate plan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="tab-panel" data-panel="notify">
+          <div class="card" style="max-width:820px">
+            <div class="card-head"><h3>Notification preferences</h3></div>
+            <form class="card-body" data-demo-form="Notification preferences saved.">
+              <div id="notifyList"></div>
+              <div class="field mt-3"><label class="label" for="nDigest">Weekly digest</label>
+                <select class="select" id="nDigest"><option selected>Monday morning</option><option>Friday evening</option><option>Sunday evening</option><option>Do not send</option></select></div>
+              <button class="btn btn-primary" type="submit">Save preferences</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ACCESSIBILITY -->
+        <div class="tab-panel" data-panel="access">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Display</h3></div>
+              <div class="card-body">
+                <div class="field">
+                  <label class="label">Theme</label>
+                  <div class="row row-tight" id="themeChips">
+                    <span class="chip" data-theme-set="light">Light</span>
+                    <span class="chip" data-theme-set="dark">Dark</span>
+                    <span class="chip" data-theme-set="system">Match system</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="aFont">Text size</label>
+                  <input type="range" id="aFont" min="90" max="130" value="100" step="5" style="width:100%;accent-color:var(--primary)">
+                  <span class="hint" id="fontHint">100% — default</span>
+                </div>
+                <label class="check mb-2"><input type="checkbox" id="aMotion"><span>Reduce motion and animation</span></label>
+                <label class="check mb-2"><input type="checkbox" id="aContrast"><span>Increase contrast of borders and dividers</span></label>
+                <label class="check"><input type="checkbox" checked><span>Underline links within learning content</span></label>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>Exam accommodations</h3></div>
+              <div class="card-body">
+                <p class="text-sm">If your college has granted you extra time or other adjustments, set them here so your mocks match your real conditions.</p>
+                <div class="field"><label class="label" for="aTime">Extra time</label>
+                  <select class="select" id="aTime"><option selected>None</option><option>25% additional</option><option>50% additional</option></select></div>
+                <div class="field"><label class="label" for="aBreaks">Rest breaks</label>
+                  <select class="select" id="aBreaks"><option selected>None</option><option>Stop-the-clock breaks permitted</option></select></div>
+                <label class="check mb-2"><input type="checkbox"><span>Use a screen-reader friendly question layout</span></label>
+                <label class="check"><input type="checkbox"><span>Provide transcripts for all audio questions</span></label>
+                <button class="btn btn-primary mt-3" type="button" onclick="EM.toast('Accommodations saved and applied to future mocks.')">Save accommodations</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECURITY -->
+        <div class="tab-panel" data-panel="security">
+          <div class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head"><h3>Password</h3></div>
+              <form class="card-body" data-demo-form="Password updated.">
+                <div class="field"><label class="label" for="secOld">Current password</label><input class="input" id="secOld" type="password"></div>
+                <div class="field"><label class="label" for="secNew">New password</label><input class="input" id="secNew" type="password"></div>
+                <div class="field"><label class="label" for="secConf">Confirm new password</label><input class="input" id="secConf" type="password"></div>
+                <button class="btn btn-primary" type="submit">Update password</button>
+              </form>
+            </div>
+            <aside class="stack">
+              <div class="card card-pad">
+                <h4>Two-factor authentication</h4>
+                <p class="text-sm">Not enabled. We recommend enabling it — your account holds your exam performance history.</p>
+                <button class="btn btn-outline btn-sm btn-block" type="button" onclick="EM.toast('Two-factor setup is disabled in this prototype.')">Enable 2FA</button>
+              </div>
+              <div class="card card-pad">
+                <h4>Active sessions</h4>
+                <div class="stack-sm mt-2" id="sessions"></div>
+              </div>
+              <div class="card card-pad">
+                <h4 class="text-danger">Danger zone</h4>
+                <p class="text-sm">Deleting your account removes your progress, analytics and certificates permanently. Issued certificates remain verifiable.</p>
+                <button class="btn btn-danger btn-sm btn-block" type="button" onclick="EM.toast('Account deletion is disabled in this prototype.')">Delete my account</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var I = EM.icon;
+
+  document.getElementById("acctSummary").innerHTML = [
+    ["Account type", "Candidate"], ["Active courses", "3"],
+    ["Questions answered", "2,292"], ["Certificates", "2"],
+    ["Data region", "United Kingdom"]
+  ].map(function (r) {
+    return '<div class="row-between text-sm" style="padding:6px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="text-subtle">' + r[0] + '</span><span class="fw-700">' + r[1] + "</span></div>";
+  }).join("");
+
+  var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  document.getElementById("dayChips").innerHTML = days.map(function (d, i) {
+    return '<span class="chip' + (i !== 4 ? " is-active" : "") + '">' + d + "</span>";
+  }).join("");
+  document.querySelectorAll("#dayChips .chip").forEach(function (c) {
+    c.addEventListener("click", function () { c.classList.toggle("is-active"); });
+  });
+
+  document.getElementById("notifyList").innerHTML = [
+    ["Study reminders", "A nudge on days you have not studied by 20:00", true],
+    ["Weak topic alerts", "When a subject drops below pass standard", true],
+    ["Mock exam results", "Your report is ready, with cohort benchmarking", true],
+    ["Guideline updates", "When a change affects questions you have answered", true],
+    ["Subscription expiry", "At 14 days, 7 days and 1 day remaining", true],
+    ["New content", "When chapters or videos are added to your courses", false],
+    ["Faculty replies", "When a faculty member answers your question", true],
+    ["Product announcements", "New features and platform changes", false]
+  ].map(function (n) {
+    return '<label class="check" style="padding:11px 0;border-bottom:1px solid var(--border)">' +
+      '<input type="checkbox"' + (n[2] ? " checked" : "") + ">" +
+      "<span><span class='fw-700 text-sm' style='display:block;color:var(--text)'>" + n[0] + "</span>" +
+      "<span class='text-xs text-subtle'>" + n[1] + "</span></span></label>";
+  }).join("");
+
+  /* Theme chips reflect and set the current theme */
+  function syncThemeChips() {
+    var cur = document.documentElement.getAttribute("data-theme");
+    document.querySelectorAll("#themeChips .chip").forEach(function (c) {
+      c.classList.toggle("is-active", c.getAttribute("data-theme-set") === cur);
+    });
+  }
+  document.querySelectorAll("#themeChips .chip").forEach(function (c) {
+    c.addEventListener("click", function () {
+      var t = c.getAttribute("data-theme-set");
+      if (t === "system") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      EM.applyTheme(t);
+      syncThemeChips();
+      EM.toast("Theme updated.");
+    });
+  });
+  syncThemeChips();
+
+  var font = document.getElementById("aFont");
+  font.addEventListener("input", function () {
+    document.body.style.fontSize = (15 * font.value / 100).toFixed(2) + "px";
+    document.getElementById("fontHint").textContent = font.value + "%" + (font.value === "100" ? " — default" : "");
+  });
+
+  document.getElementById("aMotion").addEventListener("change", function () {
+    document.documentElement.style.scrollBehavior = this.checked ? "auto" : "smooth";
+    EM.toast(this.checked ? "Reduced motion enabled." : "Reduced motion disabled.");
+  });
+  document.getElementById("aContrast").addEventListener("change", function () {
+    document.documentElement.style.setProperty("--border", this.checked ? "var(--slate-400)" : "");
+    EM.toast(this.checked ? "High contrast borders enabled." : "Contrast reset.");
+  });
+
+  document.getElementById("sessions").innerHTML = [
+    ["monitor", "Chrome on macOS", "Bengaluru, India · current session", true],
+    ["phone", "Safari on iPhone", "Bengaluru, India · 2 hours ago", false],
+    ["monitor", "Edge on Windows", "Manchester, UK · 6 days ago", false]
+  ].map(function (s) {
+    return '<div class="row" style="align-items:center;gap:11px">' +
+      '<span class="icon-tile' + (s[3] ? " icon-tile-green" : "") + '" style="width:34px;height:34px">' + I(s[0]) + "</span>" +
+      "<div class='grow'><div class='fw-700 text-sm'>" + s[1] + "</div><div class='text-xs text-subtle'>" + s[2] + "</div></div>" +
+      (s[3] ? '<span class="badge badge-green">Current</span>'
+            : '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Session revoked.\')">Revoke</button>') +
+      "</div>";
+  }).join("");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout — EM Hub</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body style="background:var(--bg-subtle)">
+<a class="skip-link" href="#main">Skip to main content</a>
+<header data-header data-active="courses" data-prefix=""></header>
+
+<main id="main" class="section">
+  <div class="container" style="max-width:1080px">
+    <nav class="breadcrumb"><a href="courses.html">Courses</a><span class="sep">/</span><span id="bcCourse">Course</span><span class="sep">/</span><span>Checkout</span></nav>
+    <h1 style="margin-bottom:28px">Complete your subscription</h1>
+
+    <div class="grid grid-sidebar" style="gap:32px;align-items:start">
+
+      <form class="stack" data-demo-form="Payment approved. Your subscription is now active." data-redirect="candidate/dashboard.html">
+        <div class="card card-pad">
+          <h3 style="font-size:1.1rem">1 · Choose your duration</h3>
+          <p class="text-sm">One-off payment. Nothing renews automatically.</p>
+          <div class="stack-sm mt-2" id="durationOptions"></div>
+        </div>
+
+        <div class="card card-pad">
+          <h3 style="font-size:1.1rem">2 · Your details</h3>
+          <div class="form-grid mt-2">
+            <div class="field"><label class="label" for="ckName">Full name</label><input class="input" id="ckName" value="Dr Ravi Krishnan" required></div>
+            <div class="field"><label class="label" for="ckEmail">Email</label><input class="input" id="ckEmail" type="email" value="ravi.krishnan@example.com" required></div>
+            <div class="field"><label class="label" for="ckCountry">Billing country</label>
+              <select class="select" id="ckCountry"><option>India</option><option>United Kingdom</option><option>Ireland</option><option>United Arab Emirates</option><option>Nigeria</option><option>Other</option></select></div>
+            <div class="field"><label class="label" for="ckVat">VAT / GST number <span class="text-subtle fw-500">(optional)</span></label><input class="input" id="ckVat" placeholder="Leave blank if not applicable"></div>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <h3 style="font-size:1.1rem">3 · Payment</h3>
+          <div class="row row-tight mt-2 mb-3" id="payMethods">
+            <span class="chip is-active" data-pay="card">Card</span>
+            <span class="chip" data-pay="invoice">Institutional invoice</span>
+          </div>
+
+          <div id="payCard">
+            <div class="field"><label class="label" for="ckCard">Card number</label>
+              <div class="input-group"><span data-icon="card"></span><input class="input" id="ckCard" inputmode="numeric" placeholder="4242 4242 4242 4242"></div></div>
+            <div class="form-grid">
+              <div class="field"><label class="label" for="ckExp">Expiry</label><input class="input" id="ckExp" placeholder="MM / YY"></div>
+              <div class="field"><label class="label" for="ckCvc">Security code</label><input class="input" id="ckCvc" placeholder="123"></div>
+            </div>
+          </div>
+
+          <div id="payInvoice" hidden>
+            <div class="field"><label class="label" for="ckOrg">Institution name</label><input class="input" id="ckOrg" placeholder="NHS Trust, hospital or deanery"></div>
+            <div class="field"><label class="label" for="ckPo">Purchase order reference</label><input class="input" id="ckPo" placeholder="PO-000000"></div>
+            <div class="alert alert-info"><span data-icon="info"></span><p class="mb-0 text-sm">Invoices are issued on 30-day terms. Access is activated as soon as the purchase order is confirmed.</p></div>
+          </div>
+
+          <label class="check mt-2"><input type="checkbox" required><span>I accept the Terms of Service and confirm this is a fixed-duration, non-renewing subscription.</span></label>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Pay <span id="payTotal">£119</span> and start learning</button>
+        <p class="text-xs text-subtle text-center">This is a prototype. No payment is taken and no card details are transmitted.</p>
+      </form>
+
+      <aside class="card card-pad" style="position:sticky;top:96px">
+        <h3 style="font-size:1.05rem">Order summary</h3>
+        <div class="list-row" style="border-bottom:1px solid var(--border);padding:14px 0">
+          <span class="icon-tile" data-icon="book"></span>
+          <div class="grow"><div class="fw-700 text-sm" id="sumCourse">MRCEM SBA</div>
+            <div class="text-xs text-subtle" id="sumDuration">3 month subscription</div></div>
+        </div>
+        <div class="stack-sm mt-2">
+          <div class="row-between text-sm"><span class="text-subtle">Subtotal</span><span class="fw-600" id="sumSub">£99.17</span></div>
+          <div class="row-between text-sm"><span class="text-subtle">VAT (20%)</span><span class="fw-600" id="sumVat">£19.83</span></div>
+          <div class="row-between text-sm"><span class="text-subtle">Discount</span><span class="fw-600 text-success" id="sumDisc">— £0.00</span></div>
+        </div>
+        <hr style="margin:16px 0">
+        <div class="row-between"><span class="fw-700">Total due today</span><span style="font-size:1.5rem;font-weight:800;letter-spacing:-.03em" id="sumTotal">£119.00</span></div>
+        <div class="text-xs text-subtle" id="sumExpiry">Access until 16 November 2026</div>
+
+        <div class="field mt-3">
+          <label class="label" for="ckPromo">Promotion code</label>
+          <div class="row row-tight row-nowrap">
+            <input class="input" id="ckPromo" placeholder="Enter code">
+            <button class="btn btn-outline" type="button" id="applyPromo">Apply</button>
+          </div>
+          <span class="hint">Try <span class="mono">EMHUB10</span> in this prototype.</span>
+        </div>
+
+        <div class="divider-text">Included</div>
+        <ul style="list-style:none;padding:0;margin:0" id="sumIncludes"></ul>
+
+        <div class="alert alert-success mt-3"><span data-icon="shield"></span>
+          <p class="mb-0 text-sm"><strong>Deferral protection.</strong> Exam moved? We extend your access free of charge.</p></div>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<footer data-footer data-prefix=""></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+  var course = D.courseById(EM.qs("course") || "mrcem-sba");
+  var wanted = parseInt(EM.qs("plan") || "3", 10);
+  var factor = course.priceFrom / D.PLANS[0].price;
+  var plans = D.PLANS.map(function (p) {
+    return { months: p.months, label: p.label, note: p.note, save: p.save, price: Math.round(p.price * factor) };
+  });
+  var selected = plans.filter(function (p) { return p.months === wanted; })[0] || plans[2];
+  var discount = 0;
+
+  document.getElementById("bcCourse").textContent = course.code;
+  document.getElementById("sumCourse").textContent = course.title;
+
+  document.getElementById("durationOptions").innerHTML = plans.map(function (p) {
+    return '<button class="option" type="button" data-months="' + p.months + '"' +
+      (p.months === selected.months ? ' style="border-color:var(--primary);background:var(--primary-soft)"' : "") + ">" +
+      '<span class="key">' + p.months + "</span>" +
+      '<span class="grow"><span class="fw-700" style="display:block">' + p.label + "</span>" +
+      '<span class="text-xs text-subtle">' + p.note + " · £" + (p.price / p.months).toFixed(2) + " per month</span></span>" +
+      '<span class="fw-700">£' + p.price + "</span>" +
+      (p.save ? '<span class="badge badge-green">save ' + p.save + "%</span>" : "") + "</button>";
+  }).join("");
+
+  document.getElementById("durationOptions").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-months]");
+    if (!b) return;
+    selected = plans.filter(function (p) { return p.months === +b.getAttribute("data-months"); })[0];
+    document.querySelectorAll("#durationOptions .option").forEach(function (o) { o.removeAttribute("style"); });
+    b.style.cssText = "border-color:var(--primary);background:var(--primary-soft)";
+    render();
+  });
+
+  document.getElementById("sumIncludes").innerHTML =
+    ["Full question bank access", "Structured revision notes", "Video library", "Unlimited timed mocks",
+     "Performance analytics", "Completion certificate"].map(function (f) {
+      return "<li style='display:flex;gap:9px;padding:5px 0;font-size:.86rem;color:var(--text-muted)'>" +
+        "<span style='width:16px;height:16px;color:var(--success);flex:none'>" + I("check") + "</span>" + f + "</li>";
+    }).join("");
+
+  document.querySelectorAll("#payMethods .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#payMethods .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      var card = chip.getAttribute("data-pay") === "card";
+      document.getElementById("payCard").hidden = !card;
+      document.getElementById("payInvoice").hidden = card;
+    });
+  });
+
+  document.getElementById("applyPromo").addEventListener("click", function () {
+    var v = document.getElementById("ckPromo").value.trim().toUpperCase();
+    if (v === "EMHUB10") { discount = 0.10; EM.toast("Promotion code applied — 10% off."); }
+    else if (!v) { EM.toast("Enter a code first."); return; }
+    else { discount = 0; EM.toast("That code is not recognised."); }
+    render();
+  });
+
+  var monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  function render() {
+    var gross = selected.price * (1 - discount);
+    var net = gross / 1.2;
+    document.getElementById("sumDuration").textContent = selected.months + " month subscription";
+    document.getElementById("sumSub").textContent = "£" + net.toFixed(2);
+    document.getElementById("sumVat").textContent = "£" + (gross - net).toFixed(2);
+    document.getElementById("sumDisc").textContent = "— £" + (selected.price * discount).toFixed(2);
+    document.getElementById("sumTotal").textContent = "£" + gross.toFixed(2);
+    document.getElementById("payTotal").textContent = "£" + gross.toFixed(2);
+
+    var m = 7 + selected.months, y = 2026;
+    while (m > 11) { m -= 12; y++; }
+    document.getElementById("sumExpiry").textContent = "Access until 16 " + monthNames[m] + " " + y;
+  }
+  render();
+}
+</script>
+</body>
+</html>

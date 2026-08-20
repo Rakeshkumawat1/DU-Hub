@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course Management — EM Hub Admin</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="admin" data-active="courses" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Course Management" data-sub="Seven live courses"></div>
+
+    <main class="app-content" id="main">
+
+      <div class="tabs" data-tabs="#coursePanels" role="tablist">
+        <button class="tab is-active" data-tab="list">All courses</button>
+        <button class="tab" data-tab="edit">Create / edit course</button>
+        <button class="tab" data-tab="pricing">Pricing</button>
+      </div>
+
+      <div id="coursePanels">
+
+        <!-- LIST -->
+        <div class="tab-panel is-active" data-panel="list">
+          <section class="grid grid-4 mb-3" id="courseStats"></section>
+
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Courses</h3><div class="text-xs text-subtle"><span id="cCount">7</span> live</div></div>
+              <div class="row row-tight">
+                <div class="search-box">
+                  <span data-icon="search"></span>
+                  <input type="search" placeholder="Search courses" data-filter-input="#courseTable" data-filter-count="#cCount" aria-label="Search courses">
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-modal-open="#newCourseModal"><span data-icon="plus"></span> New course</button>
+              </div>
+            </div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="courseTable">
+                <thead><tr><th>Course</th><th>Pathway</th><th>Questions</th><th>Chapters</th><th>Enrolled</th><th>Rating</th><th>From</th><th>Status</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+          </div>
+
+          <div class="grid grid-2 mt-3">
+            <div class="card">
+              <div class="card-head"><h3>Enrolment by course</h3></div>
+              <div class="card-body" id="enrolChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Completion rate by course</h3></div>
+              <div class="card-body" id="completionChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EDIT -->
+        <div class="tab-panel" data-panel="edit">
+          <div class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head"><h3>Course details</h3>
+                <select class="select" style="width:auto" id="editSelect"></select></div>
+              <form class="card-body" data-demo-form="Course updated.">
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="eTitle">Course title</label><input class="input" id="eTitle"></div>
+                  <div class="field"><label class="label" for="eCode">Short code</label><input class="input" id="eCode"></div>
+                  <div class="field"><label class="label" for="eTag">Pathway tag</label>
+                    <select class="select" id="eTag"><option>Clinical</option><option>Basic Sciences</option><option>Practical</option><option>Advanced</option><option>India</option><option>Skills</option></select></div>
+                  <div class="field"><label class="label" for="eBody">Awarding body</label><input class="input" id="eBody"></div>
+                  <div class="field full"><label class="label" for="eShort">Short description</label>
+                    <textarea class="textarea" id="eShort" style="min-height:80px"></textarea></div>
+                  <div class="field full"><label class="label" for="eLong">Full description</label>
+                    <textarea class="textarea" id="eLong" style="min-height:130px"></textarea></div>
+                  <div class="field"><label class="label" for="eFormat">Exam format</label><input class="input" id="eFormat"></div>
+                  <div class="field"><label class="label" for="ePass">Pass standard</label><input class="input" id="ePass"></div>
+                  <div class="field"><label class="label" for="eSittings">Sittings</label><input class="input" id="eSittings"></div>
+                  <div class="field"><label class="label" for="ePrice">Base monthly price (GBP)</label><input class="input" id="ePrice" type="number"></div>
+                </div>
+
+                <div class="field">
+                  <label class="label">Subjects in the blueprint</label>
+                  <div class="row row-tight" id="subjectChips"></div>
+                  <div class="row row-tight row-nowrap mt-2">
+                    <input class="input" id="newSubject" placeholder="Add a subject">
+                    <button class="btn btn-outline" type="button" id="addSubject">Add</button>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label">Learning features</label>
+                  <div id="featureRows"></div>
+                </div>
+
+                <label class="check mb-2"><input type="checkbox" checked><span>Visible on the public website</span></label>
+                <label class="check mb-3"><input type="checkbox" checked><span>Open for new enrolments</span></label>
+
+                <div class="row">
+                  <button class="btn btn-primary" type="submit">Save course</button>
+                  <button class="btn btn-outline" type="button" onclick="EM.toast('Preview opened in a new view.')">Preview public page</button>
+                  <button class="btn btn-danger" type="button" onclick="EM.toast('Archiving requires a second administrator to approve.')">Archive course</button>
+                </div>
+              </form>
+            </div>
+
+            <aside class="stack">
+              <div class="card">
+                <div class="card-head"><h3 style="font-size:1rem">Course health</h3></div>
+                <div class="card-body" id="courseHealth"></div>
+              </div>
+              <div class="card">
+                <div class="card-head"><h3 style="font-size:1rem">Assigned faculty</h3></div>
+                <div class="card-body" id="assignedFaculty"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- PRICING -->
+        <div class="tab-panel" data-panel="pricing">
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Subscription pricing</h3><div class="text-xs text-subtle">All figures in GBP, VAT inclusive where applicable</div></div>
+              <button class="btn btn-primary btn-sm" type="button" onclick="EM.toast('Pricing changes saved. Existing subscriptions are unaffected.')">Save pricing</button>
+            </div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="pricingTable">
+                <thead><tr><th>Course</th><th>1 Month</th><th>2 Months</th><th>3 Months</th><th>4 Months</th><th>6 Months</th><th>Effective</th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+            <div class="card-foot">
+              <div class="alert alert-info" style="margin:0">
+                <span data-icon="info"></span>
+                <p class="mb-0 text-sm">Price changes apply to new purchases only. Candidates with active subscriptions keep the rate they paid, including on deferral extensions.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-3 mt-3">
+            <div class="card"><div class="card-head"><h3 style="font-size:1rem">Duration mix</h3></div>
+              <div class="card-body" id="durationMix"></div></div>
+            <div class="card"><div class="card-head"><h3 style="font-size:1rem">Average order value</h3></div>
+              <div class="card-body" id="aovChart"></div></div>
+            <div class="card"><div class="card-head"><h3 style="font-size:1rem">Discount usage</h3></div>
+              <div class="card-body" id="discounts"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="modal-backdrop" id="newCourseModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ncTitle2">
+    <div class="card-head">
+      <h3 id="ncTitle2">Create a course</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <form class="card-body" data-demo-form="Course created as a draft.">
+      <div class="field"><label class="label" for="ncName">Course title</label><input class="input" id="ncName" placeholder="e.g. EBEEM Part A" required></div>
+      <div class="field"><label class="label" for="ncBody">Awarding body</label><input class="input" id="ncBody" placeholder="e.g. European Society for Emergency Medicine"></div>
+      <div class="field"><label class="label" for="ncTag">Pathway tag</label>
+        <select class="select" id="ncTag"><option>Clinical</option><option>Basic Sciences</option><option>Practical</option><option>Advanced</option><option>India</option><option>Skills</option></select></div>
+      <div class="field"><label class="label" for="ncPrice">Base monthly price (GBP)</label><input class="input" id="ncPrice" type="number" value="49"></div>
+      <div class="alert alert-info"><span data-icon="info"></span>
+        <p class="mb-0 text-sm">The course is created hidden. Add chapters, questions and faculty before making it visible on the public site.</p></div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn btn-outline" data-modal-close type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Create course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("courseStats").innerHTML = [
+    ["book", "", "7", "Live courses"],
+    ["flask", "icon-tile-teal", "12,850", "Total questions"],
+    ["users", "icon-tile-green", "21,240", "Total enrolments"],
+    ["star", "icon-tile-amber", "4.8", "Mean rating"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div></div>";
+  }).join("");
+
+  document.querySelector("#courseTable tbody").innerHTML = D.COURSES.map(function (c) {
+    return "<tr><td><strong>" + c.title + "</strong><div class='text-xs text-subtle'>" + c.examBody.split("(")[0].trim() + "</div></td>" +
+      '<td><span class="badge badge-' + c.tagTone + '">' + c.tag + "</span></td>" +
+      "<td>" + c.questions.toLocaleString() + "</td><td>" + c.chapters + "</td>" +
+      "<td>" + c.students.toLocaleString() + "</td>" +
+      "<td><span class='fw-700'>" + c.rating + "</span> <span class='text-xs text-subtle'>(" + c.reviews + ")</span></td>" +
+      "<td><strong>£" + c.priceFrom + "</strong></td>" +
+      '<td><span class="badge badge-green badge-dot">Live</span></td>' +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Course editor opened.\')">Edit</button> ' +
+        '<a class="btn btn-ghost btn-xs" href="../course-detail.html?course=' + c.id + '">View</a>' +
+      "</td></tr>";
+  }).join("");
+
+  document.getElementById("enrolChart").innerHTML = EM.hbars(D.COURSES.map(function (c) {
+    return { label: c.code, pct: Math.round((c.students / 5140) * 100), tone: "teal" };
+  })) + '<p class="text-xs text-subtle mb-0 mt-2">Percentages are relative to the largest course (Critical Appraisal, 5,140 enrolled).</p>';
+
+  document.getElementById("completionChart").innerHTML = EM.hbars([
+    { label: "Critical Appraisal", pct: 81, tone: "green" },
+    { label: "MRCEM Primary", pct: 71, tone: "green" },
+    { label: "MRCEM SBA", pct: 68, tone: "teal" },
+    { label: "FRCEM Final SBA", pct: 62, tone: "teal" },
+    { label: "DNB Emergency Med", pct: 58, tone: "amber" },
+    { label: "MRCEM OSCE", pct: 54, tone: "amber" },
+    { label: "FRCEM Final OSCE", pct: 49, tone: "red" }
+  ]);
+
+  /* Edit form */
+  var sel = document.getElementById("editSelect");
+  D.COURSES.forEach(function (c) {
+    var o = document.createElement("option"); o.value = c.id; o.textContent = c.title; sel.appendChild(o);
+  });
+  sel.value = "mrcem-sba";
+
+  function loadCourse(id) {
+    var c = D.courseById(id);
+    document.getElementById("eTitle").value = c.title;
+    document.getElementById("eCode").value = c.code;
+    document.getElementById("eTag").value = c.tag;
+    document.getElementById("eBody").value = c.examBody;
+    document.getElementById("eShort").value = c.short;
+    document.getElementById("eLong").value = c.long;
+    document.getElementById("eFormat").value = c.format;
+    document.getElementById("ePass").value = c.passMark;
+    document.getElementById("eSittings").value = c.sittings;
+    document.getElementById("ePrice").value = c.priceFrom;
+
+    document.getElementById("subjectChips").innerHTML = c.subjects.map(function (s) {
+      return '<span class="chip is-active">' + s + " ×</span>";
+    }).join("");
+
+    document.getElementById("featureRows").innerHTML = c.features.map(function (f, i) {
+      return '<div class="row row-tight row-nowrap" style="margin-bottom:8px">' +
+        '<span class="badge" style="width:26px;justify-content:center">' + (i + 1) + "</span>" +
+        '<input class="input" value="' + f.replace(/"/g, "&quot;") + '">' +
+        '<button class="btn btn-ghost btn-icon" type="button" aria-label="Remove feature">' + I("trash") + "</button></div>";
+    }).join("") +
+    '<button class="btn btn-outline btn-sm" type="button" onclick="EM.toast(\'Feature row added.\')">Add feature</button>';
+
+    document.getElementById("courseHealth").innerHTML = [
+      ["Questions", c.questions.toLocaleString()],
+      ["Chapters", c.chapters], ["Videos", c.videos],
+      ["Enrolled", c.students.toLocaleString()],
+      ["Rating", c.rating + " / 5 (" + c.reviews + ")"],
+      ["Items pending review", "6"],
+      ["Content last updated", "15 Aug 2026"]
+    ].map(function (r) {
+      return '<div class="row-between text-sm" style="padding:6px 0;border-bottom:1px solid var(--border)">' +
+        '<span class="text-subtle">' + r[0] + '</span><span class="fw-700">' + r[1] + "</span></div>";
+    }).join("");
+
+    var faculty = D.FACULTY.filter(function (f) {
+      return f.courses.some(function (x) { return c.title.indexOf(x) > -1 || x.indexOf(c.code) > -1; });
+    });
+    if (!faculty.length) faculty = D.FACULTY.slice(0, 2);
+    document.getElementById("assignedFaculty").innerHTML = faculty.map(function (f) {
+      return '<div class="row row-tight" style="padding:8px 0;border-bottom:1px solid var(--border)">' +
+        '<span class="avatar avatar-sm">' + f.initials + "</span>" +
+        "<div class='grow'><div class='fw-700 text-sm'>" + f.name + "</div>" +
+        "<div class='text-xs text-subtle'>" + f.role + "</div></div>" +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Faculty member unassigned.\')">Remove</button></div>';
+    }).join("") +
+    '<button class="btn btn-outline btn-sm btn-block mt-2" type="button" onclick="EM.toast(\'Faculty picker opened.\')">Assign faculty</button>';
+  }
+  loadCourse("mrcem-sba");
+  sel.addEventListener("change", function () { loadCourse(sel.value); });
+
+  document.getElementById("addSubject").addEventListener("click", function () {
+    var v = document.getElementById("newSubject").value.trim();
+    if (!v) { EM.toast("Type a subject name first."); return; }
+    document.getElementById("subjectChips").insertAdjacentHTML("beforeend", '<span class="chip is-active">' + v + " ×</span>");
+    document.getElementById("newSubject").value = "";
+    EM.toast("Subject added to the blueprint.");
+  });
+
+  /* Pricing table */
+  document.querySelector("#pricingTable tbody").innerHTML = D.COURSES.map(function (c) {
+    var factor = c.priceFrom / D.PLANS[0].price;
+    return "<tr><td><strong>" + c.title + "</strong></td>" +
+      D.PLANS.map(function (p) {
+        return '<td><div class="row row-tight row-nowrap"><span class="text-subtle">£</span>' +
+          '<input class="input" style="width:80px;padding:.3rem .5rem" value="' + Math.round(p.price * factor) + '"></div></td>';
+      }).join("") +
+      "<td class='text-xs text-subtle'>01 Sep 2026</td></tr>";
+  }).join("");
+
+  document.getElementById("durationMix").innerHTML = EM.hbars([
+    { label: "1 Month", pct: 14, tone: "teal" },
+    { label: "2 Months", pct: 11, tone: "teal" },
+    { label: "3 Months", pct: 38, tone: "green" },
+    { label: "4 Months", pct: 16, tone: "teal" },
+    { label: "6 Months", pct: 21, tone: "green" }
+  ]);
+
+  document.getElementById("aovChart").innerHTML = EM.barChart([
+    { m: "Apr", v: 132 }, { m: "May", v: 136 }, { m: "Jun", v: 139 },
+    { m: "Jul", v: 141 }, { m: "Aug", v: 143 }
+  ], { prefix: "£" });
+
+  document.getElementById("discounts").innerHTML = [
+    ["EMHUB10", "10% off", "1,284 uses", "£18,240 discounted"],
+    ["DEANERY25", "25% cohort rate", "412 uses", "£14,900 discounted"],
+    ["RETURN15", "15% returning", "196 uses", "£3,180 discounted"]
+  ].map(function (d) {
+    return '<div class="panel" style="margin-bottom:8px"><div class="row-between">' +
+      "<span class='mono fw-700 text-sm'>" + d[0] + "</span>" +
+      '<span class="badge badge-teal">' + d[1] + "</span></div>" +
+      "<div class='text-xs text-subtle' style='margin-top:4px'>" + d[2] + " · " + d[3] + "</div></div>";
+  }).join("");
+}
+</script>
+</body>
+</html>

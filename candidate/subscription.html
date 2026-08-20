@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subscription — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="subscription" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Subscription" data-sub="Your access, invoices and extensions"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="card" style="overflow:hidden">
+        <div style="background:linear-gradient(120deg,var(--blue-700),var(--teal-600));padding:28px 30px;color:#fff">
+          <div class="row-between">
+            <div>
+              <span class="badge" style="background:rgba(255,255,255,.2);color:#fff">Active</span>
+              <h2 style="color:#fff;font-size:1.7rem;margin:10px 0 4px">MRCEM SBA — 3 Month Plan</h2>
+              <p style="color:#fff;opacity:.9;margin:0">Purchased 24 July 2026 · Reference SUB-20418</p>
+            </div>
+            <div class="text-center">
+              <div style="font-size:3rem;font-weight:800;letter-spacing:-.04em;line-height:1">69</div>
+              <div style="opacity:.85;font-size:.85rem">days of access remaining</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="progress progress-lg mb-2"><div class="progress-bar" data-pct="25" style="width:0%"></div></div>
+          <div class="row-between text-xs text-subtle">
+            <span>Started 24 July 2026</span><span>25% of subscription elapsed</span><span>Expires 24 October 2026</span>
+          </div>
+          <div class="grid grid-4 grid-gap-sm mt-4" id="subStats"></div>
+        </div>
+      </section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head"><h3>All subscriptions</h3><span class="text-xs text-subtle">Fixed duration · nothing renews automatically</span></div>
+          <div class="card-body card-flush">
+            <div class="table-wrap"><table class="table" id="subTable">
+              <thead><tr><th>Course</th><th>Duration</th><th>Started</th><th>Expires</th><th>Paid</th><th>Status</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Deferral protection</h3><span class="badge badge-green badge-dot">Eligible</span></div>
+            <div class="card-body">
+              <p class="text-sm">If your sitting is postponed — by the college or by you — we extend your access to cover the new date at no cost. There is no limit on requests.</p>
+              <button class="btn btn-primary btn-sm btn-block" type="button" data-modal-open="#deferModal">Request an extension</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Extend or upgrade</h3></div>
+            <div class="card-body">
+              <p class="text-sm">Add months to your current course at the same per-month rate, or add another course.</p>
+              <div class="stack-sm" id="extendOptions"></div>
+              <a class="btn btn-outline btn-sm btn-block mt-2" href="../courses.html">Add another course</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Billing</h3></div>
+            <div class="card-body">
+              <div class="row row-tight mb-2"><span class="icon-tile" style="width:36px;height:36px" data-icon="card"></span>
+                <div><div class="fw-700 text-sm">Visa ending 4242</div><div class="text-xs text-subtle">Expires 08 / 2029</div></div></div>
+              <button class="btn btn-outline btn-sm btn-block" type="button" onclick="EM.toast('Payment method update is disabled in this prototype.')">Update payment method</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h3>Invoices</h3>
+          <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('All invoices exported as a ZIP archive.')"><span data-icon="download"></span> Download all</button></div>
+        <div class="card-body card-flush">
+          <div class="table-wrap"><table class="table" id="invoiceTable">
+            <thead><tr><th>Invoice</th><th>Date</th><th>Description</th><th>Net</th><th>VAT</th><th>Total</th><th>Status</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="modal-backdrop" id="deferModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deferTitle">
+    <div class="card-head">
+      <h3 id="deferTitle">Request an extension</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <form class="card-body" data-demo-form="Extension request submitted. We will confirm by email within one working day.">
+      <div class="field">
+        <label class="label" for="dfCourse">Course</label>
+        <select class="select" id="dfCourse"><option>MRCEM SBA (Intermediate)</option><option>MRCEM OSCE</option><option>Critical Appraisal &amp; EBM</option></select>
+      </div>
+      <div class="field">
+        <label class="label" for="dfReason">Reason</label>
+        <select class="select" id="dfReason">
+          <option>Examination postponed by the college</option>
+          <option>Deferred to a later sitting — personal</option>
+          <option>Illness or parental leave</option>
+          <option>Visa or travel delay</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label" for="dfDate">New sitting date</label>
+        <input class="input" id="dfDate" type="month" value="2027-03">
+      </div>
+      <div class="field">
+        <label class="label" for="dfNotes">Anything we should know</label>
+        <textarea class="textarea" id="dfNotes" style="min-height:88px" placeholder="Optional"></textarea>
+      </div>
+      <div class="alert alert-info"><span data-icon="info"></span>
+        <p class="mb-0 text-sm">Extensions are granted as a matter of course. We ask for a reason only so we can spot patterns in college scheduling.</p></div>
+      <div class="row mt-2" style="justify-content:flex-end">
+        <button class="btn btn-outline" data-modal-close type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Submit request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("subStats").innerHTML = [
+    ["calendar", "", "24 Oct 2026", "Expiry date"],
+    ["clock", "icon-tile-teal", "69 days", "Remaining"],
+    ["flask", "icon-tile-green", "1,420", "Questions used"],
+    ["pound", "icon-tile-amber", "£119.00", "Paid"]
+  ].map(function (s) {
+    return '<div class="panel row row-tight"><span class="icon-tile ' + s[1] + '" style="width:38px;height:38px">' + I(s[0]) + "</span>" +
+      "<div><div class='fw-700 text-sm'>" + s[2] + "</div><div class='text-xs text-subtle'>" + s[3] + "</div></div></div>";
+  }).join("");
+
+  var subs = [
+    ["MRCEM SBA (Intermediate)", "3 Months", "24 Jul 2026", "24 Oct 2026", "£119.00", "Active"],
+    ["Critical Appraisal & EBM", "3 Months", "24 Jul 2026", "24 Oct 2026", "£119.00", "Active"],
+    ["MRCEM OSCE", "4 Months", "18 Aug 2026", "18 Dec 2026", "£149.00", "Active"],
+    ["Foundation in Emergency Medicine", "1 Month", "02 Apr 2026", "02 May 2026", "£49.00", "Expired"]
+  ];
+  document.querySelector("#subTable tbody").innerHTML = subs.map(function (s) {
+    var active = s[5] === "Active";
+    return "<tr><td><strong>" + s[0] + "</strong></td><td>" + s[1] + "</td><td>" + s[2] + "</td><td>" + s[3] + "</td>" +
+      "<td>" + s[4] + '</td><td><span class="badge badge-' + (active ? "green" : "red") + ' badge-dot">' + s[5] + "</span></td>" +
+      '<td class="cell-actions">' + (active
+        ? '<a class="btn btn-soft btn-xs" href="../checkout.html">Extend</a>'
+        : '<a class="btn btn-outline btn-xs" href="../checkout.html">Renew</a>') + "</td></tr>";
+  }).join("");
+
+  document.getElementById("extendOptions").innerHTML = [
+    ["1 month", "£39.67"], ["2 months", "£79.34"], ["3 months", "£119.00"]
+  ].map(function (e) {
+    return '<div class="row-between panel" style="padding:10px 12px">' +
+      "<div><div class='fw-700 text-sm'>" + e[0] + " more</div><div class='text-xs text-subtle'>same rate as your plan</div></div>" +
+      '<a class="btn btn-soft btn-xs" href="../checkout.html">' + e[1] + "</a></div>";
+  }).join("");
+
+  var invoices = [
+    ["INV-2026-08114", "18 Aug 2026", "MRCEM OSCE — 4 Month Plan", "£124.17", "£24.83", "£149.00", "Paid"],
+    ["INV-2026-07052", "24 Jul 2026", "Critical Appraisal — 3 Month Plan", "£99.17", "£19.83", "£119.00", "Paid"],
+    ["INV-2026-07051", "24 Jul 2026", "MRCEM SBA — 3 Month Plan", "£99.17", "£19.83", "£119.00", "Paid"],
+    ["INV-2026-04018", "02 Apr 2026", "Foundation in EM — 1 Month Plan", "£40.83", "£8.17", "£49.00", "Paid"]
+  ];
+  document.querySelector("#invoiceTable tbody").innerHTML = invoices.map(function (v) {
+    return "<tr><td class='mono'>" + v[0] + "</td><td>" + v[1] + "</td><td><strong>" + v[2] + "</strong></td>" +
+      "<td>" + v[3] + "</td><td>" + v[4] + "</td><td><strong>" + v[5] + "</strong></td>" +
+      '<td><span class="badge badge-green badge-dot">' + v[6] + "</span></td>" +
+      '<td class="cell-actions"><button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Invoice ' + v[0] + ' downloaded.\')">PDF</button></td></tr>';
+  }).join("");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="dashboard" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Good morning, Dr Krishnan" data-sub="Monday, 16 August 2026 · 69 days until your sitting"></div>
+
+    <main class="app-content" id="main">
+
+      <!-- Widgets -->
+      <section class="grid grid-4" id="widgets"></section>
+
+      <!-- Continue + readiness -->
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head">
+            <h3>Continue where you left off</h3>
+            <a class="btn btn-ghost btn-sm" href="my-courses.html">All courses <span data-icon="chevronRight"></span></a>
+          </div>
+          <div class="card-body" id="continueList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Exam readiness</h3><span class="badge badge-green badge-dot">On track</span></div>
+          <div class="card-body text-center">
+            <div class="donut" id="readinessDonut"></div>
+            <p class="text-sm mt-2 mb-0">Based on your last three mocks, weighted by blueprint coverage. Candidates who pass sit at <strong>70%+</strong> four weeks out.</p>
+            <div class="panel mt-3 text-left">
+              <div class="row row-tight"><span class="icon-tile icon-tile-amber" style="width:36px;height:36px" data-icon="alert"></span>
+              <div><div class="fw-700 text-sm">Biggest risk: Musculoskeletal</div>
+              <div class="text-xs text-muted">49% accuracy over 128 questions</div></div></div>
+              <a class="btn btn-primary btn-sm btn-block mt-2" href="question-bank.html?subject=Musculoskeletal">Drill this topic</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Score trend + subject performance -->
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Mock score trend</h3><div class="text-xs text-subtle">Last seven assessments</div></div>
+            <span class="badge badge-green">▲ 21.6 pts since baseline</span>
+          </div>
+          <div class="card-body" id="trendChart"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Performance by subject</h3><div class="text-xs text-subtle">MRCEM SBA · 1,420 questions answered</div></div>
+            <a class="btn btn-ghost btn-sm" href="progress.html">Details <span data-icon="chevronRight"></span></a>
+          </div>
+          <div class="card-body" id="subjectBars"></div>
+        </div>
+      </section>
+
+      <!-- Activity + certificates + study plan -->
+      <section class="grid grid-3">
+        <div class="card">
+          <div class="card-head"><h3>Recent activity</h3></div>
+          <div class="card-body"><div class="timeline" id="activity"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Certificates</h3>
+            <a class="btn btn-ghost btn-sm" href="certificates.html">All <span data-icon="chevronRight"></span></a>
+          </div>
+          <div class="card-body" id="certList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>This week</h3><span class="badge badge-blue">495 questions</span></div>
+          <div class="card-body">
+            <div id="weekBars"></div>
+            <hr>
+            <div class="row-between text-sm"><span class="text-subtle">Weekly target</span><span class="fw-700">420 questions</span></div>
+            <div class="row-between text-sm mt-1"><span class="text-subtle">Current streak</span><span class="fw-700">18 days</span></div>
+            <div class="row-between text-sm mt-1"><span class="text-subtle">Average session</span><span class="fw-700">34 minutes</span></div>
+            <a class="btn btn-outline btn-block mt-3" href="mock-tests.html">Start a new session</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+
+  /* ---------- Widgets ---------- */
+  document.getElementById("widgets").innerHTML = [
+    { ic: "book",        tone: "",                v: "3",     l: "Active courses", note: "MRCEM SBA · OSCE · Appraisal" },
+    { ic: "calendar",    tone: "icon-tile-amber", v: "69",    l: "Days of access left", note: "Expires 24 October 2026" },
+    { ic: "target",      tone: "icon-tile-teal",  v: "61%",   l: "Overall progress", note: "Across all enrolled courses" },
+    { ic: "monitor",     tone: "icon-tile-green", v: "7",     l: "Tests attempted", note: "Best score 88.3%" }
+  ].map(function (w) {
+    return '<div class="stat-card">' +
+      '<div class="row-between"><span class="icon-tile ' + w.tone + '">' + I(w.ic) + "</span></div>" +
+      '<div><div class="stat-value">' + w.v + '</div><div class="stat-label">' + w.l + "</div></div>" +
+      '<div class="text-xs text-subtle">' + w.note + "</div></div>";
+  }).join("");
+
+  /* ---------- Continue learning ---------- */
+  document.getElementById("continueList").innerHTML = C.enrolled.map(function (c, i) {
+    return '<div class="list-row">' +
+      '<span class="icon-tile ' + ["", "icon-tile-teal", "icon-tile-violet"][i] + '">' + I("book") + "</span>" +
+      '<div class="grow">' +
+        '<div class="row-between" style="margin-bottom:6px">' +
+          "<div><div class='fw-700 text-sm'>" + c.title + "</div>" +
+          "<div class='text-xs text-subtle'>Last topic: " + c.lastTopic + "</div></div>" +
+          '<span class="badge badge-' + (c.daysLeft < 90 ? "amber" : "green") + '">' + c.daysLeft + " days left</span>" +
+        "</div>" +
+        '<div class="progress progress-sm"><div class="progress-bar" data-pct="' + c.progress + '" style="width:0%"></div></div>' +
+        '<div class="row-between text-xs text-subtle mt-1">' +
+          "<span>" + c.progress + "% complete · " + c.questionsDone.toLocaleString() + " / " + c.questionsTotal.toLocaleString() + " questions</span>" +
+          "<span>" + c.accuracy + "% accuracy</span>" +
+        "</div>" +
+      "</div>" +
+      '<a class="btn btn-primary btn-sm" href="learn.html?course=' + c.id + '">Continue</a></div>';
+  }).join("");
+
+  /* ---------- Readiness donut ---------- */
+  document.getElementById("readinessDonut").innerHTML =
+    EM.donut(73, 170, 16) + '<div class="donut-center"><div class="v">73%</div><div class="l">Readiness</div></div>';
+
+  /* ---------- Trend ---------- */
+  document.getElementById("trendChart").innerHTML =
+    EM.lineChart(C.scoreTrend, {
+      labels: ["Baseline", "Mock 2", "Mock 3", "Drill", "Mock 5", "Mock 6", "Mock 7"],
+      min: 45, max: 82, height: 210
+    }) +
+    '<div class="row-between mt-2">' +
+      '<div><div class="text-xs text-subtle">Latest</div><div class="fw-700">73.3%</div></div>' +
+      '<div><div class="text-xs text-subtle">Average</div><div class="fw-700">64.6%</div></div>' +
+      '<div><div class="text-xs text-subtle">Best</div><div class="fw-700">88.3%</div></div>' +
+      '<div><div class="text-xs text-subtle">Cohort percentile</div><div class="fw-700 text-success">68th</div></div>' +
+    "</div>";
+
+  /* ---------- Subject bars ---------- */
+  document.getElementById("subjectBars").innerHTML = EM.hbars(C.subjectPerformance.map(function (s) {
+    return { label: s.subject, pct: s.pct, tone: s.tone };
+  }));
+
+  /* ---------- Activity ---------- */
+  document.getElementById("activity").innerHTML = C.activity.map(function (a, i) {
+    return '<div class="timeline-item' + (i < 3 ? " done" : "") + '">' +
+      '<div class="t-time">' + a.when + "</div>" +
+      '<div class="t-title">' + a.title + "</div>" +
+      "<div class='text-xs text-subtle'>" + a.meta + "</div></div>";
+  }).join("");
+
+  /* ---------- Certificates ---------- */
+  document.getElementById("certList").innerHTML = C.certificates.map(function (c) {
+    return '<div class="list-row">' +
+      '<span class="icon-tile icon-tile-green">' + I("certificate") + "</span>" +
+      "<div class='grow'><div class='fw-700 text-sm'>" + c.course + "</div>" +
+      "<div class='text-xs text-subtle mono'>" + c.id + "</div>" +
+      "<div class='text-xs text-subtle'>Issued " + c.date + " · " + c.score + "</div></div>" +
+      '<a class="btn btn-outline btn-xs" href="certificate.html?id=' + c.id + '">View</a></div>';
+  }).join("") +
+  '<div class="panel mt-2 text-center"><div class="text-xs text-subtle">MRCEM SBA certificate unlocks at 80% completion</div>' +
+  '<div class="progress progress-sm mt-2"><div class="progress-bar is-amber" data-pct="68" style="width:0%"></div></div>' +
+  '<div class="text-xs text-subtle mt-1">68% — 372 questions to go</div></div>';
+
+  /* ---------- Weekly bars ---------- */
+  document.getElementById("weekBars").innerHTML =
+    EM.barChart(C.weeklyActivity.map(function (w) { return { m: w.d, v: w.v }; }), { teal: true });
+}
+</script>
+</body>
+</html>

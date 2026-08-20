@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Question Bank — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="question-bank" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Question Bank" data-sub="MRCEM SBA · 1,420 of 3,100 answered"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="qbStats"></section>
+
+      <section class="grid grid-sidebar">
+
+        <!-- Session -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3 id="sessionTitle">Practice session</h3>
+              <div class="text-xs text-subtle" id="sessionMeta">Answers and explanations shown immediately</div>
+            </div>
+            <div class="row row-tight">
+              <div class="row row-tight" id="modeSwitch">
+                <span class="chip is-active" data-mode="practice">Practice mode</span>
+                <span class="chip" data-mode="exam">Exam mode</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row-between mb-3">
+              <div class="text-sm"><span class="fw-700" id="sessionPos">Question 1</span> <span class="text-subtle" id="sessionOf">of 8</span></div>
+              <div class="row row-tight">
+                <span class="badge badge-green" id="sessionCorrect">0 correct</span>
+                <span class="badge badge-red" id="sessionWrong">0 incorrect</span>
+              </div>
+            </div>
+            <div class="progress progress-sm mb-3"><div class="progress-bar" id="sessionBar" style="width:0%"></div></div>
+            <div id="questionHost"></div>
+            <div class="row-between mt-3">
+              <button class="btn btn-outline" type="button" id="prevQ"><span data-icon="chevronLeft"></span> Previous</button>
+              <div class="text-xs text-subtle" id="examNotice" hidden>Exam mode — explanations appear when you finish the session.</div>
+              <button class="btn btn-primary" type="button" id="nextQ">Next question <span data-icon="arrowRight"></span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters + palette -->
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Build a session</h3></div>
+            <div class="card-body">
+              <div class="field">
+                <label class="label" for="fSubject">Subject</label>
+                <select class="select" id="fSubject"><option>All subjects</option></select>
+              </div>
+              <div class="field">
+                <label class="label" for="fType">Question format</label>
+                <select class="select" id="fType">
+                  <option value="all">All formats</option>
+                  <option value="sba">Single Best Answer</option>
+                  <option value="multi">Multiple Correct</option>
+                  <option value="image">Image-Based</option>
+                  <option value="audio">Audio</option>
+                  <option value="video">Video</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="label" for="fDiff">Difficulty</label>
+                <select class="select" id="fDiff">
+                  <option>Any difficulty</option><option>Easy</option><option>Moderate</option><option>Hard</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="label" for="fPool">Question pool</label>
+                <select class="select" id="fPool">
+                  <option>All questions</option>
+                  <option>Unseen only</option>
+                  <option>Previously incorrect</option>
+                  <option>Flagged</option>
+                  <option>Bookmarked</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="label" for="fCount">Session length</label>
+                <select class="select" id="fCount"><option>10</option><option selected>30</option><option>60</option><option>120</option></select>
+              </div>
+              <button class="btn btn-primary btn-block" type="button" id="buildSession">Start new session</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Question palette</h3></div>
+            <div class="card-body">
+              <div class="palette-grid mb-2" id="palette"></div>
+              <div class="palette-legend">
+                <span><i style="background:var(--success)"></i>Answered</span>
+                <span><i style="background:var(--warning)"></i>Flagged</span>
+                <span><i style="background:var(--surface);border:1px solid var(--border-strong)"></i>Unseen</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Weakest subjects</h3></div>
+            <div class="card-body" id="weakSubjects"></div>
+          </div>
+        </aside>
+
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/questions.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+
+  document.getElementById("qbStats").innerHTML = [
+    ["flask", "", "1,420", "Questions answered", "of 3,100 in the bank"],
+    ["target", "icon-tile-green", "71%", "Overall accuracy", "cohort average 64%"],
+    ["flag", "icon-tile-amber", "42", "Flagged for review", "across 9 subjects"],
+    ["bookmark", "icon-tile-violet", "28", "Bookmarked", "saved explanations"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  /* Subject select */
+  var fs = document.getElementById("fSubject");
+  C.subjectPerformance.forEach(function (s) {
+    var o = document.createElement("option"); o.textContent = s.subject; fs.appendChild(o);
+  });
+  var preset = EM.qs("subject");
+  if (preset) fs.value = preset;
+
+  /* Session state */
+  var pool = D.QUESTIONS.slice();
+  var idx = 0, mode = "practice";
+  var state = pool.map(function () { return { answered: false, correct: null, flagged: false }; });
+
+  var host = document.getElementById("questionHost");
+
+  function show() {
+    var q = pool[idx];
+    host.innerHTML = EMQ.render(q, { index: idx + 1, total: pool.length, mode: mode, flagged: state[idx].flagged });
+    if (state[idx].answered) {
+      var card = host.querySelector(".question-card");
+      card.setAttribute("data-answered", "1");
+      EMQ.reveal(card, q, state[idx].picked || [], mode === "practice");
+    }
+    document.getElementById("sessionPos").textContent = "Question " + (idx + 1);
+    document.getElementById("sessionOf").textContent = "of " + pool.length;
+    document.getElementById("prevQ").disabled = idx === 0;
+    document.getElementById("nextQ").textContent = idx === pool.length - 1 ? "Finish session" : "Next question";
+    if (idx < pool.length - 1) document.getElementById("nextQ").insertAdjacentHTML("beforeend", " " + I("arrowRight"));
+    paint();
+  }
+
+  function paint() {
+    var done = state.filter(function (s) { return s.answered; }).length;
+    var right = state.filter(function (s) { return s.correct === true; }).length;
+    var wrong = state.filter(function (s) { return s.correct === false; }).length;
+    document.getElementById("sessionBar").style.width = Math.round((done / pool.length) * 100) + "%";
+    document.getElementById("sessionCorrect").textContent = right + " correct";
+    document.getElementById("sessionWrong").textContent = wrong + " incorrect";
+
+    document.getElementById("palette").innerHTML = pool.map(function (q, i) {
+      var cls = "palette-btn";
+      if (state[i].answered) cls += " answered";
+      if (state[i].flagged) cls += " flagged";
+      if (i === idx) cls += " current";
+      return '<button class="' + cls + '" type="button" data-jump="' + i + '" aria-label="Question ' + (i + 1) + '">' + (i + 1) + "</button>";
+    }).join("");
+  }
+
+  EMQ.attach(host, function (id) {
+    return pool.filter(function (q) { return q.id === id; })[0];
+  }, function (q, picked, right) {
+    state[idx].answered = true;
+    state[idx].correct = right;
+    state[idx].picked = picked;
+    paint();
+  });
+
+  /* Flag syncing */
+  host.addEventListener("click", function (e) {
+    var f = e.target.closest('[data-action="flag"]');
+    if (f) { state[idx].flagged = f.getAttribute("aria-pressed") === "true"; paint(); }
+  });
+
+  document.getElementById("nextQ").addEventListener("click", function () {
+    if (idx === pool.length - 1) {
+      var right = state.filter(function (s) { return s.correct === true; }).length;
+      var done = state.filter(function (s) { return s.answered; }).length;
+      if (!done) { EM.toast("Answer at least one question first."); return; }
+      EM.toast("Session finished — " + right + " of " + done + " correct.");
+      setTimeout(function () { window.location.href = "results.html"; }, 900);
+      return;
+    }
+    idx++; show();
+  });
+  document.getElementById("prevQ").addEventListener("click", function () { if (idx > 0) { idx--; show(); } });
+
+  document.getElementById("palette").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-jump]");
+    if (b) { idx = +b.getAttribute("data-jump"); show(); }
+  });
+
+  document.querySelectorAll("#modeSwitch .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#modeSwitch .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      mode = chip.getAttribute("data-mode");
+      document.getElementById("sessionTitle").textContent = mode === "exam" ? "Exam-mode session" : "Practice session";
+      document.getElementById("sessionMeta").textContent = mode === "exam"
+        ? "Results and explanations shown at the end of the session"
+        : "Answers and explanations shown immediately";
+      document.getElementById("examNotice").hidden = mode !== "exam";
+      show();
+      EM.toast("Switched to " + (mode === "exam" ? "exam" : "practice") + " mode.");
+    });
+  });
+
+  document.getElementById("buildSession").addEventListener("click", function () {
+    var type = document.getElementById("fType").value;
+    var diff = document.getElementById("fDiff").value;
+    var subject = document.getElementById("fSubject").value;
+    pool = D.QUESTIONS.filter(function (q) {
+      if (type !== "all" && q.type !== type) return false;
+      if (diff !== "Any difficulty" && q.difficulty !== diff) return false;
+      if (subject !== "All subjects" && q.subject !== subject) return false;
+      return true;
+    });
+    if (!pool.length) { pool = D.QUESTIONS.slice(); EM.toast("No questions match those filters — showing the full pool."); }
+    else EM.toast("New session built — " + pool.length + " questions.");
+    state = pool.map(function () { return { answered: false, correct: null, flagged: false }; });
+    idx = 0; show();
+  });
+
+  document.getElementById("weakSubjects").innerHTML =
+    EM.hbars(C.subjectPerformance.slice(-4).map(function (s) {
+      return { label: s.subject, pct: s.pct, tone: s.tone };
+    })) +
+    '<button class="btn btn-outline btn-sm btn-block mt-2" type="button" id="drillWeak">Drill my four weakest</button>';
+
+  document.getElementById("drillWeak").addEventListener("click", function () {
+    EM.toast("Adaptive drill built — 30 questions weighted to your weakest sub-topics.");
+  });
+
+  show();
+}
+</script>
+</body>
+</html>

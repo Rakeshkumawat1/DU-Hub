@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="progress" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Progress" data-sub="Learning analytics across every enrolled course"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="row-between">
+        <div class="row row-tight" id="courseSwitch">
+          <span class="chip is-active">MRCEM SBA</span>
+          <span class="chip">MRCEM OSCE</span>
+          <span class="chip">Critical Appraisal</span>
+          <span class="chip">All courses</span>
+        </div>
+        <div class="row row-tight">
+          <select class="select" style="width:auto" id="rangeSelect">
+            <option>Last 30 days</option><option selected>Last 90 days</option><option>All time</option>
+          </select>
+          <button class="btn btn-outline btn-sm" type="button" onclick="window.print()"><span data-icon="download"></span> Export</button>
+        </div>
+      </section>
+
+      <section class="grid grid-4" id="pStats"></section>
+
+      <!-- Completion -->
+      <section class="grid grid-3">
+        <div class="card">
+          <div class="card-head"><h3>Course completion</h3></div>
+          <div class="card-body text-center">
+            <div class="donut" id="courseDonut"></div>
+            <div class="grid grid-2 grid-gap-sm mt-3 text-left" id="completionBits"></div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column:span 2">
+          <div class="card-head">
+            <div><h3>Chapter completion</h3><div class="text-xs text-subtle">Six of 56 chapters shown</div></div>
+            <a class="btn btn-ghost btn-sm" href="learn.html">Open course <span data-icon="chevronRight"></span></a>
+          </div>
+          <div class="card-body" id="chapterProgress"></div>
+        </div>
+      </section>
+
+      <!-- Analytics -->
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Average score over time</h3><span class="badge badge-green">▲ 21.6 pts</span></div>
+          <div class="card-body" id="avgChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Study activity</h3><span class="text-xs text-subtle">Questions answered per day, last 13 weeks</span></div>
+          <div class="card-body">
+            <div class="heat-grid" id="heatmap"></div>
+            <div class="row-between mt-2">
+              <span class="text-xs text-subtle">13 weeks ago</span>
+              <div class="row row-tight text-xs text-subtle">
+                Less
+                <span class="heat-cell" style="width:12px;height:12px"></span>
+                <span class="heat-cell heat-1" style="width:12px;height:12px"></span>
+                <span class="heat-cell heat-2" style="width:12px;height:12px"></span>
+                <span class="heat-cell heat-3" style="width:12px;height:12px"></span>
+                <span class="heat-cell heat-4" style="width:12px;height:12px"></span>
+                More
+              </div>
+              <span class="text-xs text-subtle">Today</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Subject detail -->
+      <section class="card">
+        <div class="card-head">
+          <div><h3>Subject and sub-topic breakdown</h3><div class="text-xs text-subtle">Ranked by the number of marks you are currently losing</div></div>
+          <span class="badge badge-amber">4 subjects below pass standard</span>
+        </div>
+        <div class="card-body card-flush">
+          <div class="table-wrap"><table class="table" id="subjectTable">
+            <thead><tr><th>Subject</th><th>Attempted</th><th>Accuracy</th><th>Cohort</th><th>Trend</th><th>Marks at risk</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <!-- Test history + streaks -->
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head"><h3>Test history</h3>
+            <a class="btn btn-ghost btn-sm" href="results.html">All results <span data-icon="chevronRight"></span></a></div>
+          <div class="card-body card-flush">
+            <div class="table-wrap"><table class="table" id="historyTable">
+              <thead><tr><th>Assessment</th><th>Date</th><th>Questions</th><th>Score</th><th>Time</th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Consistency</h3></div>
+            <div class="card-body" id="consistency"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Milestones</h3></div>
+            <div class="card-body"><div class="timeline" id="milestones"></div></div>
+          </div>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+
+  document.getElementById("pStats").innerHTML = [
+    ["target", "", "68%", "Course completion", "38 of 214 topics"],
+    ["flask", "icon-tile-teal", "1,420", "Questions answered", "of 3,100 available"],
+    ["chart", "icon-tile-green", "71%", "Overall accuracy", "cohort average 64%"],
+    ["clock", "icon-tile-amber", "86 h", "Study time logged", "6h 12m this week"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  document.getElementById("courseDonut").innerHTML =
+    EM.donut(68, 180, 18) + '<div class="donut-center"><div class="v">68%</div><div class="l">Complete</div></div>';
+
+  document.getElementById("completionBits").innerHTML = [
+    ["Chapters", "6 / 56"], ["Topics", "38 / 214"],
+    ["Videos", "22 / 74"], ["Questions", "1,420 / 3,100"]
+  ].map(function (b) {
+    return '<div class="panel text-center"><div class="fw-700">' + b[1] + "</div>" +
+      '<div class="text-xs text-subtle">' + b[0] + "</div></div>";
+  }).join("");
+
+  document.getElementById("chapterProgress").innerHTML = D.CHAPTERS.map(function (ch) {
+    var done = ch.topics.filter(function (t) { return t.done; }).length;
+    var tone = ch.pct >= 75 ? "green" : ch.pct >= 50 ? "teal" : ch.pct >= 25 ? "amber" : "red";
+    return '<div style="margin-bottom:16px">' +
+      '<div class="row-between text-sm" style="margin-bottom:5px">' +
+        '<span class="fw-600">' + ch.title + "</span>" +
+        '<span class="text-xs text-subtle">' + done + " / " + ch.topics.length + " topics · <strong>" + ch.pct + "%</strong></span>" +
+      "</div>" +
+      '<div class="progress"><div class="progress-bar is-' + tone + '" data-pct="' + ch.pct + '" style="width:0%"></div></div>' +
+      "</div>";
+  }).join("");
+
+  document.getElementById("avgChart").innerHTML = EM.lineChart(C.scoreTrend, {
+    labels: ["02 Jul", "09 Jul", "14 Jul", "22 Jul", "04 Aug", "11 Aug", "15 Aug"],
+    min: 45, max: 82, height: 230
+  });
+
+  /* Activity heatmap — 13 weeks x 7 days, deterministic */
+  var cells = "";
+  var seed = 42;
+  function rnd() { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; }
+  for (var i = 0; i < 91; i++) {
+    var v = rnd();
+    var lvl = v > .88 ? 4 : v > .68 ? 3 : v > .45 ? 2 : v > .25 ? 1 : 0;
+    var count = [0, 12, 34, 68, 120][lvl];
+    cells += '<span class="heat-cell' + (lvl ? " heat-" + lvl : "") + '" title="' + count + ' questions"></span>';
+  }
+  document.getElementById("heatmap").innerHTML = cells;
+
+  document.querySelector("#subjectTable tbody").innerHTML = C.subjectPerformance.map(function (s, i) {
+    var cohort = [71, 68, 70, 62, 66, 64, 65, 61][i];
+    var diff = s.pct - cohort;
+    var atRisk = Math.round((100 - s.pct) / 100 * (s.attempted / 10));
+    var trend = [4, 2, 3, 6, -1, -3, -5, -2][i];
+    return "<tr><td><strong>" + s.subject + "</strong></td>" +
+      "<td>" + s.attempted + "</td>" +
+      '<td><div class="row row-tight"><span class="fw-700">' + s.pct + "%</span>" +
+      '<span class="progress progress-sm" style="width:70px"><span class="progress-bar is-' +
+      (s.tone === "green" ? "green" : s.tone === "amber" ? "amber" : "red") + '" data-pct="' + s.pct + '" style="width:0%"></span></span></div></td>' +
+      "<td>" + cohort + "% <span class='text-xs " + (diff >= 0 ? "text-success" : "text-danger") + " fw-700'>" +
+      (diff >= 0 ? "+" : "") + diff + "</span></td>" +
+      '<td><span class="' + (trend >= 0 ? "text-success" : "text-danger") + ' fw-700">' +
+      (trend >= 0 ? "▲ +" : "▼ ") + trend + " pts</span></td>" +
+      '<td><span class="badge badge-' + (atRisk > 6 ? "red" : atRisk > 3 ? "amber" : "green") + '">~' + atRisk + " marks</span></td>" +
+      '<td class="cell-actions"><a class="btn btn-soft btn-xs" href="question-bank.html?subject=' +
+      encodeURIComponent(s.subject) + '">Drill</a></td></tr>';
+  }).join("");
+
+  document.querySelector("#historyTable tbody").innerHTML = C.testHistory.map(function (t) {
+    var tone = t.pct >= 75 ? "green" : t.pct >= 62 ? "amber" : "red";
+    return "<tr><td><strong>" + t.name + "</strong></td><td>" + t.date + "</td><td>" + t.qs + "</td>" +
+      '<td><span class="badge badge-' + tone + '">' + t.pct + "%</span></td><td class='mono'>" + t.time + "</td></tr>";
+  }).join("");
+
+  document.getElementById("consistency").innerHTML = [
+    ["Current streak", "18 days"], ["Longest streak", "31 days"],
+    ["Active days (90)", "71 of 90"], ["Average session", "34 minutes"],
+    ["Best time of day", "07:00 – 09:00"], ["Weekly target", "420 / 495 done"]
+  ].map(function (b) {
+    return '<div class="row-between text-sm" style="padding:7px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="text-subtle">' + b[0] + '</span><span class="fw-700">' + b[1] + "</span></div>";
+  }).join("");
+
+  document.getElementById("milestones").innerHTML = [
+    ["Achieved 13 Aug", "Passed 70% on a full mock", true],
+    ["Achieved 04 Aug", "1,000 questions answered", true],
+    ["Achieved 22 Jul", "First subject above 80%", true],
+    ["Next", "Reach 78% readiness threshold", false],
+    ["Next", "Complete 80% of the course (certificate unlocks)", false]
+  ].map(function (m) {
+    return '<div class="timeline-item' + (m[2] ? " done" : "") + '">' +
+      '<div class="t-time">' + m[0] + '</div><div class="t-title">' + m[1] + "</div></div>";
+  }).join("");
+
+  document.querySelectorAll("#courseSwitch .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#courseSwitch .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      EM.toast("Showing analytics for: " + chip.textContent.trim());
+    });
+  });
+  document.getElementById("rangeSelect").addEventListener("change", function () {
+    EM.toast("Range updated: " + this.value);
+  });
+}
+</script>
+</body>
+</html>

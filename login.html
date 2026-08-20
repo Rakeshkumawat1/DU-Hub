@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in — EM Hub</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="auth-wrap">
+  <section class="auth-panel">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" data-icon="pulse"></span>
+      <span class="brand-text"><span class="brand-name">EM Hub</span><span class="brand-sub">Emergency Medicine</span></span>
+    </a>
+    <div style="margin-top:auto;position:relative;z-index:1">
+      <h2 style="font-size:2rem;max-width:420px">Pick up exactly where you left off</h2>
+      <p style="max-width:420px;font-size:1.05rem">Your progress, bookmarks and mock history sync across every device you sign in on.</p>
+      <div class="stack mt-4" id="authFeatures"></div>
+    </div>
+    <div style="margin-top:auto;padding-top:36px;position:relative;z-index:1">
+      <div class="row row-tight" style="opacity:.9">
+        <span class="avatar avatar-sm" style="background:rgba(255,255,255,.22)">HB</span>
+        <div style="font-size:.85rem">
+          <div style="font-weight:700">“Passed at the next sitting with 74%.”</div>
+          <div style="opacity:.75">Dr Hannah Blake · MRCEM Primary</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-form-side" id="main">
+    <div class="auth-form">
+      <div class="row-between mb-3">
+        <a class="btn btn-ghost btn-sm" href="index.html"><span data-icon="chevronLeft"></span> Back to site</a>
+        <button class="btn btn-ghost btn-icon" data-theme-toggle type="button"></button>
+      </div>
+
+      <h1 style="font-size:1.9rem;margin-bottom:6px">Welcome back</h1>
+      <p>Sign in to continue your preparation.</p>
+
+      <div class="row row-tight mb-3" id="roleSwitch">
+        <span class="chip is-active" data-role="candidate">Candidate</span>
+        <span class="chip" data-role="faculty">Faculty</span>
+        <span class="chip" data-role="admin">Admin</span>
+      </div>
+
+      <form data-demo-form="Signed in. Redirecting to your dashboard…" data-redirect="candidate/dashboard.html" id="loginForm">
+        <div class="field">
+          <label class="label" for="lEmail">Email address</label>
+          <div class="input-group">
+            <span data-icon="mail"></span>
+            <input class="input" id="lEmail" type="email" value="ravi.krishnan@example.com" required>
+          </div>
+        </div>
+        <div class="field">
+          <div class="row-between">
+            <label class="label" for="lPass">Password</label>
+            <a class="text-xs fw-600" href="#">Forgot password?</a>
+          </div>
+          <div class="input-group">
+            <span data-icon="lock"></span>
+            <input class="input" id="lPass" type="password" value="prototype" required>
+          </div>
+        </div>
+        <label class="check mb-3"><input type="checkbox" checked><span>Keep me signed in on this device</span></label>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Sign in</button>
+      </form>
+
+      <div class="divider-text">Prototype shortcuts</div>
+      <div class="row">
+        <a class="btn btn-outline btn-sm grow" href="candidate/dashboard.html">Candidate portal</a>
+        <a class="btn btn-outline btn-sm grow" href="faculty-portal/dashboard.html">Faculty portal</a>
+        <a class="btn btn-outline btn-sm grow" href="admin/dashboard.html">Admin portal</a>
+      </div>
+
+      <p class="text-center text-sm mt-4">New to EM Hub? <a href="register.html" class="fw-600">Create a free account</a></p>
+    </div>
+  </section>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var I = EM.icon;
+  document.getElementById("authFeatures").innerHTML = [
+    ["checkCircle", "12,800+ exam-standard questions", "Written and reviewed by practising consultants."],
+    ["chart", "Analytics that name your weak topics", "Subject and sub-topic breakdowns after every session."],
+    ["monitor", "A true exam-day simulation", "Same interface, timing and flagging as the real test."],
+    ["shield", "Deferral protection", "If your exam moves, your access moves with it."]
+  ].map(function (f) {
+    return '<div class="auth-feature">' + I(f[0]) +
+      "<div><div class='t'>" + f[1] + "</div><div class='d'>" + f[2] + "</div></div></div>";
+  }).join("");
+
+  var redirects = {
+    candidate: "candidate/dashboard.html",
+    faculty: "faculty-portal/dashboard.html",
+    admin: "admin/dashboard.html"
+  };
+  var emails = {
+    candidate: "ravi.krishnan@example.com",
+    faculty: "a.rahman@emhub.example",
+    admin: "meera.shah@emhub.example"
+  };
+  document.querySelectorAll("#roleSwitch .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#roleSwitch .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      var r = chip.getAttribute("data-role");
+      document.getElementById("loginForm").setAttribute("data-redirect", redirects[r]);
+      document.getElementById("lEmail").value = emails[r];
+    });
+  });
+}
+</script>
+</body>
+</html>

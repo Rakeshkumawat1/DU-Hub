@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course Learning — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#learnMain">Skip to lesson content</a>
+
+<!-- Slim learning topbar (replaces the app shell for maximum reading width) -->
+<header class="site-header">
+  <div class="container" style="max-width:none;padding-inline:20px">
+    <a class="btn btn-ghost btn-sm" href="my-courses.html"><span data-icon="chevronLeft"></span> My Courses</a>
+    <div style="margin-left:8px;min-width:0">
+      <div class="fw-700 text-sm" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MRCEM SBA (Intermediate)</div>
+      <div class="text-xs text-subtle" id="crumbTrail">Cardiovascular Emergencies › Acute Coronary Syndromes</div>
+    </div>
+    <div class="header-actions">
+      <div class="row row-tight btn-desktop" style="margin-right:8px">
+        <div class="text-xs text-subtle fw-600">Course progress</div>
+        <div class="progress progress-sm" style="width:120px"><div class="progress-bar" data-pct="68" style="width:0%"></div></div>
+        <div class="text-xs fw-700">68%</div>
+      </div>
+      <button class="btn btn-ghost btn-icon" data-theme-toggle type="button"></button>
+      <button class="btn btn-ghost btn-icon nav-toggle" type="button" id="mobileChapters" aria-label="Open chapter list" data-icon="list"></button>
+      <a class="btn btn-primary btn-sm" href="dashboard.html">Dashboard</a>
+    </div>
+  </div>
+</header>
+
+<div class="learn-layout">
+
+  <!-- ============ LEFT: CHAPTERS ============ -->
+  <aside class="learn-aside" aria-label="Course chapters">
+    <div class="row-between mb-2">
+      <div class="aside-title" style="margin-bottom:0">Chapters</div>
+      <span class="text-xs text-subtle">6 of 56</span>
+    </div>
+    <div class="search-box mb-3" style="max-width:none">
+      <span data-icon="search"></span>
+      <input type="search" id="chapterSearch" placeholder="Find a topic" aria-label="Search chapters">
+    </div>
+    <div id="chapterTree"></div>
+    <div class="panel mt-3 text-center">
+      <div class="text-xs text-subtle">Estimated time to complete</div>
+      <div class="fw-700">27 hours remaining</div>
+    </div>
+  </aside>
+
+  <!-- ============ CENTRE: CONTENT ============ -->
+  <main class="learn-main" id="learnMain">
+    <div class="row-between mb-3">
+      <div>
+        <div class="row row-tight mb-2">
+          <span class="badge badge-blue">Chapter 1 · Topic 1</span>
+          <span class="badge badge-teal">Cardiology</span>
+          <span class="badge badge-green badge-dot">Completed</span>
+        </div>
+        <h1 style="font-size:1.9rem;margin-bottom:6px">Acute Coronary Syndromes</h1>
+        <div class="text-sm text-subtle">18 minute read · 24 linked questions · Updated 04 August 2026</div>
+      </div>
+      <div class="row row-tight">
+        <button class="btn btn-outline btn-sm" type="button" id="bookmarkTopic"><span data-icon="bookmark"></span> Bookmark</button>
+        <button class="btn btn-outline btn-sm" type="button" id="printTopic"><span data-icon="download"></span> PDF</button>
+      </div>
+    </div>
+
+    <div class="tabs mb-3" data-tabs="#learnPanels" role="tablist">
+      <button class="tab is-active" data-tab="notes">Learning content</button>
+      <button class="tab" data-tab="scenarios">Question scenarios</button>
+      <button class="tab" data-tab="video">Video</button>
+      <button class="tab" data-tab="summary">Summary sheet</button>
+    </div>
+
+    <div id="learnPanels">
+
+      <!-- ---------- NOTES ---------- -->
+      <div class="tab-panel is-active" data-panel="notes">
+        <article class="prose">
+          <p class="lead">Acute coronary syndrome covers the spectrum from unstable angina through NSTEMI to STEMI. For the examination, almost every mark turns on two decisions: is the ECG diagnostic of ST elevation, and can reperfusion be delivered in time.</p>
+
+          <h2>Definitions and classification</h2>
+          <p>Acute coronary syndrome (ACS) describes the clinical spectrum resulting from acute myocardial ischaemia. It is separated by the initial ECG and subsequent troponin result.</p>
+          <table>
+            <thead><tr><th>Entity</th><th>ECG</th><th>Troponin</th><th>Immediate priority</th></tr></thead>
+            <tbody>
+              <tr><td>STEMI</td><td>ST elevation or new LBBB</td><td>Rises (do not wait)</td><td>Reperfusion within 120 minutes</td></tr>
+              <tr><td>NSTEMI</td><td>ST depression, T inversion or normal</td><td>Elevated</td><td>Risk stratify, early invasive if high risk</td></tr>
+              <tr><td>Unstable angina</td><td>Often normal</td><td>Normal</td><td>Risk stratify, antiplatelet therapy</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Recognition</h2>
+          <p>Classic presentation is central crushing chest pain radiating to the jaw or left arm with autonomic features. The examination reliably tests the atypical presentations, because those are the ones missed in practice.</p>
+          <ul>
+            <li><strong>Diabetic patients</strong> may present with breathlessness or collapse without pain, due to autonomic neuropathy.</li>
+            <li><strong>Older patients</strong> present with delirium, falls or non-specific deterioration in around a third of cases.</li>
+            <li><strong>Women</strong> more frequently report nausea, fatigue and interscapular pain rather than crushing central pain.</li>
+            <li><strong>Posterior infarction</strong> produces ST depression in V1–V3 with tall R waves — read it as a mirror image.</li>
+          </ul>
+
+          <blockquote>
+            <p>If a question describes ST depression in V1 to V3 with dominant R waves, obtain posterior leads V7 to V9 before concluding it is an NSTEMI. This is the single most common trap in ACS questions.</p>
+          </blockquote>
+
+          <h2>Immediate management</h2>
+          <p>Initial treatment is common to the whole spectrum, then diverges on the reperfusion decision.</p>
+          <ol>
+            <li>Aspirin 300 mg orally, chewed or dispersed.</li>
+            <li>Oxygen <em>only</em> if saturations fall below 94% — routine oxygen worsens outcomes in normoxic patients.</li>
+            <li>Analgesia with intravenous morphine plus an antiemetic; sublingual GTN unless hypotensive or right ventricular infarction is suspected.</li>
+            <li>Second antiplatelet agent per local protocol.</li>
+            <li>Continuous cardiac monitoring — ventricular fibrillation risk is highest in the first hour.</li>
+          </ol>
+
+          <h3>The reperfusion decision in STEMI</h3>
+          <p>Primary percutaneous coronary intervention is the reperfusion strategy of choice where it can be delivered within 120 minutes of the time thrombolysis could otherwise have been given. Beyond that window, thrombolysis is given first and the patient is transferred for angiography.</p>
+
+          <div class="key-points">
+            <h4><span data-icon="zap"></span> High-yield exam points</h4>
+            <ul>
+              <li>Inferior STEMI (II, III, aVF) — always obtain right-sided leads. RV infarction is preload dependent, so nitrates can cause profound hypotension.</li>
+              <li>New left bundle branch block with a convincing history is treated as STEMI.</li>
+              <li>Do not delay reperfusion for troponin in a diagnostic ECG. The diagnosis is already made.</li>
+              <li>Anticoagulation excludes thrombolysis but does not exclude primary PCI.</li>
+              <li>Wellens' syndrome — deep T inversion in V2–V3 during pain-free periods — signals critical LAD stenosis despite an apparently reassuring patient.</li>
+            </ul>
+          </div>
+
+          <h2>Complications to anticipate</h2>
+          <p>Examiners frequently move a stable ACS stem into a complication in the second half of the question.</p>
+          <ul>
+            <li><strong>Arrhythmia</strong> — VF in the first hour, complete heart block in inferior infarction.</li>
+            <li><strong>Cardiogenic shock</strong> — occurs in roughly 7%, mortality above 40%.</li>
+            <li><strong>Mechanical complications</strong> — papillary muscle rupture, ventricular septal defect, free wall rupture, typically days 2 to 7.</li>
+            <li><strong>Pericarditis</strong> — early or as Dressler's syndrome weeks later.</li>
+          </ul>
+
+          <div class="alert alert-warning mt-3">
+            <span data-icon="alert"></span>
+            <p class="mb-0"><strong>Guideline update, June 2026.</strong> The revised RCEM position now recommends against routine high-flow oxygen in normoxic ACS. Nine questions in this chapter were rewritten to reflect this.</p>
+          </div>
+        </article>
+
+        <div class="row-between mt-4" style="padding-top:24px;border-top:1px solid var(--border)">
+          <button class="btn btn-outline" type="button" disabled><span data-icon="chevronLeft"></span> Previous topic</button>
+          <button class="btn btn-primary" type="button" id="nextTopic">Mark complete and continue <span data-icon="arrowRight"></span></button>
+        </div>
+      </div>
+
+      <!-- ---------- SCENARIOS ---------- -->
+      <div class="tab-panel" data-panel="scenarios">
+        <p class="lead">Three questions linked to this topic. Answer them now while the content is fresh — this is when retention is highest.</p>
+        <div id="topicQuestions" class="stack-lg"></div>
+      </div>
+
+      <!-- ---------- VIDEO ---------- -->
+      <div class="tab-panel" data-panel="video">
+        <div class="media-frame">
+          <div class="video-frame">
+            <div class="play-overlay" role="button" tabindex="0" aria-label="Play video" data-icon="play"></div>
+            <span class="duration">14:22</span>
+          </div>
+          <div class="media-cap">ECG interpretation in acute coronary syndromes — Dr Aisha Rahman</div>
+        </div>
+        <h3 class="mt-3">Chapter videos</h3>
+        <div class="stack-sm" id="videoList"></div>
+      </div>
+
+      <!-- ---------- SUMMARY ---------- -->
+      <div class="tab-panel" data-panel="summary">
+        <div class="card card-pad">
+          <div class="row-between mb-3">
+            <h3 style="margin:0">One-page summary — Acute Coronary Syndromes</h3>
+            <button class="btn btn-outline btn-sm" type="button" onclick="window.print()"><span data-icon="download"></span> Print</button>
+          </div>
+          <div class="grid grid-2 grid-gap-sm" id="summaryGrid"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============ RIGHT: NOTES / BOOKMARKS / PROGRESS ============ -->
+  <aside class="learn-aside learn-aside--right" aria-label="Study tools">
+    <div class="tabs mb-3" data-tabs="#toolPanels" role="tablist">
+      <button class="tab is-active" data-tab="mynotes">Notes</button>
+      <button class="tab" data-tab="marks">Bookmarks</button>
+      <button class="tab" data-tab="prog">Progress</button>
+    </div>
+
+    <div id="toolPanels">
+      <div class="tab-panel is-active" data-panel="mynotes" style="padding-top:0">
+        <form id="noteForm">
+          <div class="field">
+            <textarea class="textarea" id="noteInput" style="min-height:88px"
+              placeholder="Add a note on this topic…"></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm btn-block" type="submit">Save note</button>
+        </form>
+        <div class="aside-title mt-3">Your notes (3)</div>
+        <div id="noteList"></div>
+      </div>
+
+      <div class="tab-panel" data-panel="marks" style="padding-top:0">
+        <div class="aside-title">Bookmarked questions (4)</div>
+        <div id="bookmarkList"></div>
+        <a class="btn btn-outline btn-sm btn-block mt-2" href="question-bank.html">Review all bookmarks</a>
+      </div>
+
+      <div class="tab-panel" data-panel="prog" style="padding-top:0">
+        <div class="text-center mb-3">
+          <div class="donut" id="topicDonut"></div>
+        </div>
+        <div id="progressBits"></div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/questions.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  /* ---------- Chapter tree ---------- */
+  document.getElementById("chapterTree").innerHTML = D.CHAPTERS.map(function (ch, ci) {
+    return '<div class="chapter-group' + (ci === 0 ? " is-open" : "") + '" data-chapter="' + ch.title.toLowerCase() + '">' +
+      '<button class="chapter-toggle" type="button" aria-expanded="' + (ci === 0) + '">' +
+        '<span class="caret">' + I("chevronRight") + "</span>" +
+        "<span>" + ch.title + "</span>" +
+        '<span class="pct">' + ch.pct + "%</span>" +
+      "</button>" +
+      '<div class="topic-list">' +
+        ch.topics.map(function (t) {
+          return '<a class="topic-link' + (t.active ? " is-active" : "") + '" href="#" data-topic="' + t.name.toLowerCase() + '">' +
+            '<span class="tick' + (t.done ? "" : " todo") + '">' + I(t.done ? "checkCircle" : "clock") + "</span>" +
+            "<span>" + t.name + "</span></a>";
+        }).join("") +
+      "</div></div>";
+  }).join("");
+
+  EM.initAccordions();
+
+  /* Topic search */
+  document.getElementById("chapterSearch").addEventListener("input", function (e) {
+    var q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll(".chapter-group").forEach(function (g) {
+      var hits = 0;
+      g.querySelectorAll(".topic-link").forEach(function (t) {
+        var on = !q || t.getAttribute("data-topic").indexOf(q) > -1;
+        t.style.display = on ? "" : "none";
+        if (on) hits++;
+      });
+      var chapterHit = g.getAttribute("data-chapter").indexOf(q) > -1;
+      g.style.display = (hits || chapterHit || !q) ? "" : "none";
+      if (q) g.classList.add("is-open");
+    });
+  });
+
+  /* Topic navigation */
+  document.getElementById("chapterTree").addEventListener("click", function (e) {
+    var link = e.target.closest(".topic-link");
+    if (!link) return;
+    e.preventDefault();
+    document.querySelectorAll(".topic-link").forEach(function (t) { t.classList.remove("is-active"); });
+    link.classList.add("is-active");
+    var chapter = link.closest(".chapter-group").querySelector(".chapter-toggle span:nth-child(2)").textContent;
+    document.getElementById("crumbTrail").textContent = chapter + " › " + link.textContent.trim();
+    EM.toast("Loaded: " + link.textContent.trim());
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  /* Mobile chapter drawer */
+  document.getElementById("mobileChapters").addEventListener("click", function () {
+    var a = document.querySelector(".learn-aside");
+    var open = a.style.display === "block";
+    a.style.display = open ? "" : "block";
+    a.style.position = open ? "" : "relative";
+    a.style.maxHeight = open ? "" : "60vh";
+  });
+
+  /* ---------- Linked questions ---------- */
+  var linked = D.QUESTIONS.filter(function (q) { return q.subject === "Cardiology" || q.topic === "Acute Coronary Syndromes"; });
+  if (linked.length < 3) linked = D.QUESTIONS.slice(0, 3);
+  var qHost = document.getElementById("topicQuestions");
+  qHost.innerHTML = linked.map(function (q, i) { return EMQ.render(q, { index: i + 1, total: linked.length }); }).join("");
+  EMQ.attach(qHost, function (id) {
+    return D.QUESTIONS.filter(function (q) { return q.id === id; })[0];
+  });
+
+  /* ---------- Videos ---------- */
+  document.getElementById("videoList").innerHTML = [
+    ["ECG interpretation in ACS", "14:22", "Dr Aisha Rahman", true],
+    ["The reperfusion decision explained", "09:41", "Dr Aisha Rahman", true],
+    ["Posterior MI and the mirror image", "07:18", "Dr Daniel Fischer", false],
+    ["Mechanical complications after MI", "11:56", "Dr Aisha Rahman", false]
+  ].map(function (v) {
+    return '<div class="list-row"><span class="icon-tile' + (v[3] ? " icon-tile-green" : "") + '">' + I(v[3] ? "checkCircle" : "play") + "</span>" +
+      "<div class='grow'><div class='fw-700 text-sm'>" + v[0] + "</div>" +
+      "<div class='text-xs text-subtle'>" + v[2] + " · " + v[1] + "</div></div>" +
+      '<button class="btn btn-outline btn-xs" type="button">' + (v[3] ? "Rewatch" : "Watch") + "</button></div>";
+  }).join("");
+
+  /* ---------- Summary sheet ---------- */
+  document.getElementById("summaryGrid").innerHTML = [
+    ["Diagnostic triad", "Ischaemic chest pain + ECG changes + troponin rise. Any two should raise ACS to the top of your differential."],
+    ["STEMI criteria", "≥1 mm ST elevation in two contiguous limb leads, or ≥2 mm in two contiguous chest leads, or new LBBB."],
+    ["Reperfusion window", "Primary PCI if deliverable within 120 minutes of the time thrombolysis could have been given."],
+    ["Inferior MI caution", "Obtain right-sided leads. RV infarction is preload dependent — avoid nitrates."],
+    ["Posterior MI", "ST depression V1–V3 with tall R waves. Confirm with V7–V9."],
+    ["Oxygen", "Only if SpO₂ below 94%. Routine oxygen worsens outcomes in normoxic patients."],
+    ["Wellens' syndrome", "Deep T inversion V2–V3 when pain free. Critical LAD stenosis."],
+    ["Mechanical complications", "Days 2–7: papillary muscle rupture, VSD, free wall rupture."]
+  ].map(function (s) {
+    return '<div class="panel"><div class="fw-700 text-sm mb-1">' + s[0] + "</div>" +
+      "<div class='text-sm text-muted'>" + s[1] + "</div></div>";
+  }).join("");
+
+  /* ---------- Notes ---------- */
+  var notes = [
+    { text: "120 minute rule = time from when thrombolysis COULD have been given, not from door. Got this wrong twice.", when: "Yesterday, 21:38" },
+    { text: "Posterior MI → V7-V9. Mirror image in V1-V3. Tall R waves are the giveaway.", when: "14 Aug, 08:12" },
+    { text: "No routine O2 if sats ≥94%. Updated June 2026 — check this appears in the new mocks.", when: "11 Aug, 19:04" }
+  ];
+  function renderNotes() {
+    document.getElementById("noteList").innerHTML = notes.map(function (n) {
+      return '<div class="note-item">' + n.text + '<div class="when">' + n.when + "</div></div>";
+    }).join("");
+  }
+  renderNotes();
+
+  document.getElementById("noteForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = document.getElementById("noteInput").value.trim();
+    if (!v) { EM.toast("Write something first."); return; }
+    notes.unshift({ text: v, when: "Just now" });
+    document.getElementById("noteInput").value = "";
+    renderNotes();
+    EM.toast("Note saved to this topic.");
+  });
+
+  /* ---------- Bookmarks ---------- */
+  document.getElementById("bookmarkList").innerHTML = [
+    ["Q-4821", "Inferior STEMI — reperfusion choice", "Cardiology"],
+    ["Q-3390", "Postpartum PE — D-dimer validity", "Respiratory"],
+    ["Q-6642", "DOAC and thrombectomy eligibility", "Neurology"],
+    ["Q-9012", "Negative predictive value calculation", "Critical Appraisal"]
+  ].map(function (b) {
+    return '<div class="note-item"><div class="row-between"><span class="fw-700 text-xs mono">' + b[0] + "</span>" +
+      '<span class="badge">' + b[2] + "</span></div>" +
+      "<div style='margin-top:4px'>" + b[1] + "</div></div>";
+  }).join("");
+
+  /* ---------- Progress ---------- */
+  document.getElementById("topicDonut").innerHTML =
+    EM.donut(68, 140, 14) + '<div class="donut-center"><div class="v">68%</div><div class="l">Course</div></div>';
+
+  document.getElementById("progressBits").innerHTML = [
+    ["Chapters completed", "6 / 56"],
+    ["Topics completed", "38 / 214"],
+    ["Questions answered", "1,420 / 3,100"],
+    ["Videos watched", "22 / 74"],
+    ["Time this week", "6 h 12 m"],
+    ["Current streak", "18 days"]
+  ].map(function (b) {
+    return '<div class="row-between text-sm" style="padding:7px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="text-subtle">' + b[0] + '</span><span class="fw-700">' + b[1] + "</span></div>";
+  }).join("") +
+  '<a class="btn btn-outline btn-sm btn-block mt-3" href="progress.html">Full progress dashboard</a>';
+
+  /* ---------- Buttons ---------- */
+  document.getElementById("bookmarkTopic").addEventListener("click", function () {
+    this.classList.toggle("btn-soft");
+    EM.toast(this.classList.contains("btn-soft") ? "Topic bookmarked." : "Bookmark removed.");
+  });
+  document.getElementById("printTopic").addEventListener("click", function () { window.print(); });
+  document.getElementById("nextTopic").addEventListener("click", function () {
+    EM.toast("Topic marked complete. Loading: ECG Interpretation in ACS");
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course details — EM Hub</title>
+<meta name="description" content="Exam overview, course contents, free sample questions, subscription plans and faculty for this EM Hub programme.">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header data-header data-active="courses" data-prefix=""></header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="grid grid-sidebar" style="gap:40px;align-items:start">
+        <div id="courseHead"></div>
+        <aside class="card card-pad" id="buyBox" style="position:sticky;top:96px"></aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm" style="position:sticky;top:var(--header-h);z-index:30;background:var(--bg);border-bottom:1px solid var(--border);padding:0">
+    <div class="container">
+      <div class="tabs" data-tabs="#courseTabs" role="tablist">
+        <button class="tab is-active" data-tab="overview">Exam Overview</button>
+        <button class="tab" data-tab="course">Course Overview</button>
+        <button class="tab" data-tab="features">Learning Features</button>
+        <button class="tab" data-tab="samples">Free Sample Questions</button>
+        <button class="tab" data-tab="plans">Subscription Plans</button>
+        <button class="tab" data-tab="faculty">Faculty</button>
+        <button class="tab" data-tab="faqs">FAQs</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="courseTabs">
+    <div class="container">
+
+      <div class="tab-panel is-active" data-panel="overview">
+        <div class="grid grid-sidebar" style="gap:40px;align-items:start">
+          <div>
+            <h2>Exam overview</h2>
+            <p class="lead" id="examLong"></p>
+            <div class="grid grid-2 grid-gap-sm mt-3" id="examFacts"></div>
+            <h3 class="mt-4">Blueprint coverage</h3>
+            <p>Every question and note is tagged to a curriculum item. This is how the coverage breaks down across the programme.</p>
+            <div class="card card-pad" id="blueprint"></div>
+          </div>
+          <aside class="card card-pad" id="examSidebar"></aside>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="course">
+        <h2>Course overview</h2>
+        <p class="lead" style="max-width:760px">What is inside the programme, chapter by chapter, and how the platform sequences it for you.</p>
+        <div class="grid grid-4 grid-gap-sm mt-3" id="courseNumbers"></div>
+        <h3 class="mt-4">Syllabus structure</h3>
+        <div id="syllabus" class="mt-2"></div>
+      </div>
+
+      <div class="tab-panel" data-panel="features">
+        <h2>Learning features</h2>
+        <p class="lead" style="max-width:760px">Everything included with any subscription length.</p>
+        <div class="grid grid-2 mt-3" id="featureList"></div>
+        <div class="card card-pad mt-4" id="platformFeatures"></div>
+      </div>
+
+      <div class="tab-panel" data-panel="samples">
+        <div class="row-between mb-3">
+          <div>
+            <h2 style="margin-bottom:6px">Free sample questions</h2>
+            <p class="mb-0">Three questions from the live bank, with the full explanation and teaching point. Answer them exactly as you would in practice mode.</p>
+          </div>
+          <a class="btn btn-primary" href="question-bank-sample.html">Open all 25 free questions</a>
+        </div>
+        <div id="samples" class="stack-lg"></div>
+      </div>
+
+      <div class="tab-panel" data-panel="plans">
+        <h2>Subscription plans</h2>
+        <p class="lead" style="max-width:760px">One-off payment for a fixed duration. Nothing renews automatically. Prices in GBP, VAT included where applicable.</p>
+        <div class="grid grid-5 mt-3" id="planGrid"></div>
+        <div class="card card-pad mt-4">
+          <h4>Every plan includes</h4>
+          <div class="grid grid-3 grid-gap-sm mt-2" id="allPlanIncludes"></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="faculty">
+        <h2>Faculty on this course</h2>
+        <p class="lead" style="max-width:760px">The consultants who wrote the content and answer your questions.</p>
+        <div class="grid grid-3 mt-3" id="courseFaculty"></div>
+      </div>
+
+      <div class="tab-panel" data-panel="faqs">
+        <div style="max-width:820px">
+          <h2>Frequently asked questions</h2>
+          <div id="courseFaqs" class="mt-3"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section-sm" style="padding-bottom:84px">
+    <div class="container">
+      <div class="cta-band">
+        <div class="row-between">
+          <div style="max-width:540px">
+            <h2 style="margin-bottom:10px">Start with the free sample</h2>
+            <p class="mb-0">25 questions with full explanations and two sample chapters. No card details required.</p>
+          </div>
+          <div class="row">
+            <a class="btn btn-white btn-lg" href="register.html">Create free account</a>
+            <a class="btn btn-glass btn-lg" href="contact.html">Ask a question</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-footer data-prefix=""></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+  var c = D.courseById(EM.qs("course") || "mrcem-sba");
+  document.title = c.title + " — EM Hub";
+
+  /* ---------------- Head ---------------- */
+  document.getElementById("courseHead").innerHTML =
+    '<nav class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span>' +
+    '<a href="courses.html">Courses</a><span class="sep">/</span><span>' + c.code + "</span></nav>" +
+    '<div class="row row-tight mb-2"><span class="badge badge-' + c.tagTone + '">' + c.tag + "</span>" +
+      '<span class="badge badge-green badge-dot">Enrolling now</span></div>' +
+    "<h1>" + c.title + "</h1>" +
+    '<p class="lead">' + c.short + "</p>" +
+    '<div class="row" style="gap:22px;margin-top:20px">' +
+      metaBit("star", c.rating + " / 5", c.reviews + " reviews") +
+      metaBit("users", c.students.toLocaleString(), "candidates enrolled") +
+      metaBit("flask", c.questions.toLocaleString(), "questions") +
+      metaBit("clock", c.hours + " hours", "of content") +
+    "</div>";
+
+  function metaBit(ic, big, small) {
+    return '<div class="row row-tight"><span class="icon-tile" style="width:38px;height:38px">' + I(ic) + "</span>" +
+      '<div><div class="fw-700 text-sm">' + big + '</div><div class="text-xs text-subtle">' + small + "</div></div></div>";
+  }
+
+  /* ---------------- Buy box ---------------- */
+  var scaled = D.PLANS.map(function (p) {
+    var factor = c.priceFrom / D.PLANS[0].price;
+    return { months: p.months, label: p.label, note: p.note, featured: p.featured,
+             price: Math.round(p.price * factor), save: p.save };
+  });
+
+  document.getElementById("buyBox").innerHTML =
+    '<div class="text-xs text-subtle fw-700" style="text-transform:uppercase;letter-spacing:.09em">Subscription</div>' +
+    '<div class="price mt-1"><span class="amount" id="bbPrice">£' + scaled[2].price + '</span><span class="per">/ 3 months</span></div>' +
+    '<div class="text-xs text-subtle" id="bbPerMonth">£' + (scaled[2].price / 3).toFixed(2) + " per month</div>" +
+    '<div class="field mt-3"><label class="label" for="bbDuration">Choose duration</label>' +
+      '<select class="select" id="bbDuration">' +
+        scaled.map(function (p, i) {
+          return '<option value="' + i + '"' + (i === 2 ? " selected" : "") + ">" + p.label + " — £" + p.price + "</option>";
+        }).join("") +
+      "</select></div>" +
+    '<a class="btn btn-primary btn-block btn-lg" href="checkout.html?course=' + c.id + '" id="bbBuy">Enrol now</a>' +
+    '<a class="btn btn-outline btn-block mt-1" href="question-bank-sample.html">Try 25 free questions</a>' +
+    '<div class="divider-text">Included</div>' +
+    "<ul style='list-style:none;padding:0;margin:0'>" +
+      ["Full question bank access", "Structured revision notes", "Video library", "Unlimited timed mocks",
+       "Performance analytics", "Completion certificate"].map(function (f) {
+        return "<li style='display:flex;gap:9px;padding:5px 0;font-size:.88rem;color:var(--text-muted)'>" +
+          "<span style='width:17px;height:17px;color:var(--success);flex:none'>" + I("check") + "</span>" + f + "</li>";
+      }).join("") +
+    "</ul>" +
+    '<div class="alert alert-success mt-3"><span data-icon="shield"></span>' +
+      '<p class="mb-0 text-sm"><strong>Deferral protection.</strong> If your exam moves, we extend your access free of charge.</p></div>';
+
+  var sel = document.getElementById("bbDuration");
+  sel.addEventListener("change", function () {
+    var p = scaled[+sel.value];
+    document.getElementById("bbPrice").textContent = "£" + p.price;
+    document.getElementById("bbPrice").nextElementSibling.textContent = "/ " + p.months + (p.months === 1 ? " month" : " months");
+    document.getElementById("bbPerMonth").textContent = "£" + (p.price / p.months).toFixed(2) + " per month" + (p.save ? " · save " + p.save + "%" : "");
+    document.getElementById("bbBuy").setAttribute("href", "checkout.html?course=" + c.id + "&plan=" + p.months);
+  });
+
+  /* ---------------- Exam overview ---------------- */
+  document.getElementById("examLong").textContent = c.long;
+  document.getElementById("examFacts").innerHTML = [
+    { ic: "badge",    l: "Awarding body",  v: c.examBody },
+    { ic: "monitor",  l: "Exam format",    v: c.format },
+    { ic: "target",   l: "Pass standard",  v: c.passMark },
+    { ic: "calendar", l: "Sittings",       v: c.sittings }
+  ].map(function (f) {
+    return '<div class="card card-pad feature"><span class="icon-tile icon-tile-teal">' + I(f.ic) + "</span>" +
+      "<div><h4 style='font-size:.86rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-subtle)'>" + f.l + "</h4>" +
+      "<p class='mb-0 fw-600' style='color:var(--text)'>" + f.v + "</p></div></div>";
+  }).join("");
+
+  var blueprintRows = c.subjects.map(function (s, i) {
+    var pcts = [24, 19, 16, 13, 11, 8, 6, 3];
+    return { label: s, pct: pcts[i] != null ? pcts[i] : 4, tone: i < 2 ? "teal" : i < 4 ? "green" : "amber" };
+  });
+  document.getElementById("blueprint").innerHTML =
+    "<h4>Weighting by subject</h4><p class='text-sm'>Approximate share of the question bank, mirroring the published blueprint.</p>" +
+    EM.hbars(blueprintRows);
+
+  document.getElementById("examSidebar").innerHTML =
+    "<h4>Next sittings</h4>" +
+    '<div class="timeline mt-2">' +
+      '<div class="timeline-item done"><div class="t-time">Closed</div><div class="t-title">June 2026 sitting</div></div>' +
+      '<div class="timeline-item"><div class="t-time">Applications open 01 Sep 2026</div><div class="t-title">November 2026 sitting</div></div>' +
+      '<div class="timeline-item"><div class="t-time">Applications open 05 Jan 2027</div><div class="t-title">March 2027 sitting</div></div>' +
+    "</div>" +
+    '<div class="divider-text">Recommended</div>' +
+    '<p class="text-sm">Candidates who pass first time start on average <strong>14 weeks</strong> before their sitting and complete <strong>78%</strong> of the question bank.</p>' +
+    '<a class="btn btn-soft btn-block" href="contact.html">Ask about the next sitting</a>';
+
+  /* ---------------- Course overview ---------------- */
+  document.getElementById("courseNumbers").innerHTML = [
+    { v: c.questions.toLocaleString(), l: "Questions", ic: "flask" },
+    { v: c.chapters, l: "Chapters", ic: "book" },
+    { v: c.videos, l: "Videos", ic: "video" },
+    { v: c.hours + " h", l: "Study hours", ic: "clock" }
+  ].map(function (n) {
+    return '<div class="stat-card"><span class="icon-tile">' + I(n.ic) + "</span>" +
+      '<div><div class="stat-value">' + n.v + '</div><div class="stat-label">' + n.l + "</div></div></div>";
+  }).join("");
+
+  document.getElementById("syllabus").innerHTML = c.subjects.map(function (s, i) {
+    var chapters = Math.max(3, Math.round(c.chapters / c.subjects.length));
+    var topics = ["Core principles and definitions", "Recognition and red flags", "Investigation strategy",
+                  "Management and escalation", "Common examination traps", "Guideline updates for this sitting"];
+    return '<div class="accordion' + (i === 0 ? " is-open" : "") + '">' +
+      '<button class="accordion-trigger" type="button"><span class="row row-tight">' +
+        '<span class="badge badge-blue">' + String(i + 1).padStart(2, "0") + "</span>" +
+        "<span>" + s + '</span><span class="text-xs text-subtle">' + chapters + " chapters</span></span></button>" +
+      '<div class="accordion-content"><ul style="margin:0">' +
+        topics.map(function (t) { return "<li>" + t + " — " + s.toLowerCase() + "</li>"; }).join("") +
+      "</ul></div></div>";
+  }).join("");
+
+  /* ---------------- Features ---------------- */
+  document.getElementById("featureList").innerHTML = c.features.map(function (f, i) {
+    var ics = ["flask", "note", "video", "monitor", "chart", "users"];
+    return '<div class="card card-pad feature"><span class="icon-tile icon-tile-green">' + I(ics[i % ics.length]) + "</span>" +
+      "<div><h4>" + f.split("—")[0].trim() + "</h4><p>" + f + "</p></div></div>";
+  }).join("");
+
+  document.getElementById("platformFeatures").innerHTML =
+    "<h4>Platform features on every course</h4>" +
+    '<div class="grid grid-3 grid-gap-sm mt-2">' +
+    [["monitor", "True exam interface", "Identical layout, flagging and countdown behaviour to the real computer-based test."],
+     ["target", "Weak-topic engine", "The platform keeps returning you to sub-topics you are failing until they hold."],
+     ["bookmark", "Notes and bookmarks", "Annotate any question or topic. Everything is searchable and exportable."],
+     ["chart", "Percentile benchmarking", "See where you sit against everyone else preparing for the same sitting."],
+     ["refresh", "Guideline update feed", "NICE, RCEM and Resus Council changes flagged against affected questions."],
+     ["certificate", "Verified certificate", "QR-verifiable completion certificate for your training portfolio."]]
+      .map(function (f) {
+        return '<div class="feature"><span class="icon-tile icon-tile-teal" style="width:38px;height:38px">' + I(f[0]) + "</span>" +
+          "<div><h4 style='font-size:.93rem'>" + f[1] + "</h4><p class='text-sm mb-0'>" + f[2] + "</p></div></div>";
+      }).join("") + "</div>";
+
+  /* ---------------- Samples ---------------- */
+  document.getElementById("samples").innerHTML = D.QUESTIONS.slice(0, 3).map(function (q, i) {
+    return renderSample(q, i);
+  }).join("");
+
+  function renderSample(q, idx) {
+    var media = "";
+    if (q.media && q.media.kind === "image") {
+      media = '<div class="media-frame">' + EM.xray() + '<div class="media-cap">' + q.media.caption + "</div></div>";
+    } else if (q.media && q.media.kind === "audio") {
+      media = '<div class="audio-player"><button class="play-btn" type="button" aria-label="Play recording">' + I("play") + "</button>" +
+        '<div class="grow"><div class="wave">' + waveBars() + "</div>" +
+        '<div class="text-xs text-subtle mt-1">' + q.media.caption + "</div></div></div>";
+    } else if (q.media && q.media.kind === "video") {
+      media = '<div class="media-frame"><div class="video-frame"><div class="play-overlay">' + I("play") + "</div>" +
+        '<span class="duration">' + q.media.duration + '</span></div><div class="media-cap">' + q.media.caption + "</div></div>";
+    }
+
+    var isMulti = q.type === "multi";
+    var opts = q.options.map(function (o) {
+      return '<button class="option" type="button" data-key="' + o.key + '">' +
+        '<span class="key">' + o.key + "</span><span>" + o.text + "</span></button>";
+    }).join("");
+
+    return '<article class="card question-card" data-q="' + idx + '">' +
+      '<div class="row-between mb-3">' +
+        '<div class="row row-tight">' +
+          '<span class="badge badge-blue">' + q.typeLabel + "</span>" +
+          '<span class="badge">' + q.subject + "</span>" +
+          '<span class="badge badge-' + (q.difficulty === "Hard" ? "red" : q.difficulty === "Easy" ? "green" : "amber") + '">' + q.difficulty + "</span>" +
+        "</div>" +
+        '<span class="text-xs text-subtle mono">' + q.id + "</span>" +
+      "</div>" +
+      media +
+      '<p class="question-stem">' + q.stem.replace(/\n\n/g, "</p><p class='question-stem'>") + "</p>" +
+      (isMulti ? '<p class="text-xs text-subtle fw-600">Select all that apply, then submit.</p>' : "") +
+      '<div class="options">' + opts + "</div>" +
+      (isMulti ? '<button class="btn btn-primary mt-3" type="button" data-submit>Submit answer</button>' : "") +
+      '<div class="explanation" hidden>' +
+        "<h4>Explanation</h4>" +
+        "<p>" + q.explanation.replace(/\n\n/g, "</p><p>") + "</p>" +
+        '<div class="key-points" style="margin-bottom:0"><h4>' + I("zap") + " Exam technique</h4>" +
+        "<p class='mb-0 text-sm'>" + q.teaching + "</p></div>" +
+      "</div></article>";
+  }
+
+  function waveBars() {
+    var out = "", h = [30, 55, 80, 45, 92, 60, 35, 70, 88, 50, 40, 75, 95, 62, 38, 55, 82, 48, 30, 66, 90, 52, 36, 72];
+    for (var i = 0; i < h.length; i++) out += '<span style="height:' + h[i] + '%"></span>';
+    return out;
+  }
+
+  /* Sample question interaction */
+  document.getElementById("samples").addEventListener("click", function (e) {
+    var opt = e.target.closest(".option");
+    var card = e.target.closest(".question-card");
+    if (!card) return;
+    var q = D.QUESTIONS[+card.getAttribute("data-q")];
+
+    if (opt) {
+      if (q.type === "multi") {
+        if (card.querySelector(".explanation").hidden) opt.classList.toggle("is-selected");
+        return;
+      }
+      if (!card.querySelector(".explanation").hidden) return;
+      reveal(card, q, [opt.getAttribute("data-key")]);
+      return;
+    }
+    if (e.target.closest("[data-submit]")) {
+      var picked = [].map.call(card.querySelectorAll(".option.is-selected"), function (o) { return o.getAttribute("data-key"); });
+      if (!picked.length) { EM.toast("Select at least one option first."); return; }
+      reveal(card, q, picked);
+      e.target.closest("[data-submit]").remove();
+    }
+    if (e.target.closest(".play-btn")) {
+      var bars = card.querySelectorAll(".wave span");
+      bars.forEach(function (b, i) { setTimeout(function () { b.classList.add("on"); }, i * 45); });
+      EM.toast("Audio playback is simulated in this prototype.");
+    }
+    if (e.target.closest(".play-overlay")) EM.toast("Video playback is simulated in this prototype.");
+  });
+
+  function reveal(card, q, picked) {
+    var correct = q.answers || [q.answer];
+    card.querySelectorAll(".option").forEach(function (o) {
+      var k = o.getAttribute("data-key");
+      o.classList.remove("is-selected");
+      if (correct.indexOf(k) > -1) {
+        o.classList.add("is-correct");
+        o.insertAdjacentHTML("beforeend", '<span class="verdict">Correct</span>');
+      } else if (picked.indexOf(k) > -1) {
+        o.classList.add("is-wrong");
+        o.insertAdjacentHTML("beforeend", '<span class="verdict">Your answer</span>');
+      }
+      o.disabled = true;
+    });
+    card.querySelector(".explanation").hidden = false;
+    var got = correct.length === picked.length && correct.every(function (k) { return picked.indexOf(k) > -1; });
+    EM.toast(got ? "Correct — well done." : "Not quite. Read the explanation below.");
+  }
+
+  /* ---------------- Plans ---------------- */
+  document.getElementById("planGrid").innerHTML = scaled.map(function (p) {
+    return '<div class="card plan' + (p.featured ? " is-featured" : "") + '">' +
+      '<div class="plan-name">' + p.label + '</div><div class="text-xs text-subtle">' + p.note + "</div>" +
+      '<div class="plan-price"><span class="amount">£' + p.price + "</span></div>" +
+      '<div class="text-xs text-subtle">£' + (p.price / p.months).toFixed(2) + " per month" +
+      (p.save ? ' · <span class="text-success fw-700">save ' + p.save + "%</span>" : "") + "</div>" +
+      "<ul>" + D.PLAN_FEATURES[p.months].map(function (f) { return "<li>" + I("check") + "<span>" + f + "</span></li>"; }).join("") + "</ul>" +
+      '<a class="btn ' + (p.featured ? "btn-primary" : "btn-outline") + ' btn-block" href="checkout.html?course=' + c.id + "&plan=" + p.months + '">Choose ' + p.label + "</a></div>";
+  }).join("");
+
+  document.getElementById("allPlanIncludes").innerHTML =
+    ["Full question bank", "Structured notes", "Video library", "Unlimited mocks",
+     "Analytics dashboard", "Mobile and tablet access", "Faculty Q&A", "Deferral protection", "Completion certificate"]
+      .map(function (f) {
+        return "<div class='row row-tight text-sm'><span style='width:17px;height:17px;color:var(--success);flex:none'>" + I("check") + "</span>" + f + "</div>";
+      }).join("");
+
+  /* ---------------- Faculty ---------------- */
+  var mine = D.FACULTY.filter(function (f) {
+    return f.courses.some(function (x) { return c.title.indexOf(x) > -1 || x.indexOf(c.code) > -1; });
+  });
+  if (!mine.length) mine = D.FACULTY.slice(0, 3);
+  document.getElementById("courseFaculty").innerHTML = mine.map(function (f) {
+    return '<article class="card card-pad">' +
+      '<div class="row row-tight mb-2"><span class="avatar">' + f.initials + "</span>" +
+      "<div><div class='fw-700'>" + f.name + "</div><div class='text-xs text-primary fw-600'>" + f.qual + "</div></div></div>" +
+      "<p class='text-sm'>" + f.bio + "</p>" +
+      '<div class="row row-tight"><span class="badge badge-teal">' + f.spec + "</span>" +
+      '<span class="badge">' + f.years + " years</span></div></article>";
+  }).join("");
+
+  /* ---------------- FAQs ---------------- */
+  document.getElementById("courseFaqs").innerHTML = D.FAQS.map(function (f, i) {
+    return '<div class="accordion' + (i === 0 ? " is-open" : "") + '">' +
+      '<button class="accordion-trigger" type="button"><span>' + f.q + "</span></button>" +
+      '<div class="accordion-content"><p>' + f.a + "</p></div></div>";
+  }).join("");
+}
+</script>
+</body>
+</html>

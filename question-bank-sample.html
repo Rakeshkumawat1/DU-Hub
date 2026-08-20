@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free sample questions — EM Hub</title>
+<meta name="description" content="Try free emergency medicine exam questions across all five formats: SBA, multiple correct, image-based, audio and video.">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header data-header data-active="courses" data-prefix=""></header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Free sample</span></nav>
+      <div class="row-between">
+        <div>
+          <h1>Free sample questions</h1>
+          <p>Eight questions from the live bank covering all five formats we examine — single best answer, multiple correct, image-based, audio and video. Full explanations included, exactly as a subscriber sees them.</p>
+        </div>
+        <div class="card card-pad" style="min-width:220px;text-align:center">
+          <div class="text-xs text-subtle fw-700" style="text-transform:uppercase;letter-spacing:.08em">Sample progress</div>
+          <div style="font-size:2.2rem;font-weight:800;letter-spacing:-.03em" id="sampleScore">0 / 8</div>
+          <div class="progress mt-1"><div class="progress-bar" id="sampleBar" style="width:0%"></div></div>
+          <div class="text-xs text-subtle mt-1" id="sampleAcc">Not started</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm" style="border-bottom:1px solid var(--border);position:sticky;top:var(--header-h);z-index:30;background:var(--bg)">
+    <div class="container">
+      <div class="row-between">
+        <div class="row row-tight" id="typeFilters">
+          <span class="chip is-active" data-type="all">All formats</span>
+          <span class="chip" data-type="sba">Single Best Answer</span>
+          <span class="chip" data-type="multi">Multiple Correct</span>
+          <span class="chip" data-type="image">Image-Based</span>
+          <span class="chip" data-type="audio">Audio</span>
+          <span class="chip" data-type="video">Video</span>
+        </div>
+        <div class="row row-tight">
+          <span class="badge badge-green badge-dot">Practice mode — answers shown immediately</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:900px">
+      <div class="alert alert-info mb-4">
+        <span data-icon="info"></span>
+        <p class="mb-0">In <strong>practice mode</strong> the answer and explanation appear as soon as you respond. In <strong>exam mode</strong> nothing is revealed until you submit the whole paper. Subscribers can switch between the two on any session.</p>
+      </div>
+      <div id="sampleList" class="stack-lg"></div>
+
+      <div class="cta-band mt-4">
+        <div class="row-between">
+          <div style="max-width:520px">
+            <h2 style="margin-bottom:10px">That is 8 of 12,800</h2>
+            <p class="mb-0">Register free for the full 25-question sample, or subscribe for the complete bank, notes, videos and unlimited timed mocks.</p>
+          </div>
+          <div class="row">
+            <a class="btn btn-white btn-lg" href="register.html">Register free</a>
+            <a class="btn btn-glass btn-lg" href="courses.html">See plans</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-footer data-prefix=""></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/questions.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB;
+  var list = document.getElementById("sampleList");
+  var total = D.QUESTIONS.length;
+  var answered = 0, correct = 0;
+
+  list.innerHTML = D.QUESTIONS.map(function (q, i) {
+    return '<div data-type="' + q.type + '">' + EMQ.render(q, { index: i + 1, total: total }) + "</div>";
+  }).join("");
+
+  function byId(id) {
+    return D.QUESTIONS.filter(function (q) { return q.id === id; })[0];
+  }
+
+  EMQ.attach(list, byId, function (q, picked, right) {
+    answered++; if (right) correct++;
+    document.getElementById("sampleScore").textContent = correct + " / " + total;
+    document.getElementById("sampleBar").style.width = Math.round((answered / total) * 100) + "%";
+    document.getElementById("sampleAcc").textContent =
+      answered + " answered · " + Math.round((correct / answered) * 100) + "% accuracy";
+  });
+
+  document.querySelectorAll("#typeFilters .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#typeFilters .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      var t = chip.getAttribute("data-type");
+      list.querySelectorAll("[data-type]").forEach(function (w) {
+        w.style.display = (t === "all" || w.getAttribute("data-type") === t) ? "" : "none";
+      });
+    });
+  });
+}
+</script>
+</body>
+</html>

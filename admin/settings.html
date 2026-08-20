@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Platform Settings — EM Hub Admin</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="admin" data-active="settings" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Platform Settings" data-sub="Branding, commerce, access control and audit"></div>
+
+    <main class="app-content" id="main">
+
+      <div class="tabs" data-tabs="#aPanels" role="tablist">
+        <button class="tab is-active" data-tab="general">General</button>
+        <button class="tab" data-tab="commerce">Commerce</button>
+        <button class="tab" data-tab="access">Roles &amp; permissions</button>
+        <button class="tab" data-tab="audit">Audit log</button>
+      </div>
+
+      <div id="aPanels">
+
+        <div class="tab-panel is-active" data-panel="general">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Platform identity</h3></div>
+              <form class="card-body" data-demo-form="Platform settings saved.">
+                <div class="field"><label class="label" for="gName">Platform name</label><input class="input" id="gName" value="EM Hub"></div>
+                <div class="field"><label class="label" for="gTagline">Tagline</label>
+                  <input class="input" id="gTagline" value="Pass Your Emergency Medicine Exams with Confidence"></div>
+                <div class="field"><label class="label" for="gAlt">Alternative brand names</label>
+                  <input class="input" id="gAlt" value="EM Mentor, EM Tutor, EM Master">
+                  <span class="hint">Reserved names, redirected to the primary brand.</span></div>
+                <div class="field"><label class="label" for="gEmail">Support email</label><input class="input" id="gEmail" type="email" value="hello@emhub.example"></div>
+                <div class="field"><label class="label" for="gPhone">Support telephone</label><input class="input" id="gPhone" value="+44 20 7946 0812"></div>
+                <div class="field"><label class="label" for="gAddress">Registered address</label>
+                  <textarea class="textarea" id="gAddress" style="min-height:80px">Sovereign House, 12 Portland Street
+Manchester M1 3HL
+United Kingdom</textarea></div>
+                <button class="btn btn-primary" type="submit">Save</button>
+              </form>
+            </div>
+
+            <div class="stack">
+              <div class="card">
+                <div class="card-head"><h3>Brand colours</h3></div>
+                <div class="card-body">
+                  <div class="grid grid-3 grid-gap-sm" id="swatches"></div>
+                  <div class="alert alert-info mt-3"><span data-icon="info"></span>
+                    <p class="mb-0 text-sm">Colour changes apply platform-wide and are checked against WCAG AA contrast before they can be saved.</p></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head"><h3>Feature flags</h3></div>
+                <div class="card-body" id="flags"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-panel="commerce">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Commerce settings</h3></div>
+              <form class="card-body" data-demo-form="Commerce settings saved.">
+                <div class="field"><label class="label" for="cCurrency">Display currency</label>
+                  <select class="select" id="cCurrency"><option selected>GBP (£)</option><option>EUR (€)</option><option>USD ($)</option><option>INR (₹)</option></select>
+                  <span class="hint">All prices are set and charged in GBP. Other currencies display an indicative conversion.</span></div>
+                <div class="field"><label class="label" for="cVat">Default VAT rate</label>
+                  <div class="row row-tight row-nowrap"><input class="input" id="cVat" type="number" value="20" style="max-width:100px"><span class="text-subtle">%</span></div></div>
+                <div class="field"><label class="label" for="cGrace">Failed payment grace period</label>
+                  <div class="row row-tight row-nowrap"><input class="input" id="cGrace" type="number" value="72" style="max-width:100px"><span class="text-subtle">hours before access is suspended</span></div></div>
+                <div class="field"><label class="label" for="cRefund">Refund window</label>
+                  <div class="row row-tight row-nowrap"><input class="input" id="cRefund" type="number" value="14" style="max-width:100px"><span class="text-subtle">days, if under 10% of the bank has been used</span></div></div>
+                <label class="check mb-2"><input type="checkbox" checked><span>Allow deferral extensions without administrator approval</span></label>
+                <label class="check mb-2"><input type="checkbox" checked><span>Accept institutional purchase orders</span></label>
+                <label class="check mb-3"><input type="checkbox"><span>Enable automatic subscription renewal</span></label>
+                <div class="alert alert-warning"><span data-icon="alert"></span>
+                  <p class="mb-0 text-sm">Auto-renewal is deliberately disabled. Enabling it is a significant change to the customer promise and requires board approval.</p></div>
+                <button class="btn btn-primary" type="submit">Save</button>
+              </form>
+            </div>
+
+            <div class="stack">
+              <div class="card">
+                <div class="card-head"><h3>Promotion codes</h3>
+                  <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('New promotion code created.')">New code</button></div>
+                <div class="card-body card-flush">
+                  <div class="table-wrap"><table class="table" id="promoTable">
+                    <thead><tr><th>Code</th><th>Discount</th><th>Uses</th><th>Expires</th><th>Status</th><th></th></tr></thead>
+                    <tbody></tbody>
+                  </table></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head"><h3>Institutional accounts</h3></div>
+                <div class="card-body" id="institutions"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-panel="access">
+          <div class="card">
+            <div class="card-head"><h3>Roles and permissions</h3>
+              <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('Permission matrix saved.')">Save matrix</button></div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="permTable">
+                <thead><tr><th>Permission</th><th>Candidate</th><th>Faculty</th><th>Subject lead</th><th>Admin</th><th>Super admin</th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+          </div>
+
+          <div class="grid grid-2 mt-3">
+            <div class="card">
+              <div class="card-head"><h3>Administrators</h3></div>
+              <div class="card-body" id="admins"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Security policy</h3></div>
+              <div class="card-body">
+                <div class="field"><label class="label" for="pMinLen">Minimum password length</label>
+                  <input class="input" id="pMinLen" type="number" value="8" style="max-width:120px"></div>
+                <div class="field"><label class="label" for="pSession">Session timeout</label>
+                  <select class="select" id="pSession"><option>4 hours</option><option selected>24 hours</option><option>7 days</option><option>30 days</option></select></div>
+                <label class="check mb-2"><input type="checkbox" checked><span>Require two-factor authentication for administrators</span></label>
+                <label class="check mb-2"><input type="checkbox" checked><span>Require two-factor authentication for faculty</span></label>
+                <label class="check mb-2"><input type="checkbox"><span>Require two-factor authentication for candidates</span></label>
+                <label class="check mb-3"><input type="checkbox" checked><span>Require a second administrator to approve suspensions and refunds</span></label>
+                <button class="btn btn-primary" type="button" onclick="EM.toast('Security policy saved.')">Save policy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-panel="audit">
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Audit log</h3><div class="text-xs text-subtle">All administrative actions, retained for 7 years</div></div>
+              <div class="row row-tight">
+                <div class="search-box">
+                  <span data-icon="search"></span>
+                  <input type="search" placeholder="Search the log" data-filter-input="#auditTable" aria-label="Search audit log">
+                </div>
+                <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('Audit log exported as CSV.')"><span data-icon="download"></span> Export</button>
+              </div>
+            </div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="auditTable">
+                <thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Target</th><th>IP address</th><th>Result</th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("swatches").innerHTML = [
+    ["Primary blue", "#1656cf"], ["Accent teal", "#0fa294"], ["Surface white", "#ffffff"],
+    ["Success", "#16a34a"], ["Warning", "#f59e0b"], ["Danger", "#e11d48"]
+  ].map(function (s) {
+    return '<div class="panel text-center"><div style="height:44px;border-radius:var(--r-sm);background:' + s[1] +
+      ';border:1px solid var(--border);margin-bottom:8px"></div>' +
+      "<div class='fw-700 text-xs'>" + s[0] + "</div><div class='mono text-xs text-subtle'>" + s[1] + "</div></div>";
+  }).join("");
+
+  document.getElementById("flags").innerHTML = [
+    ["Free sample size", "25 questions available without payment", true],
+    ["Adaptive drilling engine", "Weight sessions to weak sub-topics", true],
+    ["Cohort percentile benchmarking", "Show candidates their rank", true],
+    ["Live mock OSCE circuits", "Bookable scored circuits", true],
+    ["Study plan builder", "Auto-generated week-by-week plans", true],
+    ["Supervisor dashboards", "For institutional licences", true],
+    ["Peer discussion boards", "Candidate-to-candidate forums", false],
+    ["AI explanation assistant", "In trial with 200 candidates", false]
+  ].map(function (f) {
+    return '<label class="check" style="padding:10px 0;border-bottom:1px solid var(--border)">' +
+      '<input type="checkbox"' + (f[2] ? " checked" : "") + ">" +
+      "<span><span class='fw-700 text-sm' style='display:block;color:var(--text)'>" + f[0] + "</span>" +
+      "<span class='text-xs text-subtle'>" + f[1] + "</span></span></label>";
+  }).join("");
+
+  document.querySelector("#promoTable tbody").innerHTML = [
+    ["EMHUB10", "10%", "1,284", "31 Dec 2026", "Active"],
+    ["DEANERY25", "25%", "412", "31 Mar 2027", "Active"],
+    ["RETURN15", "15%", "196", "30 Sep 2026", "Active"],
+    ["LAUNCH20", "20%", "3,842", "31 Dec 2025", "Expired"]
+  ].map(function (p) {
+    return "<tr><td class='mono fw-700'>" + p[0] + "</td><td>" + p[1] + "</td><td>" + p[2] + "</td><td>" + p[3] + "</td>" +
+      '<td><span class="badge badge-' + (p[4] === "Active" ? "green" : "red") + ' badge-dot">' + p[4] + "</span></td>" +
+      '<td class="cell-actions"><button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Code editor opened.\')">Edit</button></td></tr>';
+  }).join("");
+
+  document.getElementById("institutions").innerHTML = [
+    ["North West Deanery", "184 seats", "Renews 01 Apr 2027", "£26,680"],
+    ["Aster Medical Group, India", "96 seats", "Renews 15 Jun 2027", "£11,420"],
+    ["Emirates Health Services", "72 seats", "Renews 30 Sep 2026", "£9,840"],
+    ["Royal London Hospital", "48 seats", "Renews 12 Jan 2027", "£6,960"]
+  ].map(function (inst) {
+    return '<div class="row-between" style="padding:10px 0;border-bottom:1px solid var(--border)">' +
+      "<div><div class='fw-700 text-sm'>" + inst[0] + "</div>" +
+      "<div class='text-xs text-subtle'>" + inst[1] + " · " + inst[2] + "</div></div>" +
+      "<div class='fw-700'>" + inst[3] + "</div></div>";
+  }).join("") +
+  '<button class="btn btn-outline btn-sm btn-block mt-2" type="button" onclick="EM.toast(\'Institutional account form opened.\')">Add institution</button>';
+
+  var perms = [
+    ["Answer questions and sit mocks", 1, 1, 1, 1, 1],
+    ["View own analytics", 1, 1, 1, 1, 1],
+    ["View student analytics", 0, 1, 1, 1, 1],
+    ["Author content and questions", 0, 1, 1, 1, 1],
+    ["Review and approve items", 0, 0, 1, 1, 1],
+    ["Publish without second review", 0, 0, 1, 1, 1],
+    ["Manage users", 0, 0, 0, 1, 1],
+    ["Manage subscriptions and refunds", 0, 0, 0, 1, 1],
+    ["Change pricing", 0, 0, 0, 0, 1],
+    ["Manage roles and permissions", 0, 0, 0, 0, 1],
+    ["View the audit log", 0, 0, 0, 1, 1]
+  ];
+  document.querySelector("#permTable tbody").innerHTML = perms.map(function (p) {
+    return "<tr><td><strong>" + p[0] + "</strong></td>" +
+      p.slice(1).map(function (v) {
+        return '<td><input type="checkbox"' + (v ? " checked" : "") +
+          ' aria-label="' + p[0] + '" style="accent-color:var(--primary);width:16px;height:16px"></td>';
+      }).join("") + "</tr>";
+  }).join("");
+
+  document.getElementById("admins").innerHTML = [
+    ["MS", "Meera Shah", "Super administrator", "meera.shah@emhub.example", "Now"],
+    ["DT", "Daniel Turner", "Administrator", "d.turner@emhub.example", "2 hours ago"],
+    ["RC", "Rachel Cho", "Administrator (finance)", "r.cho@emhub.example", "Yesterday"],
+    ["JP", "Joseph Painter", "Administrator (support)", "j.painter@emhub.example", "3 days ago"]
+  ].map(function (a) {
+    return '<div class="row row-tight" style="padding:10px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="avatar avatar-sm">' + a[0] + "</span>" +
+      "<div class='grow'><div class='fw-700 text-sm'>" + a[1] + "</div>" +
+      "<div class='text-xs text-subtle'>" + a[2] + " · " + a[3] + "</div></div>" +
+      "<span class='text-xs text-subtle'>" + a[4] + "</span></div>";
+  }).join("") +
+  '<button class="btn btn-outline btn-sm btn-block mt-2" type="button" onclick="EM.toast(\'Administrator invitation form opened.\')">Add administrator</button>';
+
+  document.querySelector("#auditTable tbody").innerHTML = [
+    ["16 Aug 2026, 09:42", "Meera Shah", "Granted complimentary access", "s.adeyemi@example.com · FRCEM Final SBA · 3 months", "81.14.22.9", "Success"],
+    ["16 Aug 2026, 09:18", "Daniel Turner", "Updated course pricing", "MRCEM OSCE · 6-month plan £199 → £209", "81.14.22.14", "Success"],
+    ["16 Aug 2026, 08:55", "Rachel Cho", "Issued refund", "SUB-20402 · £119.00", "81.14.22.31", "Success"],
+    ["15 Aug 2026, 17:32", "Meera Shah", "Added faculty member", "Dr Nadia Hussain · Question author", "81.14.22.9", "Success"],
+    ["15 Aug 2026, 16:04", "Joseph Painter", "Attempted user suspension", "y.kaya@example.com", "81.14.22.48", "Blocked — second approval required"],
+    ["15 Aug 2026, 14:20", "Daniel Turner", "Published content", "MRCEM SBA · Arrhythmia Management", "81.14.22.14", "Success"],
+    ["15 Aug 2026, 11:07", "Rachel Cho", "Exported financial report", "August 2026 reconciliation", "81.14.22.31", "Success"],
+    ["14 Aug 2026, 19:48", "Meera Shah", "Changed feature flag", "AI explanation assistant → disabled", "81.14.22.9", "Success"],
+    ["14 Aug 2026, 10:12", "Unknown", "Failed login attempt ×5", "admin@emhub.example", "203.0.113.87", "Blocked — IP rate limited"]
+  ].map(function (a) {
+    var ok = a[5] === "Success";
+    return "<tr><td class='text-xs mono'>" + a[0] + "</td><td><strong>" + a[1] + "</strong></td><td>" + a[2] + "</td>" +
+      "<td class='text-sm'>" + a[3] + "</td><td class='mono text-xs'>" + a[4] + "</td>" +
+      '<td><span class="badge badge-' + (ok ? "green" : "red") + '">' + a[5] + "</span></td></tr>";
+  }).join("");
+}
+</script>
+</body>
+</html>

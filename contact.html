@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personalised enquiry — EM Hub</title>
+<meta name="description" content="Tell us which exam you are preparing for and a member of faculty will build you a recommended study plan within one working day.">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header data-header data-active="contact" data-prefix=""></header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Contact</span></nav>
+      <h1>Personalised enquiry</h1>
+      <p>Tell us which examination you are sitting and when. A member of faculty — not a sales team — will reply within one working day with a recommended course, subscription length and study plan.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-sidebar" style="gap:48px;align-items:start">
+
+        <div class="card card-pad" style="padding:32px">
+          <h2 style="font-size:1.5rem">Send us your details</h2>
+          <p>Every field marked with an asterisk is required. We do not add enquiries to a marketing list.</p>
+
+          <form data-demo-form="Thank you — your enquiry has been received. A member of faculty will reply within one working day." class="mt-3">
+            <div class="form-grid">
+              <div class="field">
+                <label class="label" for="cName">Full name *</label>
+                <input class="input" id="cName" name="name" type="text" placeholder="Dr Ravi Krishnan" required>
+              </div>
+              <div class="field">
+                <label class="label" for="cEmail">Email address *</label>
+                <input class="input" id="cEmail" name="email" type="email" placeholder="you@example.com" required>
+              </div>
+              <div class="field">
+                <label class="label" for="cCountry">Country *</label>
+                <select class="select" id="cCountry" name="country" required>
+                  <option value="">Select your country</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="label" for="cExam">Exam preparing for *</label>
+                <select class="select" id="cExam" name="exam" required>
+                  <option value="">Select an examination</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="label" for="cDate">Expected sitting</label>
+                <input class="input" id="cDate" name="sitting" type="month" value="2026-11">
+              </div>
+              <div class="field">
+                <label class="label" for="cHours">Study hours available per week</label>
+                <select class="select" id="cHours" name="hours">
+                  <option>Under 5 hours</option>
+                  <option selected>5 – 10 hours</option>
+                  <option>10 – 20 hours</option>
+                  <option>More than 20 hours</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label class="label" for="cMessage">Message *</label>
+                <textarea class="textarea" id="cMessage" name="message" required
+                  placeholder="Tell us where you are in your preparation, anything you have already tried, and what you would like help with."></textarea>
+                <span class="hint">For example: previous attempts, weak subjects, whether you need an institutional invoice.</span>
+              </div>
+              <div class="field full">
+                <label class="check">
+                  <input type="checkbox" checked>
+                  <span>I would like a recommended study plan alongside the reply.</span>
+                </label>
+                <label class="check">
+                  <input type="checkbox" required>
+                  <span>I agree to EM Hub storing these details in order to respond to my enquiry. *</span>
+                </label>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <button class="btn btn-primary btn-lg" type="submit">Send enquiry <span data-icon="send"></span></button>
+              <button class="btn btn-ghost" type="reset">Clear form</button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="stack">
+          <div class="card card-pad">
+            <h4>Direct contact</h4>
+            <div class="stack-sm mt-2" id="contactBits"></div>
+          </div>
+
+          <div class="card card-pad">
+            <h4>Response times</h4>
+            <div class="stack-sm mt-2">
+              <div class="row-between text-sm"><span class="text-subtle">Course enquiries</span><span class="fw-700">Within 1 working day</span></div>
+              <div class="row-between text-sm"><span class="text-subtle">Faculty clinical questions</span><span class="fw-700">Within 24 hours (weekdays)</span></div>
+              <div class="row-between text-sm"><span class="text-subtle">Billing and invoices</span><span class="fw-700">Within 2 working days</span></div>
+              <div class="row-between text-sm"><span class="text-subtle">Institutional licensing</span><span class="fw-700">Within 3 working days</span></div>
+            </div>
+          </div>
+
+          <div class="card card-pad">
+            <h4>Institutional enquiries</h4>
+            <p class="text-sm">We work with more than 60 deaneries, hospitals and training programmes on cohort licences, which include a supervisor dashboard showing aggregate progress.</p>
+            <a class="btn btn-outline btn-sm btn-block" href="#">Download the institutional pack</a>
+          </div>
+
+          <div class="alert alert-info">
+            <span data-icon="info"></span>
+            <p class="mb-0 text-sm">This is a prototype. Submitting the form shows a confirmation but does not send anything.</p>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-subtle">
+    <div class="container container-narrow">
+      <div class="section-head">
+        <span class="eyebrow">Before you write</span>
+        <h2>These come up most often</h2>
+      </div>
+      <div id="contactFaqs"></div>
+    </div>
+  </section>
+</main>
+
+<footer data-footer data-prefix=""></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  var countries = ["United Kingdom", "India", "Ireland", "United Arab Emirates", "Nigeria", "Pakistan",
+    "Egypt", "Saudi Arabia", "Malaysia", "Singapore", "Australia", "South Africa", "Sri Lanka",
+    "Bangladesh", "Kenya", "Oman", "Qatar", "Kuwait", "Canada", "Other"];
+  var csel = document.getElementById("cCountry");
+  countries.forEach(function (c) {
+    var o = document.createElement("option"); o.textContent = c; csel.appendChild(o);
+  });
+
+  var esel = document.getElementById("cExam");
+  D.COURSES.forEach(function (c) {
+    var o = document.createElement("option"); o.textContent = c.title; esel.appendChild(o);
+  });
+  var other = document.createElement("option");
+  other.textContent = "Not sure yet — please advise";
+  esel.appendChild(other);
+
+  document.getElementById("contactBits").innerHTML = [
+    ["mail",  "Email",     "hello@emhub.example"],
+    ["phone", "Telephone", "+44 20 7946 0812"],
+    ["clock", "Office hours", "Mon–Fri, 09:00–17:30 GMT"],
+    ["pin",   "Registered office", "Sovereign House, 12 Portland Street, Manchester M1 3HL, United Kingdom"]
+  ].map(function (b) {
+    return '<div class="row" style="align-items:flex-start;gap:11px">' +
+      '<span class="icon-tile" style="width:36px;height:36px">' + I(b[0]) + "</span>" +
+      "<div><div class='text-xs text-subtle fw-600' style='text-transform:uppercase;letter-spacing:.07em'>" + b[1] + "</div>" +
+      "<div class='text-sm fw-600'>" + b[2] + "</div></div></div>";
+  }).join("");
+
+  document.getElementById("contactFaqs").innerHTML = D.FAQS.slice(0, 5).map(function (f, i) {
+    return '<div class="accordion' + (i === 0 ? " is-open" : "") + '">' +
+      '<button class="accordion-trigger" type="button"><span>' + f.q + "</span></button>" +
+      '<div class="accordion-content"><p>' + f.a + "</p></div></div>";
+  }).join("");
+}
+</script>
+</body>
+</html>

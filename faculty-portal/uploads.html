@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Media Uploads — EM Hub Faculty</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="faculty" data-active="uploads" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Media Uploads" data-sub="Images, audio, video and documents"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="mediaStats"></section>
+
+      <section class="card">
+        <div class="card-head"><h3>Upload media</h3><span class="badge badge-amber">Anonymised content only</span></div>
+        <div class="card-body">
+          <div class="grid grid-sidebar" style="gap:24px;align-items:start">
+            <div>
+              <div class="dropzone" id="dropzone" style="padding:44px 20px">
+                <span data-icon="upload"></span>
+                <div class="fw-700">Drop files here, or click to browse</div>
+                <div class="text-xs text-subtle mt-1">JPEG, PNG, WebP · MP3, WAV, M4A · MP4, WebM · PDF, DOCX — up to 200 MB per file</div>
+                <button class="btn btn-primary btn-sm mt-3" type="button">Choose files</button>
+              </div>
+
+              <div id="uploadQueue" class="mt-3"></div>
+
+              <div class="form-grid mt-3">
+                <div class="field"><label class="label" for="uCourse">Attach to course</label><select class="select" id="uCourse"></select></div>
+                <div class="field"><label class="label" for="uTopic">Attach to topic</label><select class="select" id="uTopic"></select></div>
+                <div class="field full"><label class="label" for="uAlt">Alternative text / transcript</label>
+                  <textarea class="textarea" id="uAlt" style="min-height:90px" placeholder="Required for accessibility. Audio and video files also need a full transcript."></textarea></div>
+              </div>
+              <label class="check mb-2"><input type="checkbox" required><span>I confirm this media contains no patient identifiers and consent is documented where required.</span></label>
+              <button class="btn btn-primary" type="button" onclick="EM.toast('Upload queued. Files are scanned before publication.')">Upload and attach</button>
+            </div>
+
+            <aside class="card card-pad">
+              <h4>Media guidelines</h4>
+              <div id="guidelines" class="mt-2"></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><h3>Media library</h3><div class="text-xs text-subtle"><span id="mCount">12</span> files</div></div>
+          <div class="row row-tight">
+            <div class="row row-tight" data-chip-group="#mediaTable">
+              <span class="chip is-active" data-value="">All</span>
+              <span class="chip" data-value="Image">Images</span>
+              <span class="chip" data-value="Audio">Audio</span>
+              <span class="chip" data-value="Video">Video</span>
+              <span class="chip" data-value="Document">Documents</span>
+            </div>
+            <div class="search-box">
+              <span data-icon="search"></span>
+              <input type="search" placeholder="Search media" data-filter-input="#mediaTable" data-filter-count="#mCount" aria-label="Search media">
+            </div>
+          </div>
+        </div>
+        <div class="card-body card-flush">
+          <div class="table-wrap"><table class="table" id="mediaTable">
+            <thead><tr><th>File</th><th>Type</th><th>Attached to</th><th>Size</th><th>Uploaded</th><th>Accessibility</th><th>Status</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <section class="grid grid-3" id="previewGrid"></section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("mediaStats").innerHTML = [
+    ["image", "", "684", "Images", "clinical and diagrams"],
+    ["audio", "icon-tile-amber", "112", "Audio files", "auscultation library"],
+    ["video", "icon-tile-red", "486", "Videos", "stations and teaching"],
+    ["file", "icon-tile-violet", "94", "Documents", "summaries and mark schemes"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  var uc = document.getElementById("uCourse");
+  D.COURSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; uc.appendChild(o); });
+  var ut = document.getElementById("uTopic");
+  D.CHAPTERS.forEach(function (ch) {
+    ch.topics.forEach(function (t) { var o = document.createElement("option"); o.textContent = ch.title + " › " + t.name; ut.appendChild(o); });
+  });
+
+  document.getElementById("dropzone").addEventListener("click", function () {
+    document.getElementById("uploadQueue").innerHTML = [
+      ["image", "ecg-inferior-stemi.png", "412 KB", 100, "Complete"],
+      ["video", "reperfusion-decision.mp4", "84.2 MB", 64, "Uploading"],
+      ["audio", "aortic-stenosis-lse.mp3", "2.1 MB", 100, "Complete"]
+    ].map(function (f) {
+      return '<div class="panel" style="margin-bottom:8px">' +
+        '<div class="row row-tight mb-1"><span class="icon-tile" style="width:34px;height:34px">' + I(f[0]) + "</span>" +
+        "<div class='grow'><div class='fw-700 text-sm'>" + f[1] + "</div>" +
+        "<div class='text-xs text-subtle'>" + f[2] + "</div></div>" +
+        '<span class="badge badge-' + (f[4] === "Complete" ? "green" : "amber") + '">' + f[4] + "</span></div>" +
+        '<div class="progress progress-sm"><div class="progress-bar' + (f[3] === 100 ? " is-green" : "") + '" style="width:' + f[3] + '%"></div></div></div>';
+    }).join("");
+    EM.toast("File picker is disabled in this prototype — showing a sample queue.");
+  });
+
+  document.getElementById("guidelines").innerHTML = [
+    ["Anonymise everything", "Remove DICOM metadata, patient names, hospital numbers and dates of birth before upload."],
+    ["Consent must be documented", "Any identifiable feature — tattoos, jewellery, distinctive scars — requires written consent on file."],
+    ["Transcripts are mandatory", "Every audio and video file needs a full transcript, both for accessibility and for candidates studying without sound."],
+    ["Alt text on every image", "Describe what a candidate should be able to see, without giving away the answer."],
+    ["Prefer WebP and MP4", "These compress best. Files over 200 MB are rejected at upload."]
+  ].map(function (g) {
+    return "<div style='padding:9px 0;border-bottom:1px solid var(--border)'>" +
+      "<div class='fw-700 text-sm'>" + g[0] + "</div>" +
+      "<div class='text-xs text-muted'>" + g[1] + "</div></div>";
+  }).join("");
+
+  var media = [
+    ["ecg-inferior-stemi.png", "Image", "Q-4821 · Acute Coronary Syndromes", "412 KB", "15 Aug 2026", true, "Live"],
+    ["chest-xray-haemopneumo.png", "Image", "Q-2214 · Chest Trauma", "788 KB", "14 Aug 2026", true, "Live"],
+    ["aortic-stenosis-lse.mp3", "Audio", "Q-5107 · Valvular Disease", "2.1 MB", "14 Aug 2026", false, "Review"],
+    ["stroke-assessment.mp4", "Video", "Q-6642 · Acute Stroke Pathways", "126 MB", "12 Aug 2026", true, "Live"],
+    ["osce-consent-sedation.mp4", "Video", "OSCE Station 7", "214 MB", "12 Aug 2026", true, "Live"],
+    ["forest-plot-worked.png", "Image", "Critical Appraisal Ch. 11", "196 KB", "10 Aug 2026", true, "Live"],
+    ["acs-summary-sheet.pdf", "Document", "Cardiovascular Emergencies", "1.4 MB", "09 Aug 2026", true, "Live"],
+    ["paeds-sepsis-pathway.pdf", "Document", "Paediatric EM Ch. 3", "882 KB", "08 Aug 2026", true, "Live"],
+    ["mitral-regurg-apex.mp3", "Audio", "Unattached", "1.8 MB", "07 Aug 2026", false, "Draft"],
+    ["pelvic-binder-technique.mp4", "Video", "Trauma Ch. 4", "94 MB", "06 Aug 2026", true, "Live"],
+    ["wellens-pattern.png", "Image", "Q-4821 · Acute Coronary Syndromes", "268 KB", "04 Aug 2026", true, "Live"],
+    ["osce-markscheme-2026.pdf", "Document", "MRCEM OSCE", "2.6 MB", "02 Aug 2026", true, "Live"]
+  ];
+
+  document.querySelector("#mediaTable tbody").innerHTML = media.map(function (m) {
+    var ic = m[1] === "Image" ? "image" : m[1] === "Audio" ? "audio" : m[1] === "Video" ? "video" : "file";
+    return '<tr data-tags="' + m[1] + '">' +
+      "<td><div class='row row-tight'><span class='icon-tile' style='width:32px;height:32px'>" + I(ic) + "</span>" +
+      "<strong class='mono text-xs'>" + m[0] + "</strong></div></td>" +
+      "<td>" + m[1] + "</td><td>" + m[2] + "</td><td>" + m[3] + "</td><td>" + m[4] + "</td>" +
+      '<td>' + (m[5] ? '<span class="badge badge-green">Alt text ✓</span>' : '<span class="badge badge-red">Missing</span>') + "</td>" +
+      '<td><span class="badge badge-' + (m[6] === "Live" ? "green" : m[6] === "Review" ? "amber" : "") + ' badge-dot">' + m[6] + "</span></td>" +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Preview opened.\')">View</button> ' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'File replaced.\')">Replace</button>' +
+      "</td></tr>";
+  }).join("");
+
+  document.getElementById("previewGrid").innerHTML =
+    '<div class="card"><div class="card-head"><h3 style="font-size:1rem">Image preview</h3><span class="badge badge-green">Live</span></div>' +
+      '<div class="card-body"><div class="media-frame">' + EM.xray() +
+      '<div class="media-cap">chest-xray-haemopneumo.png · attached to Q-2214</div></div></div></div>' +
+
+    '<div class="card"><div class="card-head"><h3 style="font-size:1rem">Audio preview</h3><span class="badge badge-amber">Needs transcript</span></div>' +
+      '<div class="card-body"><div class="audio-player"><button class="play-btn" type="button" aria-label="Play">' + I("play") + "</button>" +
+      '<div class="grow"><div class="wave" id="wave"></div>' +
+      '<div class="text-xs text-subtle mt-1">aortic-stenosis-lse.mp3 · 12 seconds</div></div></div>' +
+      '<div class="alert alert-warning"><span style="width:18px;height:18px;flex:none">' + I("alert") + "</span>" +
+      "<p class='mb-0 text-sm'>This file cannot go live until a transcript is added.</p></div></div></div>" +
+
+    '<div class="card"><div class="card-head"><h3 style="font-size:1rem">Video preview</h3><span class="badge badge-green">Live</span></div>' +
+      '<div class="card-body"><div class="media-frame"><div class="video-frame">' +
+      '<div class="play-overlay" role="button" tabindex="0" aria-label="Play">' + I("play") + "</div>" +
+      '<span class="duration">1:48</span></div>' +
+      '<div class="media-cap">stroke-assessment.mp4 · attached to Q-6642</div></div></div></div>';
+
+  var bars = "";
+  [30, 55, 80, 45, 92, 60, 35, 70, 88, 50, 40, 75, 95, 62, 38, 55, 82, 48, 30, 66, 90, 52].forEach(function (h) {
+    bars += '<span style="height:' + h + '%"></span>';
+  });
+  document.getElementById("wave").innerHTML = bars;
+
+  document.getElementById("previewGrid").addEventListener("click", function (e) {
+    if (e.target.closest(".play-btn")) {
+      document.querySelectorAll("#wave span").forEach(function (b, i) {
+        setTimeout(function () { b.classList.add("on"); }, i * 45);
+      });
+      EM.toast("Audio playback is simulated in this prototype.");
+    }
+    if (e.target.closest(".play-overlay")) EM.toast("Video playback is simulated in this prototype.");
+  });
+}
+</script>
+</body>
+</html>

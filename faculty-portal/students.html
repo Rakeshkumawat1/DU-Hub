@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Students — EM Hub Faculty</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="faculty" data-active="students" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Students" data-sub="1,284 candidates across your four courses"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="stStats"></section>
+
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Cohort readiness distribution</h3><span class="text-xs text-subtle">Latest mock score</span></div>
+          <div class="card-body" id="readinessChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Engagement</h3><span class="text-xs text-subtle">Active in the last 7 days</span></div>
+          <div class="card-body">
+            <div id="engagement"></div>
+            <div class="alert alert-warning mt-3">
+              <span data-icon="alert"></span>
+              <p class="mb-0 text-sm"><strong>184 candidates inactive for over 14 days.</strong> Historically, 61% of these do not sit their intended examination. An automated nudge is scheduled for Monday.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><h3>Candidate list</h3><div class="text-xs text-subtle"><span id="stCount">6</span> shown</div></div>
+          <div class="row row-tight">
+            <div class="row row-tight" data-chip-group="#stTable">
+              <span class="chip is-active" data-value="">All</span>
+              <span class="chip" data-value="On track">On track</span>
+              <span class="chip" data-value="At risk">At risk</span>
+              <span class="chip" data-value="Inactive">Inactive</span>
+              <span class="chip" data-value="Complete">Complete</span>
+            </div>
+            <div class="search-box">
+              <span data-icon="search"></span>
+              <input type="search" placeholder="Search candidates" data-filter-input="#stTable" data-filter-count="#stCount" aria-label="Search candidates">
+            </div>
+            <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('Cohort report exported as CSV.')"><span data-icon="download"></span> Export</button>
+          </div>
+        </div>
+        <div class="card-body card-flush">
+          <div class="table-wrap"><table class="table" id="stTable">
+            <thead><tr><th>Candidate</th><th>Course</th><th>Progress</th><th>Questions</th><th>Average</th><th>Last active</th><th>Status</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head"><h3>Candidate questions</h3><span class="badge badge-red">9 unanswered</span></div>
+          <div class="card-body" id="qaList"></div>
+        </div>
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Common sticking points</h3></div>
+            <div class="card-body">
+              <p class="text-sm">Topics generating the most candidate questions this month.</p>
+              <div id="sticking"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Response time</h3></div>
+            <div class="card-body">
+              <div class="row-between text-sm"><span class="text-subtle">Your median</span><span class="fw-700">6 h 12 m</span></div>
+              <div class="row-between text-sm mt-1"><span class="text-subtle">Faculty median</span><span class="fw-700">9 h 40 m</span></div>
+              <div class="row-between text-sm mt-1"><span class="text-subtle">Target</span><span class="fw-700">Within 24 h</span></div>
+              <div class="progress progress-sm mt-2"><div class="progress-bar is-green" data-pct="88" style="width:0%"></div></div>
+              <div class="text-xs text-subtle mt-1">88% answered within target this month</div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, F = D.FACULTY_USER, I = EM.icon;
+
+  document.getElementById("stStats").innerHTML = [
+    ["users", "", "1,284", "Active students", "+8.4% this month"],
+    ["checkCircle", "icon-tile-green", "892", "On track", "69% of cohort"],
+    ["alert", "icon-tile-red", "208", "At risk", "below pass standard"],
+    ["clock", "icon-tile-amber", "184", "Inactive 14+ days", "nudge scheduled"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  document.getElementById("readinessChart").innerHTML = EM.barChart([
+    { m: "<50%", v: 96 }, { m: "50-59", v: 184 }, { m: "60-64", v: 268 },
+    { m: "65-69", v: 312 }, { m: "70-74", v: 246 }, { m: "75-79", v: 124 }, { m: "80+", v: 54 }
+  ]) +
+  '<div class="row-between mt-2 text-xs text-subtle"><span>Cohort mean 66.4%</span><span>Pass mark 62%</span><span>736 above standard</span></div>';
+
+  document.getElementById("engagement").innerHTML = EM.hbars([
+    { label: "Daily active", pct: 34, tone: "green" },
+    { label: "Weekly active", pct: 71, tone: "teal" },
+    { label: "Monthly active", pct: 86, tone: "teal" },
+    { label: "Inactive 14+ days", pct: 14, tone: "red" }
+  ]);
+
+  /* Expand the six named students into a fuller, realistic list */
+  var extra = [
+    { name: "Dr Liam Docherty", initials: "LD", course: "FRCEM Final SBA", progress: 78, avg: 76, last: "Today", risk: "On track" },
+    { name: "Dr Fatima Al-Sayed", initials: "FA", course: "MRCEM SBA", progress: 62, avg: 70, last: "Yesterday", risk: "On track" },
+    { name: "Dr Kofi Mensah", initials: "KM", course: "MRCEM OSCE", progress: 44, avg: 61, last: "4 days", risk: "At risk" },
+    { name: "Dr Hannah Blake", initials: "HB", course: "MRCEM Primary", progress: 88, avg: 79, last: "Today", risk: "On track" },
+    { name: "Dr Ananya Iyer", initials: "AI", course: "DNB Emergency Medicine", progress: 21, avg: 52, last: "17 days", risk: "Inactive" },
+    { name: "Dr Tom Ridley", initials: "TR", course: "FRCEM Final SBA", progress: 96, avg: 82, last: "2 days", risk: "On track" }
+  ];
+  var students = F.students.concat(extra);
+
+  document.querySelector("#stTable tbody").innerHTML = students.map(function (s) {
+    var tone = s.risk === "At risk" ? "red" : s.risk === "Inactive" ? "amber" : s.risk === "Complete" ? "violet" : "green";
+    var qs = Math.round(s.progress * 31);
+    return '<tr data-tags="' + s.risk + '">' +
+      "<td><div class='row row-tight'><span class='avatar avatar-sm'>" + s.initials + "</span>" +
+      "<div><strong>" + s.name + "</strong></div></div></td>" +
+      "<td>" + s.course + "</td>" +
+      '<td><div class="row row-tight"><span class="progress progress-sm" style="width:70px"><span class="progress-bar" data-pct="' +
+        s.progress + '" style="width:0%"></span></span><span class="text-xs fw-700">' + s.progress + "%</span></div></td>" +
+      "<td>" + qs.toLocaleString() + "</td>" +
+      '<td><span class="fw-700 ' + (s.avg >= 70 ? "text-success" : s.avg >= 62 ? "" : "text-danger") + '">' + s.avg + "%</span></td>" +
+      "<td>" + s.last + "</td>" +
+      '<td><span class="badge badge-' + tone + ' badge-dot">' + s.risk + "</span></td>" +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Candidate profile opened.\')">Profile</button> ' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Message sent to the candidate.\')">Message</button>' +
+      "</td></tr>";
+  }).join("");
+
+  document.getElementById("qaList").innerHTML = [
+    ["RK", "Dr Ravi Krishnan", "Q-4821 · Acute Coronary Syndromes", "19 hours ago",
+     "In the inferior STEMI question, why is thrombolysis wrong if the transfer is 35 minutes? I thought the 120-minute clock started at first medical contact.", true],
+    ["EN", "Dr Elena Novak", "Q-3390 · Pulmonary Embolism", "1 day ago",
+     "Is D-dimer ever useful in pregnancy, or should it simply never be requested? Our local protocol still includes it.", true],
+    ["SA", "Dr Samuel Adeyemi", "Chapter 12 · Ethics and Law", "1 day ago",
+     "The Gillick competence section mentions Fraser guidelines only in passing. Are both examinable for FRCEM Final?", true],
+    ["AS", "Dr Ana Silva", "OSCE Station 7 · Breaking Bad News", "2 days ago",
+     "The mark scheme awards a point for 'checking understanding'. Does repeating back count, or does it need to be an explicit question?", false]
+  ].map(function (q) {
+    return '<div class="panel" style="margin-bottom:10px">' +
+      '<div class="row-between mb-1"><div class="row row-tight">' +
+        '<span class="avatar avatar-sm">' + q[0] + "</span>" +
+        "<div><div class='fw-700 text-sm'>" + q[1] + "</div>" +
+        "<div class='text-xs text-subtle'>" + q[2] + "</div></div></div>" +
+        '<div class="row row-tight"><span class="text-xs text-subtle">' + q[3] + "</span>" +
+        (q[5] ? '<span class="badge badge-red">Unanswered</span>' : '<span class="badge badge-green">Answered</span>') + "</div></div>" +
+      "<p class='text-sm mb-2'>" + q[4] + "</p>" +
+      '<div class="row row-tight">' +
+        '<button class="btn btn-primary btn-xs" type="button" onclick="EM.toast(\'Reply editor opened.\')">Reply</button>' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Escalated to the subject lead.\')">Escalate</button>' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Added to the course FAQ.\')">Add to FAQ</button>' +
+      "</div></div>";
+  }).join("");
+
+  document.getElementById("sticking").innerHTML = EM.hbars([
+    { label: "Reperfusion timing", pct: 82, tone: "red" },
+    { label: "D-dimer in pregnancy", pct: 64, tone: "amber" },
+    { label: "Paediatric fluid volumes", pct: 58, tone: "amber" },
+    { label: "Gillick vs Fraser", pct: 47, tone: "teal" },
+    { label: "Likelihood ratios", pct: 41, tone: "teal" }
+  ]);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faculty Dashboard — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="faculty" data-active="dashboard" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Faculty Dashboard" data-sub="Dr Aisha Rahman · Programme Director"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="facStats"></section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Content pipeline</h3><div class="text-xs text-subtle">Items you own across all courses</div></div>
+            <a class="btn btn-primary btn-sm" href="content.html"><span data-icon="plus"></span> Create content</a>
+          </div>
+          <div class="card-body card-flush">
+            <div class="table-wrap"><table class="table" id="pipeline">
+              <thead><tr><th>Item</th><th>Type</th><th>Course</th><th>Items</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+          <div class="card-foot row-between">
+            <div class="row row-tight text-xs text-subtle">
+              <span class="badge badge-green">3 published</span>
+              <span class="badge badge-amber">2 in review</span>
+              <span class="badge">2 drafts</span>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="content.html">Open content library <span data-icon="chevronRight"></span></a>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Needs your attention</h3><span class="badge badge-red">6</span></div>
+            <div class="card-body stack-sm" id="attention"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Quick actions</h3></div>
+            <div class="card-body stack-sm" id="quickActions"></div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Question performance</h3><div class="text-xs text-subtle">Your authored items, last 90 days</div></div>
+          </div>
+          <div class="card-body">
+            <div id="qPerf"></div>
+            <div class="alert alert-warning mt-3">
+              <span data-icon="alert"></span>
+              <p class="mb-0 text-sm"><strong>4 items flagged for review.</strong> These have a discrimination index below 0.15, meaning strong and weak candidates answer them at similar rates — usually a sign of ambiguous wording.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Content published</h3><div class="text-xs text-subtle">Items per month</div></div>
+            <span class="badge badge-green">▲ 16 this month</span>
+          </div>
+          <div class="card-body" id="publishChart"></div>
+        </div>
+      </section>
+
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head">
+            <h3>Students on your courses</h3>
+            <a class="btn btn-ghost btn-sm" href="students.html">All students <span data-icon="chevronRight"></span></a>
+          </div>
+          <div class="card-body card-flush">
+            <div class="table-wrap"><table class="table" id="studentTable">
+              <thead><tr><th>Candidate</th><th>Course</th><th>Progress</th><th>Average</th><th>Last active</th><th>Status</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <aside class="card">
+          <div class="card-head"><h3 style="font-size:1rem">Course statistics</h3></div>
+          <div class="card-body" id="courseStats"></div>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, F = D.FACULTY_USER, I = EM.icon;
+
+  document.getElementById("facStats").innerHTML = F.stats.map(function (s, i) {
+    var ics = ["users", "book", "flask", "star"], tones = ["", "icon-tile-teal", "icon-tile-violet", "icon-tile-amber"];
+    return '<div class="stat-card"><span class="icon-tile ' + tones[i] + '">' + I(ics[i]) + "</span>" +
+      '<div><div class="stat-value">' + s.value + '</div><div class="stat-label">' + s.label + "</div></div>" +
+      '<div class="row row-tight"><span class="stat-delta ' + (s.up ? "up" : "down") + '">' +
+      (s.up ? "▲" : "▼") + " " + s.delta + '</span><span class="text-xs text-subtle">' + s.note + "</span></div></div>";
+  }).join("");
+
+  document.querySelector("#pipeline tbody").innerHTML = F.contentQueue.map(function (c) {
+    var tone = c.status === "Published" ? "green" : c.status === "In review" ? "amber" : "";
+    var ic = c.type === "Question" ? "flask" : c.type === "Video" ? "video" : c.type === "Station" ? "users" : "book";
+    return "<tr><td><div class='row row-tight'><span class='icon-tile' style='width:32px;height:32px'>" + I(ic) + "</span>" +
+      "<strong>" + c.title + "</strong></div></td>" +
+      "<td>" + c.type + "</td><td>" + c.course + "</td><td>" + c.items + "</td>" +
+      '<td><span class="badge badge-' + tone + ' badge-dot">' + c.status + "</span></td>" +
+      "<td>" + c.updated + "</td>" +
+      '<td class="cell-actions"><a class="btn btn-soft btn-xs" href="content.html">Edit</a></td></tr>';
+  }).join("");
+
+  document.getElementById("attention").innerHTML = [
+    ["alert", "icon-tile-red", "4 questions flagged", "Discrimination index below 0.15 — likely ambiguous.", "questions.html"],
+    ["mail", "icon-tile-amber", "9 unanswered candidate questions", "Oldest is 19 hours old. Target is 24 hours.", "students.html"],
+    ["refresh", "icon-tile-violet", "Guideline change: RCEM oxygen therapy", "9 of your questions reference the old position.", "questions.html"]
+  ].map(function (a) {
+    return '<a class="row" href="' + a[4] + '" style="align-items:flex-start;gap:11px;padding:9px;border-radius:var(--r-sm)">' +
+      '<span class="icon-tile ' + a[1] + '" style="width:34px;height:34px">' + I(a[0]) + "</span>" +
+      "<span><span class='fw-700 text-sm' style='display:block;color:var(--text)'>" + a[2] + "</span>" +
+      "<span class='text-xs text-subtle'>" + a[3] + "</span></span></a>";
+  }).join("");
+
+  document.getElementById("quickActions").innerHTML = [
+    ["plus", "Write a new question", "questions.html"],
+    ["book", "Create a chapter or topic", "content.html"],
+    ["upload", "Upload media", "uploads.html"],
+    ["chart", "Export a cohort report", "students.html"]
+  ].map(function (a) {
+    return '<a class="btn btn-outline btn-sm btn-block" href="' + a[2] + '" style="justify-content:flex-start">' +
+      "<span style='display:inline-flex;width:16px;height:16px'>" + I(a[0]) + "</span> " + a[1] + "</a>";
+  }).join("");
+
+  document.getElementById("qPerf").innerHTML = EM.hbars([
+    { label: "Facility index (avg)", pct: 64, tone: "teal" },
+    { label: "Discrimination ≥ 0.30", pct: 71, tone: "green" },
+    { label: "Discrimination 0.15–0.29", pct: 22, tone: "amber" },
+    { label: "Discrimination < 0.15", pct: 7, tone: "red" }
+  ]) +
+  '<div class="grid grid-3 grid-gap-sm mt-3">' +
+    ["1,908 authored", "4.7 avg rating", "132 retired"].map(function (t) {
+      return '<div class="panel text-center text-sm fw-700">' + t + "</div>";
+    }).join("") + "</div>";
+
+  document.getElementById("publishChart").innerHTML = EM.barChart([
+    { m: "Mar", v: 22 }, { m: "Apr", v: 31 }, { m: "May", v: 28 },
+    { m: "Jun", v: 36 }, { m: "Jul", v: 24 }, { m: "Aug", v: 42 }
+  ], { teal: true });
+
+  document.querySelector("#studentTable tbody").innerHTML = F.students.map(function (s) {
+    var tone = s.risk === "At risk" ? "red" : s.risk === "Inactive" ? "amber" : s.risk === "Complete" ? "violet" : "green";
+    return "<tr><td><div class='row row-tight'><span class='avatar avatar-sm'>" + s.initials + "</span>" +
+      "<strong>" + s.name + "</strong></div></td><td>" + s.course + "</td>" +
+      '<td><div class="row row-tight"><span class="progress progress-sm" style="width:70px"><span class="progress-bar" data-pct="' +
+      s.progress + '" style="width:0%"></span></span><span class="text-xs fw-700">' + s.progress + "%</span></div></td>" +
+      "<td>" + s.avg + "%</td><td>" + s.last + "</td>" +
+      '<td><span class="badge badge-' + tone + ' badge-dot">' + s.risk + "</span></td>" +
+      '<td class="cell-actions"><a class="btn btn-soft btn-xs" href="students.html">View</a></td></tr>';
+  }).join("");
+
+  document.getElementById("courseStats").innerHTML = [
+    ["MRCEM SBA", "4,260 enrolled", 74],
+    ["FRCEM Final SBA", "2,470 enrolled", 68],
+    ["MRCEM OSCE", "1,890 enrolled", 62],
+    ["MRCEM Primary", "3,180 enrolled", 71]
+  ].map(function (c) {
+    return '<div style="margin-bottom:14px"><div class="row-between text-sm" style="margin-bottom:5px">' +
+      '<span class="fw-600">' + c[0] + '</span><span class="text-xs text-subtle">' + c[1] + "</span></div>" +
+      '<div class="progress progress-sm"><div class="progress-bar" data-pct="' + c[2] + '" style="width:0%"></div></div>' +
+      '<div class="text-xs text-subtle mt-1">' + c[2] + "% average completion</div></div>";
+  }).join("") +
+  '<div class="panel mt-2"><div class="text-xs text-subtle">Aggregate satisfaction</div>' +
+  '<div class="row row-tight"><span class="fw-700" style="font-size:1.3rem">4.8 / 5</span>' +
+  '<span class="text-xs text-subtle">from 2,692 ratings</span></div></div>';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Library — EM Hub Faculty</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="faculty" data-active="content" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Content Library" data-sub="Create and manage chapters, topics and explanations"></div>
+
+    <main class="app-content" id="main">
+
+      <div class="tabs" data-tabs="#contentPanels" role="tablist">
+        <button class="tab is-active" data-tab="library">Library</button>
+        <button class="tab" data-tab="create">Create chapter or topic</button>
+        <button class="tab" data-tab="structure">Course structure</button>
+      </div>
+
+      <div id="contentPanels">
+
+        <!-- LIBRARY -->
+        <div class="tab-panel is-active" data-panel="library">
+          <section class="grid grid-4 mb-3" id="libStats"></section>
+
+          <div class="card">
+            <div class="card-head">
+              <div><h3>All content</h3><div class="text-xs text-subtle"><span id="libCount">7</span> items</div></div>
+              <div class="row row-tight">
+                <div class="row row-tight" data-chip-group="#libTable">
+                  <span class="chip is-active" data-value="">All</span>
+                  <span class="chip" data-value="Published">Published</span>
+                  <span class="chip" data-value="In review">In review</span>
+                  <span class="chip" data-value="Draft">Draft</span>
+                </div>
+                <div class="search-box">
+                  <span data-icon="search"></span>
+                  <input type="search" placeholder="Search content" data-filter-input="#libTable" data-filter-count="#libCount" aria-label="Search content">
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-modal-open="#newContentModal"><span data-icon="plus"></span> New</button>
+              </div>
+            </div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="libTable">
+                <thead><tr><th>Title</th><th>Type</th><th>Course</th><th>Subject</th><th>Items</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CREATE -->
+        <div class="tab-panel" data-panel="create">
+          <div class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head"><h3>Create content</h3><span class="badge badge-amber">Draft — not visible to candidates</span></div>
+              <form class="card-body" data-demo-form="Content saved as a draft and queued for clinical review.">
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="cType">Content type</label>
+                    <select class="select" id="cType"><option>Chapter</option><option selected>Topic</option><option>Explanation</option><option>OSCE station</option></select></div>
+                  <div class="field"><label class="label" for="cCourse">Course</label>
+                    <select class="select" id="cCourse"></select></div>
+                  <div class="field"><label class="label" for="cSubject">Subject</label>
+                    <select class="select" id="cSubject"></select></div>
+                  <div class="field"><label class="label" for="cChapter">Parent chapter</label>
+                    <select class="select" id="cChapter"></select></div>
+                  <div class="field full"><label class="label" for="cTitle">Title</label>
+                    <input class="input" id="cTitle" placeholder="e.g. Aortic Dissection" required></div>
+                  <div class="field full"><label class="label" for="cSummary">One-line summary</label>
+                    <input class="input" id="cSummary" placeholder="Shown in the chapter list and search results"></div>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="cBody">Learning content</label>
+                  <div class="row row-tight mb-1" id="editorToolbar"></div>
+                  <textarea class="textarea" id="cBody" style="min-height:280px" placeholder="Write the topic content. Use ## for headings, - for bullets and > for a highlighted box."></textarea>
+                  <span class="hint">Markdown-style formatting. Content is rendered into the candidate learning screen on publication.</span>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="cKeyPoints">High-yield exam points</label>
+                  <textarea class="textarea" id="cKeyPoints" style="min-height:120px" placeholder="One per line. These appear in the yellow key-points box."></textarea>
+                </div>
+
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="cCurriculum">Curriculum mapping</label>
+                    <input class="input" id="cCurriculum" placeholder="e.g. CAP4, SLO1"></div>
+                  <div class="field"><label class="label" for="cRead">Estimated read time</label>
+                    <input class="input" id="cRead" type="number" value="15" min="1"> </div>
+                </div>
+
+                <label class="check mb-2"><input type="checkbox" checked><span>Send to clinical review on save</span></label>
+                <label class="check mb-3"><input type="checkbox"><span>Notify enrolled candidates when published</span></label>
+
+                <div class="row">
+                  <button class="btn btn-primary" type="submit">Save draft</button>
+                  <button class="btn btn-outline" type="button" onclick="EM.toast('Preview opened in the candidate learning view.')">Preview as candidate</button>
+                </div>
+              </form>
+            </div>
+
+            <aside class="stack">
+              <div class="card">
+                <div class="card-head"><h3 style="font-size:1rem">Editorial checklist</h3></div>
+                <div class="card-body" id="checklist"></div>
+              </div>
+              <div class="card">
+                <div class="card-head"><h3 style="font-size:1rem">Attach media</h3></div>
+                <div class="card-body">
+                  <div class="dropzone" id="dz">
+                    <span data-icon="upload"></span>
+                    <div class="fw-700 text-sm">Drop files or click to browse</div>
+                    <div class="text-xs text-subtle">Images, audio, video and documents · max 200 MB</div>
+                  </div>
+                  <div class="mt-2" id="attached"></div>
+                  <a class="btn btn-outline btn-sm btn-block mt-2" href="uploads.html">Open media library</a>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- STRUCTURE -->
+        <div class="tab-panel" data-panel="structure">
+          <div class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head">
+                <div><h3>Course structure</h3><div class="text-xs text-subtle">MRCEM SBA · Course → Subject → Chapter → Topic</div></div>
+                <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('Reordering saved.')">Save order</button>
+              </div>
+              <div class="card-body" id="structure"></div>
+            </div>
+            <aside class="card">
+              <div class="card-head"><h3 style="font-size:1rem">Coverage gaps</h3></div>
+              <div class="card-body">
+                <p class="text-sm">Curriculum items with fewer than 15 questions or no published topic.</p>
+                <div id="gaps"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="modal-backdrop" id="newContentModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ncTitle">
+    <div class="card-head">
+      <h3 id="ncTitle">What would you like to create?</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <div class="card-body">
+      <div class="stack-sm" id="createOptions"></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, F = D.FACULTY_USER, I = EM.icon;
+
+  document.getElementById("libStats").innerHTML = [
+    ["book", "", "342", "Content items"],
+    ["checkCircle", "icon-tile-green", "298", "Published"],
+    ["clock", "icon-tile-amber", "26", "In review"],
+    ["file", "icon-tile-violet", "18", "Drafts"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div></div>";
+  }).join("");
+
+  var subjects = ["Cardiology", "Respiratory", "Neurology", "Trauma", "Toxicology", "Paediatric EM", "Resuscitation", "Musculoskeletal"];
+
+  document.querySelector("#libTable tbody").innerHTML = F.contentQueue.map(function (c, i) {
+    var tone = c.status === "Published" ? "green" : c.status === "In review" ? "amber" : "";
+    var ic = c.type === "Question" ? "flask" : c.type === "Video" ? "video" : c.type === "Station" ? "users" : "book";
+    return '<tr data-tags="' + c.status + '">' +
+      "<td><div class='row row-tight'><span class='icon-tile' style='width:32px;height:32px'>" + I(ic) + "</span>" +
+      "<strong>" + c.title + "</strong></div></td>" +
+      "<td>" + c.type + "</td><td>" + c.course + "</td><td>" + subjects[i % subjects.length] + "</td><td>" + c.items + "</td>" +
+      '<td><span class="badge badge-' + tone + ' badge-dot">' + c.status + "</span></td><td>" + c.updated + "</td>" +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Opened in the editor.\')">Edit</button> ' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Preview opened.\')">Preview</button>' +
+      "</td></tr>";
+  }).join("");
+
+  /* Create form selects */
+  var cc = document.getElementById("cCourse");
+  D.COURSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; cc.appendChild(o); });
+  cc.value = "MRCEM SBA (Intermediate)";
+  var cs = document.getElementById("cSubject");
+  subjects.forEach(function (s) { var o = document.createElement("option"); o.textContent = s; cs.appendChild(o); });
+  var ch = document.getElementById("cChapter");
+  D.CHAPTERS.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; ch.appendChild(o); });
+
+  document.getElementById("editorToolbar").innerHTML =
+    [["Heading", "H2"], ["Bold", "B"], ["Italic", "I"], ["Bullets", "•"], ["Table", "▦"], ["Quote", "❝"], ["Image", "▣"]]
+      .map(function (b) {
+        return '<button class="btn btn-outline btn-xs" type="button" title="' + b[0] + '">' + b[1] + "</button>";
+      }).join("");
+  document.getElementById("editorToolbar").addEventListener("click", function (e) {
+    if (e.target.closest("button")) EM.toast("Formatting applied.");
+  });
+
+  document.getElementById("checklist").innerHTML = [
+    ["Mapped to a curriculum item", true],
+    ["Written from mechanism, not recall", true],
+    ["Red flags stated explicitly", true],
+    ["Guidelines cited with a date", false],
+    ["UK-specific pathways flagged", false],
+    ["Reviewed by a second consultant", false]
+  ].map(function (c) {
+    return '<label class="check" style="padding:7px 0"><input type="checkbox"' + (c[1] ? " checked" : "") + ">" +
+      "<span class='text-sm'>" + c[0] + "</span></label>";
+  }).join("") +
+  '<div class="progress progress-sm mt-2"><div class="progress-bar is-amber" data-pct="50" style="width:0%"></div></div>' +
+  '<div class="text-xs text-subtle mt-1">3 of 6 complete — cannot publish until all are checked</div>';
+
+  document.getElementById("dz").addEventListener("click", function () {
+    EM.toast("File picker is disabled in this prototype.");
+    document.getElementById("attached").innerHTML =
+      [["image", "ecg-inferior-stemi.png", "412 KB"], ["video", "reperfusion-decision.mp4", "84 MB"]].map(function (f) {
+        return '<div class="row row-tight" style="padding:8px 0;border-bottom:1px solid var(--border)">' +
+          "<span class='icon-tile' style='width:32px;height:32px'>" + I(f[0]) + "</span>" +
+          "<div class='grow'><div class='fw-700 text-xs'>" + f[1] + "</div><div class='text-xs text-subtle'>" + f[2] + "</div></div>" +
+          '<span class="badge badge-green">Uploaded</span></div>';
+      }).join("");
+  });
+
+  /* Structure tree */
+  document.getElementById("structure").innerHTML = D.CHAPTERS.map(function (ch, i) {
+    return '<div class="accordion' + (i === 0 ? " is-open" : "") + '">' +
+      '<button class="accordion-trigger" type="button"><span class="row row-tight">' +
+        '<span class="badge badge-blue">' + String(i + 1).padStart(2, "0") + "</span>" +
+        "<span>" + ch.title + "</span>" +
+        '<span class="badge">' + ch.topics.length + " topics</span></span></button>" +
+      '<div class="accordion-content">' +
+        ch.topics.map(function (t) {
+          return '<div class="row-between" style="padding:8px 0;border-bottom:1px solid var(--border)">' +
+            "<div class='row row-tight'><span style='width:15px;height:15px;color:var(--text-subtle)'>" + I("file") + "</span>" +
+            "<span class='text-sm'>" + t.name + "</span>" +
+            '<span class="badge badge-' + (t.done ? "green" : "") + '">' + (t.done ? "Published" : "Draft") + "</span></div>" +
+            '<div class="row row-tight">' +
+              '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Opened in the editor.\')">Edit</button>' +
+              '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Moved.\')">Move</button>' +
+            "</div></div>";
+        }).join("") +
+        '<button class="btn btn-outline btn-sm mt-2" type="button" onclick="EM.toast(\'New topic added to this chapter.\')">' +
+        "<span style='display:inline-flex;width:15px;height:15px'>" + I("plus") + "</span> Add topic</button>" +
+      "</div></div>";
+  }).join("");
+
+  document.getElementById("gaps").innerHTML = [
+    ["Aortic dissection", "8 questions", "red"],
+    ["Hyperkalaemia management", "11 questions", "red"],
+    ["Ophthalmic emergencies", "12 questions", "amber"],
+    ["Dental emergencies", "6 questions", "red"],
+    ["Frailty and falls", "13 questions", "amber"]
+  ].map(function (g) {
+    return '<div class="row-between" style="padding:9px 0;border-bottom:1px solid var(--border)">' +
+      "<div><div class='fw-700 text-sm'>" + g[0] + "</div><div class='text-xs text-subtle'>" + g[1] + "</div></div>" +
+      '<span class="badge badge-' + g[2] + '">Gap</span></div>';
+  }).join("");
+
+  document.getElementById("createOptions").innerHTML = [
+    ["book", "Chapter", "A top-level container holding several topics."],
+    ["file", "Topic", "A single learning unit with notes, key points and linked questions."],
+    ["flask", "Question", "An SBA, multiple-correct, image, audio or video item."],
+    ["users", "OSCE station", "A filmed station with an examiner mark scheme."],
+    ["video", "Video", "A recorded teaching segment attached to a topic."]
+  ].map(function (o) {
+    return '<a class="panel row" href="' + (o[1] === "Question" ? "questions.html" : o[1] === "Video" ? "uploads.html" : "#") +
+      '" style="align-items:center;gap:12px">' +
+      '<span class="icon-tile" style="width:38px;height:38px">' + I(o[0]) + "</span>" +
+      "<span class='grow'><span class='fw-700 text-sm' style='display:block;color:var(--text)'>" + o[1] + "</span>" +
+      "<span class='text-xs text-subtle'>" + o[2] + "</span></span>" +
+      "<span style='width:16px;height:16px;color:var(--text-subtle)'>" + I("chevronRight") + "</span></a>";
+  }).join("");
+}
+</script>
+</body>
+</html>

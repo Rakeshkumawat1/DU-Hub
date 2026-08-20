@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analytics — EM Hub Admin</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="admin" data-active="analytics" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Analytics" data-sub="Commercial, learning and content performance"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="row-between">
+        <div class="tabs" data-tabs="#anPanels" role="tablist" style="border:0">
+          <button class="tab is-active" data-tab="commercial">Commercial</button>
+          <button class="tab" data-tab="learning">Learning outcomes</button>
+          <button class="tab" data-tab="content">Content quality</button>
+          <button class="tab" data-tab="engagement">Engagement</button>
+        </div>
+        <div class="row row-tight">
+          <select class="select" style="width:auto" id="anRange">
+            <option>Last 30 days</option><option selected>Last 90 days</option><option>Year to date</option><option>All time</option>
+          </select>
+          <button class="btn btn-outline btn-sm" type="button" onclick="EM.toast('Report exported as PDF.')"><span data-icon="download"></span> Export</button>
+        </div>
+      </section>
+
+      <div id="anPanels">
+
+        <!-- COMMERCIAL -->
+        <div class="tab-panel is-active" data-panel="commercial">
+          <section class="grid grid-5 mb-3" id="comKpis"></section>
+
+          <section class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head"><h3>Revenue and new subscriptions</h3><span class="badge badge-green">▲ 11.4% MoM</span></div>
+              <div class="card-body">
+                <div id="revChart"></div>
+                <div class="chart-legend mt-2"><span><i style="background:var(--blue-500)"></i>Revenue (£k)</span></div>
+                <hr>
+                <div id="subsChart"></div>
+                <div class="chart-legend mt-2"><span><i style="background:var(--teal-400)"></i>New subscriptions</span></div>
+              </div>
+            </div>
+            <aside class="stack">
+              <div class="card"><div class="card-head"><h3 style="font-size:1rem">Revenue mix</h3></div>
+                <div class="card-body text-center">
+                  <div class="donut" id="mixDonut"></div>
+                  <div id="mixList" class="mt-3"></div>
+                </div></div>
+            </aside>
+          </section>
+
+          <section class="grid grid-3">
+            <div class="card"><div class="card-head"><h3>Conversion funnel</h3></div>
+              <div class="card-body" id="funnel"></div></div>
+            <div class="card"><div class="card-head"><h3>Duration mix</h3></div>
+              <div class="card-body" id="durMix"></div></div>
+            <div class="card"><div class="card-head"><h3>Revenue by region</h3></div>
+              <div class="card-body" id="regionRev"></div></div>
+          </section>
+        </div>
+
+        <!-- LEARNING -->
+        <div class="tab-panel" data-panel="learning">
+          <section class="grid grid-4 mb-3" id="learnKpis"></section>
+
+          <section class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Reported pass rates by course</h3><span class="text-xs text-subtle">Self-reported, 2025–26 sittings</span></div>
+              <div class="card-body" id="passRates"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Readiness distribution</h3><span class="text-xs text-subtle">All candidates with a mock in the last 30 days</span></div>
+              <div class="card-body" id="readiness"></div>
+            </div>
+          </section>
+
+          <section class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Platform-wide accuracy by subject</h3></div>
+              <div class="card-body" id="subjectAccuracy"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Preparation intensity vs outcome</h3></div>
+              <div class="card-body">
+                <div id="intensity"></div>
+                <div class="alert alert-info mt-3">
+                  <span data-icon="info"></span>
+                  <p class="mb-0 text-sm">Candidates completing <strong>70% or more</strong> of the question bank pass at 96%. Below 40% completion, the pass rate falls to 58%. Completion is a far stronger predictor than time spent.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="tab-panel" data-panel="content">
+          <section class="grid grid-4 mb-3" id="contentKpis"></section>
+
+          <section class="grid grid-2">
+            <div class="card"><div class="card-head"><h3>Item quality distribution</h3></div>
+              <div class="card-body" id="itemQuality"></div></div>
+            <div class="card"><div class="card-head"><h3>Content freshness</h3></div>
+              <div class="card-body" id="freshness"></div></div>
+          </section>
+
+          <section class="card">
+            <div class="card-head"><h3>Lowest-rated content</h3><span class="text-xs text-subtle">Candidate ratings below 4.0</span></div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="lowRated">
+                <thead><tr><th>Item</th><th>Type</th><th>Course</th><th>Author</th><th>Rating</th><th>Ratings</th><th>Common complaint</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ENGAGEMENT -->
+        <div class="tab-panel" data-panel="engagement">
+          <section class="grid grid-4 mb-3" id="engKpis"></section>
+
+          <section class="grid grid-2">
+            <div class="card"><div class="card-head"><h3>Daily active candidates</h3></div>
+              <div class="card-body" id="dauChart"></div></div>
+            <div class="card"><div class="card-head"><h3>Sessions by time of day</h3></div>
+              <div class="card-body" id="hourChart"></div></div>
+          </section>
+
+          <section class="grid grid-3">
+            <div class="card"><div class="card-head"><h3>Device mix</h3></div>
+              <div class="card-body" id="devices"></div></div>
+            <div class="card"><div class="card-head"><h3>Feature usage</h3></div>
+              <div class="card-body" id="features"></div></div>
+            <div class="card"><div class="card-head"><h3>Retention by cohort week</h3></div>
+              <div class="card-body" id="retention"></div></div>
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, A = D.ADMIN, I = EM.icon;
+
+  function kpi(list) {
+    return list.map(function (s) {
+      return '<div class="stat-card"><span class="icon-tile ' + (s[1] || "") + '">' + I(s[0]) + "</span>" +
+        '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+        (s[4] ? '<div class="text-xs text-subtle">' + s[4] + "</div>" : "") + "</div>";
+    }).join("");
+  }
+
+  /* ---------- COMMERCIAL ---------- */
+  document.getElementById("comKpis").innerHTML = kpi([
+    ["pound", "", "£2.79M", "Revenue YTD", "+18.2% year on year"],
+    ["card", "icon-tile-teal", "4,932", "Active subscriptions", "+6.2% MoM"],
+    ["chart", "icon-tile-green", "£142.60", "Average order value", "+£8.40 vs Q1"],
+    ["refresh", "icon-tile-amber", "34%", "Renewal rate", "cohort average 29%"],
+    ["users", "icon-tile-violet", "39.5%", "Registration to purchase", "+5.4 pts since Jun"]
+  ]);
+
+  document.getElementById("revChart").innerHTML = EM.lineChart(
+    A.revenueByMonth.map(function (r) { return r.v; }),
+    { labels: A.revenueByMonth.map(function (r) { return r.m; }), min: 280, max: 520, height: 190 });
+
+  document.getElementById("subsChart").innerHTML = EM.barChart(
+    [{ m: "Feb", v: 486 }, { m: "Mar", v: 542 }, { m: "Apr", v: 598 }, { m: "May", v: 561 },
+     { m: "Jun", v: 654 }, { m: "Jul", v: 668 }, { m: "Aug", v: 742 }], { teal: true });
+
+  var palette = ["var(--blue-600)", "var(--teal-500)", "var(--blue-400)", "var(--teal-300)",
+                 "var(--violet-500)", "var(--amber-500)", "var(--slate-400)"];
+  document.getElementById("mixDonut").innerHTML =
+    EM.pieRing(A.revenueByCourse.map(function (c, i) { return { pct: c.pct, color: palette[i] }; }), 160, 22) +
+    '<div class="donut-center"><div class="v" style="font-size:1.1rem">£2.79M</div><div class="l">YTD</div></div>';
+  document.getElementById("mixList").innerHTML = A.revenueByCourse.map(function (c, i) {
+    return '<div class="row-between text-sm" style="padding:5px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="row row-tight"><i style="width:10px;height:10px;border-radius:3px;background:' + palette[i] + '"></i>' +
+      c.name + "</span><span class='fw-700'>" + c.pct + "%</span></div>";
+  }).join("");
+
+  document.getElementById("funnel").innerHTML = A.funnel.map(function (f, i) {
+    var tones = ["is-teal", "is-teal", "is-green", "is-amber", "is-red"];
+    return '<div style="margin-bottom:13px"><div class="row-between text-sm" style="margin-bottom:4px">' +
+      '<span class="fw-600">' + f.stage + '</span><span class="text-xs"><strong>' + f.v.toLocaleString() + "</strong> · " + f.pct + "%</span></div>" +
+      '<div class="progress"><div class="progress-bar ' + tones[i] + '" data-pct="' + f.pct + '" style="width:0%"></div></div></div>';
+  }).join("");
+
+  document.getElementById("durMix").innerHTML = EM.hbars([
+    { label: "1 Month", pct: 14, tone: "teal" }, { label: "2 Months", pct: 11, tone: "teal" },
+    { label: "3 Months", pct: 38, tone: "green" }, { label: "4 Months", pct: 16, tone: "teal" },
+    { label: "6 Months", pct: 21, tone: "green" }
+  ]);
+
+  document.getElementById("regionRev").innerHTML = EM.hbars([
+    { label: "United Kingdom", pct: 38, tone: "green" }, { label: "South Asia", pct: 24, tone: "teal" },
+    { label: "Middle East", pct: 16, tone: "teal" }, { label: "Africa", pct: 11, tone: "amber" },
+    { label: "Europe (non-UK)", pct: 7, tone: "amber" }, { label: "Rest of world", pct: 4, tone: "" }
+  ]);
+
+  /* ---------- LEARNING ---------- */
+  document.getElementById("learnKpis").innerHTML = kpi([
+    ["award", "", "94%", "First-attempt pass rate", "2025 cohort, self-reported"],
+    ["target", "icon-tile-teal", "66.4%", "Mean readiness score", "across active candidates"],
+    ["flask", "icon-tile-green", "3.14M", "Questions answered", "last 90 days"],
+    ["certificate", "icon-tile-violet", "2,618", "Certificates issued", "since launch"]
+  ]);
+
+  document.getElementById("passRates").innerHTML = EM.hbars([
+    { label: "Critical Appraisal", pct: 97, tone: "green" },
+    { label: "MRCEM Primary", pct: 95, tone: "green" },
+    { label: "MRCEM SBA", pct: 94, tone: "green" },
+    { label: "DNB Emergency Med", pct: 92, tone: "green" },
+    { label: "FRCEM Final SBA", pct: 89, tone: "teal" },
+    { label: "MRCEM OSCE", pct: 88, tone: "teal" },
+    { label: "FRCEM Final OSCE", pct: 84, tone: "amber" }
+  ]) + '<p class="text-xs text-subtle mt-2 mb-0">Based on 4,182 candidates who reported an outcome. Response bias is likely — treat as indicative rather than audited.</p>';
+
+  document.getElementById("readiness").innerHTML = EM.barChart([
+    { m: "<50", v: 6 }, { m: "50-59", v: 13 }, { m: "60-64", v: 19 },
+    { m: "65-69", v: 24 }, { m: "70-74", v: 21 }, { m: "75-79", v: 12 }, { m: "80+", v: 5 }
+  ], { suffix: "%" }) +
+  '<div class="row-between text-xs text-subtle mt-2"><span>Mean 66.4%</span><span>Median 67.1%</span><span>62% above pass standard</span></div>';
+
+  document.getElementById("subjectAccuracy").innerHTML = EM.hbars([
+    { label: "Resuscitation", pct: 74, tone: "green" }, { label: "Cardiology", pct: 71, tone: "green" },
+    { label: "Respiratory", pct: 70, tone: "green" }, { label: "Toxicology", pct: 67, tone: "teal" },
+    { label: "Trauma", pct: 66, tone: "teal" }, { label: "Paediatric EM", pct: 63, tone: "amber" },
+    { label: "Neurology", pct: 62, tone: "amber" }, { label: "Musculoskeletal", pct: 58, tone: "red" },
+    { label: "Critical Appraisal", pct: 55, tone: "red" }
+  ]);
+
+  document.getElementById("intensity").innerHTML = EM.hbars([
+    { label: "70%+ bank completed", pct: 96, tone: "green" },
+    { label: "55–69% completed", pct: 89, tone: "green" },
+    { label: "40–54% completed", pct: 76, tone: "amber" },
+    { label: "25–39% completed", pct: 58, tone: "red" },
+    { label: "Under 25% completed", pct: 34, tone: "red" }
+  ]);
+
+  /* ---------- CONTENT ---------- */
+  document.getElementById("contentKpis").innerHTML = kpi([
+    ["flask", "", "12,850", "Live questions", "132 retired this cycle"],
+    ["star", "icon-tile-amber", "4.7", "Mean item rating", "from 2,140 ratings"],
+    ["target", "icon-tile-green", "0.34", "Mean discrimination", "target 0.30+"],
+    ["refresh", "icon-tile-teal", "8.4%", "Refreshed per cycle", "reviewed or rewritten"]
+  ]);
+
+  document.getElementById("itemQuality").innerHTML = EM.hbars([
+    { label: "Excellent (disc. 0.40+)", pct: 37, tone: "green" },
+    { label: "Good (0.30–0.39)", pct: 34, tone: "green" },
+    { label: "Acceptable (0.20–0.29)", pct: 18, tone: "teal" },
+    { label: "Weak (0.10–0.19)", pct: 8, tone: "amber" },
+    { label: "Poor (under 0.10)", pct: 3, tone: "red" }
+  ]) + '<p class="text-xs text-subtle mt-2 mb-0">Items below 0.15 are automatically routed to the authoring faculty for review.</p>';
+
+  document.getElementById("freshness").innerHTML = EM.hbars([
+    { label: "Updated in last 3 months", pct: 42, tone: "green" },
+    { label: "3–6 months", pct: 28, tone: "green" },
+    { label: "6–12 months", pct: 19, tone: "teal" },
+    { label: "12–18 months", pct: 8, tone: "amber" },
+    { label: "Over 18 months", pct: 3, tone: "red" }
+  ]) + '<p class="text-xs text-subtle mt-2 mb-0">386 items are over 18 months old. These are queued for the September editorial review.</p>';
+
+  document.querySelector("#lowRated tbody").innerHTML = [
+    ["Q-1188 · Paracetamol overdose timing", "SBA", "MRCEM SBA", "Dr Aisha Rahman", 3.4, 218, "Answer considered ambiguous"],
+    ["Q-5107 · Aortic stenosis auscultation", "Audio", "MRCEM SBA", "Dr Aisha Rahman", 3.6, 164, "Audio quality poor on mobile"],
+    ["Q-2214 · Chest trauma radiograph", "Image", "MRCEM SBA", "Dr Daniel Fischer", 3.7, 142, "Image resolution too low"],
+    ["Ch. 12 · Ethics and Law", "Topic", "FRCEM Final SBA", "Dr Omar Haddad", 3.8, 96, "Too UK-specific for IMGs"],
+    ["Q-9012 · Predictive values", "SBA", "Critical Appraisal", "Dr Priya Nair", 3.9, 284, "Explanation assumes prior stats knowledge"]
+  ].map(function (r) {
+    return "<tr><td><strong>" + r[0] + "</strong></td><td>" + r[1] + "</td><td>" + r[2] + "</td><td>" + r[3] + "</td>" +
+      '<td><span class="badge badge-' + (r[4] < 3.5 ? "red" : "amber") + '">' + r[4] + "</span></td>" +
+      "<td>" + r[5] + "</td><td class='text-sm'>" + r[6] + "</td>" +
+      '<td class="cell-actions"><button class="btn btn-soft btn-xs" type="button" onclick="EM.toast(\'Sent to the author for revision.\')">Send to author</button></td></tr>';
+  }).join("");
+
+  /* ---------- ENGAGEMENT ---------- */
+  document.getElementById("engKpis").innerHTML = kpi([
+    ["users", "", "4,246", "Daily active", "34% of active subscribers"],
+    ["clock", "icon-tile-teal", "34 min", "Median session", "+4 min vs Q1"],
+    ["zap", "icon-tile-green", "11.2 days", "Median streak", "at exam minus 30 days"],
+    ["monitor", "icon-tile-amber", "58%", "Mobile sessions", "42% desktop"]
+  ]);
+
+  document.getElementById("dauChart").innerHTML = EM.lineChart(
+    [3180, 3420, 3640, 3510, 3880, 4120, 3960, 4246],
+    { labels: ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"], min: 3000, max: 4400, height: 200 });
+
+  document.getElementById("hourChart").innerHTML = EM.barChart([
+    { m: "00", v: 4 }, { m: "04", v: 3 }, { m: "07", v: 18 }, { m: "10", v: 11 },
+    { m: "13", v: 9 }, { m: "16", v: 12 }, { m: "19", v: 21 }, { m: "22", v: 22 }
+  ], { suffix: "%", teal: true }) +
+  '<p class="text-xs text-subtle mt-2 mb-0">Two clear peaks: the morning commute and late evening after shifts.</p>';
+
+  document.getElementById("devices").innerHTML = EM.hbars([
+    { label: "Mobile", pct: 58, tone: "teal" },
+    { label: "Desktop", pct: 34, tone: "green" },
+    { label: "Tablet", pct: 8, tone: "amber" }
+  ]);
+
+  document.getElementById("features").innerHTML = EM.hbars([
+    { label: "Question bank", pct: 96, tone: "green" },
+    { label: "Mock exams", pct: 78, tone: "green" },
+    { label: "Revision notes", pct: 71, tone: "teal" },
+    { label: "Videos", pct: 54, tone: "amber" },
+    { label: "Bookmarks", pct: 48, tone: "amber" },
+    { label: "Study plan", pct: 36, tone: "red" }
+  ]);
+
+  document.getElementById("retention").innerHTML = EM.hbars([
+    { label: "Week 1", pct: 100, tone: "green" }, { label: "Week 2", pct: 84, tone: "green" },
+    { label: "Week 4", pct: 71, tone: "teal" }, { label: "Week 8", pct: 62, tone: "teal" },
+    { label: "Week 12", pct: 54, tone: "amber" }, { label: "Week 16", pct: 41, tone: "red" }
+  ]);
+
+  document.getElementById("anRange").addEventListener("change", function () {
+    EM.toast("Range updated: " + this.value);
+  });
+}
+</script>
+</body>
+</html>

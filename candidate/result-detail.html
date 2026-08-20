@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Answer review — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="results" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Answer review" data-sub="Full Mock #8 · every question with the model explanation"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="card">
+        <div class="card-body">
+          <div class="row-between">
+            <div class="row row-tight">
+              <a class="btn btn-ghost btn-sm" href="result.html"><span data-icon="chevronLeft"></span> Back to report</a>
+              <span class="badge badge-blue">73.3%</span>
+              <span class="badge badge-green">132 correct</span>
+              <span class="badge badge-red">42 incorrect</span>
+              <span class="badge badge-amber">6 unanswered</span>
+            </div>
+            <div class="row row-tight" id="revFilter">
+              <span class="chip is-active" data-value="all">All</span>
+              <span class="chip" data-value="wrong">Incorrect only</span>
+              <span class="chip" data-value="flagged">Flagged</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-sidebar">
+        <div id="reviewList" class="stack-lg"></div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Jump to question</h3></div>
+            <div class="card-body">
+              <div class="palette-grid" id="revPalette"></div>
+              <div class="palette-legend mt-2">
+                <span><i style="background:var(--success)"></i>Correct</span>
+                <span><i style="background:var(--danger)"></i>Incorrect</span>
+                <span><i style="background:var(--warning)"></i>Unanswered</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Add all incorrect to a drill</h3></div>
+            <div class="card-body">
+              <p class="text-sm">Build a targeted session from the 42 questions you got wrong on this paper. Spaced repetition puts them back in front of you at 3, 10 and 28 days.</p>
+              <a class="btn btn-primary btn-sm btn-block" href="question-bank.html">Build drill from incorrect</a>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/questions.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  /* Deterministic set of "attempted" answers so the review is realistic. */
+  var attempts = D.QUESTIONS.map(function (q, i) {
+    var correct = q.answers || [q.answer];
+    var wrongKey = q.options.filter(function (o) { return correct.indexOf(o.key) === -1; })[0].key;
+    var pattern = [true, false, false, true, false, true, false, false];
+    var got = pattern[i % pattern.length];
+    var unanswered = i === 7;
+    return {
+      q: q,
+      picked: unanswered ? [] : (got ? correct : [wrongKey]),
+      correct: got && !unanswered,
+      unanswered: unanswered,
+      flagged: i % 3 === 1,
+      time: ["0:42", "1:38", "1:12", "0:36", "1:44", "1:22", "1:51", "—"][i % 8]
+    };
+  });
+
+  var host = document.getElementById("reviewList");
+
+  host.innerHTML = attempts.map(function (a, i) {
+    var status = a.unanswered ? "unanswered" : a.correct ? "correct" : "wrong";
+    return '<div data-status="' + status + '" data-flagged="' + a.flagged + '">' +
+      '<div class="row-between mb-2">' +
+        '<div class="row row-tight">' +
+          '<span class="badge badge-' + (status === "correct" ? "green" : status === "wrong" ? "red" : "amber") + '">' +
+            (status === "correct" ? "Correct" : status === "wrong" ? "Incorrect" : "Unanswered") + "</span>" +
+          (a.flagged ? '<span class="badge badge-amber">You flagged this</span>' : "") +
+          '<span class="text-xs text-subtle">Time spent ' + a.time + "</span>" +
+        "</div>" +
+      "</div>" +
+      EMQ.render(a.q, { index: i + 1, total: attempts.length, mode: "review" }) +
+      "</div>";
+  }).join("");
+
+  /* Reveal every question immediately — this is a review, not an attempt. */
+  attempts.forEach(function (a, i) {
+    var card = host.querySelectorAll(".question-card")[i];
+    card.setAttribute("data-answered", "1");
+    EMQ.reveal(card, a.q, a.picked, true);
+    if (a.unanswered) {
+      card.querySelector(".options").insertAdjacentHTML("afterbegin",
+        '<div class="alert alert-warning" style="margin-bottom:10px"><span style="width:18px;height:18px;flex:none">' +
+        I("alert") + "</span><p class='mb-0 text-sm'>You did not answer this question. There is no negative marking — always guess.</p></div>");
+    }
+  });
+
+  /* Palette */
+  function paintPalette() {
+    document.getElementById("revPalette").innerHTML = attempts.map(function (a, i) {
+      var cls = "palette-btn " + (a.unanswered ? "flagged" : a.correct ? "answered" : "");
+      var style = (!a.unanswered && !a.correct) ? ' style="background:var(--danger);border-color:var(--danger);color:#fff"' : "";
+      return '<button class="' + cls + '" type="button" data-jump="' + i + '"' + style +
+        ' aria-label="Question ' + (i + 1) + '">' + (i + 1) + "</button>";
+    }).join("");
+  }
+  paintPalette();
+
+  document.getElementById("revPalette").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-jump]");
+    if (!b) return;
+    var target = host.children[+b.getAttribute("data-jump")];
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  /* Filters */
+  document.querySelectorAll("#revFilter .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#revFilter .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      var v = chip.getAttribute("data-value");
+      [].forEach.call(host.children, function (el) {
+        var on = v === "all" ||
+          (v === "wrong" && el.getAttribute("data-status") !== "correct") ||
+          (v === "flagged" && el.getAttribute("data-flagged") === "true");
+        el.style.display = on ? "" : "none";
+      });
+    });
+  });
+
+  /* Bookmark / report buttons inside review cards */
+  host.addEventListener("click", function (e) {
+    var act = e.target.closest("[data-action]");
+    if (!act) return;
+    var a = act.getAttribute("data-action");
+    if (a === "bookmark") { act.classList.toggle("btn-soft"); EM.toast("Bookmark updated."); }
+    if (a === "flag") EM.toast("Flag updated.");
+    if (a === "rate") EM.toast("Thank you — feedback recorded.");
+    if (a === "report") EM.toast("Reported to the editorial team.");
+  });
+}
+</script>
+</body>
+</html>

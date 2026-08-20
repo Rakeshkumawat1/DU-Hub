@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Result — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="results" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Mock exam result" data-sub="Full Mock #8 · submitted 16 August 2026"></div>
+
+    <main class="app-content" id="main">
+
+      <!-- Headline -->
+      <section class="card" style="overflow:hidden">
+        <div style="background:linear-gradient(120deg,var(--blue-700),var(--blue-600) 45%,var(--teal-600));padding:34px 30px;color:#fff">
+          <div class="row-between">
+            <div>
+              <div class="row row-tight mb-2">
+                <span class="badge" style="background:rgba(255,255,255,.2);color:#fff">Exam mode</span>
+                <span class="badge" style="background:rgba(255,255,255,.2);color:#fff" id="hMode">MRCEM SBA</span>
+              </div>
+              <h2 style="color:#fff;font-size:2rem;margin-bottom:6px" id="hVerdict">Provisional pass standard reached</h2>
+              <p style="color:#fff;opacity:.9;margin-bottom:0" id="hSub">You scored above the Angoff-derived standard for this paper.</p>
+            </div>
+            <div class="text-center">
+              <div style="font-size:3.6rem;font-weight:800;letter-spacing:-.05em;line-height:1" id="hPct">73.3%</div>
+              <div style="opacity:.85;font-size:.9rem" id="hScore">132 of 180 correct</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="grid grid-5" id="resultCards"></div>
+        </div>
+      </section>
+
+      <!-- Charts -->
+      <section class="grid grid-3">
+        <div class="card">
+          <div class="card-head"><h3>Answer breakdown</h3></div>
+          <div class="card-body text-center">
+            <div class="donut" id="breakdownDonut"></div>
+            <div class="chart-legend mt-3" style="justify-content:center" id="breakdownLegend"></div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column:span 2">
+          <div class="card-head">
+            <div><h3>Performance by subject</h3><div class="text-xs text-subtle">Your score against the cohort average for this paper</div></div>
+          </div>
+          <div class="card-body" id="subjectCompare"></div>
+        </div>
+      </section>
+
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Pacing analysis</h3><span class="badge badge-green">Comfortable</span></div>
+          <div class="card-body">
+            <div id="pacingChart"></div>
+            <div class="grid grid-3 grid-gap-sm mt-3" id="pacingStats"></div>
+            <div class="alert alert-info mt-3">
+              <span data-icon="info"></span>
+              <p class="mb-0 text-sm">You spent an average of <strong>56 seconds</strong> per question and finished with 12 minutes to spare. Your accuracy dropped by 9 points in the final 30 questions, which usually signals concentration fatigue rather than knowledge gaps.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Where you stand</h3><span class="text-xs text-subtle">Against 2,140 candidates for the November sitting</span></div>
+          <div class="card-body">
+            <div class="text-center mb-3">
+              <div style="font-size:2.6rem;font-weight:800;letter-spacing:-.04em" class="gradient-text">68th</div>
+              <div class="text-sm text-subtle">percentile in the current cohort</div>
+            </div>
+            <div id="percentileChart"></div>
+            <div class="grid grid-2 grid-gap-sm mt-3" id="cohortStats"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recommendations + review -->
+      <section class="grid grid-sidebar">
+        <div class="card">
+          <div class="card-head">
+            <h3>Review your answers</h3>
+            <div class="row row-tight" id="reviewFilter">
+              <span class="chip is-active" data-value="all">All</span>
+              <span class="chip" data-value="wrong">Incorrect</span>
+              <span class="chip" data-value="flagged">Flagged</span>
+              <span class="chip" data-value="slow">Slowest</span>
+            </div>
+          </div>
+          <div class="card-body card-flush">
+            <div class="table-wrap"><table class="table" id="reviewTable">
+              <thead><tr><th>#</th><th>Subject</th><th>Topic</th><th>Your answer</th><th>Correct</th><th>Time</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+          <div class="card-foot row-between">
+            <span class="text-xs text-subtle">Showing 12 of 180 questions in this prototype</span>
+            <a class="btn btn-primary btn-sm" href="result-detail.html">Open full review</a>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">What to do next</h3></div>
+            <div class="card-body stack-sm" id="nextActions"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 style="font-size:1rem">Export</h3></div>
+            <div class="card-body">
+              <button class="btn btn-outline btn-sm btn-block mb-2" type="button" onclick="window.print()"><span data-icon="download"></span> Download PDF report</button>
+              <button class="btn btn-outline btn-sm btn-block" type="button" onclick="EM.toast('Report shared with your educational supervisor.')"><span data-icon="send"></span> Share with supervisor</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  /* Pull the live result if the runner stored one, else use the sample. */
+  var res = { total: 180, correct: 132, elapsed: 10080, mode: "exam", requested: 180 };
+  try {
+    var raw = sessionStorage.getItem("emhub-last-result");
+    if (raw) {
+      var live = JSON.parse(raw);
+      var scale = 180 / live.total;
+      res = { total: 180, correct: Math.round(live.correct * scale), elapsed: live.elapsed, mode: live.mode, requested: live.requested };
+    }
+  } catch (e) {}
+
+  var pct = (res.correct / res.total) * 100;
+  var incorrect = res.total - res.correct - 6;
+  var unanswered = 6;
+  var passMark = 62;
+
+  document.getElementById("hPct").textContent = pct.toFixed(1) + "%";
+  document.getElementById("hScore").textContent = res.correct + " of " + res.total + " correct";
+  document.getElementById("hMode").textContent = "MRCEM SBA · " + res.total + " questions";
+  if (pct < passMark) {
+    document.getElementById("hVerdict").textContent = "Below the provisional pass standard";
+    document.getElementById("hSub").textContent = "You are " + (passMark - pct).toFixed(1) + " points short of the Angoff-derived standard for this paper.";
+  }
+
+  function hms(s) {
+    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+    return h ? h + "h " + m + "m" : m + "m";
+  }
+
+  document.getElementById("resultCards").innerHTML = [
+    ["award",  "",                 pct.toFixed(1) + "%", "Score",       "pass mark " + passMark + "%"],
+    ["checkCircle", "icon-tile-green",  String(res.correct),  "Correct",     Math.round((res.correct / res.total) * 100) + "% of paper"],
+    ["xCircle", "icon-tile-red",   String(incorrect),    "Incorrect",   Math.round((incorrect / res.total) * 100) + "% of paper"],
+    ["alert",  "icon-tile-amber",  String(unanswered),   "Unanswered",  "scored as zero"],
+    ["clock",  "icon-tile-violet", hms(res.elapsed),     "Time taken",  "limit " + Math.round(res.requested / 60) + "h 00m"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  /* Donut */
+  var segs = [
+    { pct: (res.correct / res.total) * 100, color: "var(--success)", label: "Correct" },
+    { pct: (incorrect / res.total) * 100,   color: "var(--danger)",  label: "Incorrect" },
+    { pct: (unanswered / res.total) * 100,  color: "var(--warning)", label: "Unanswered" }
+  ];
+  document.getElementById("breakdownDonut").innerHTML =
+    EM.pieRing(segs, 190, 24) +
+    '<div class="donut-center"><div class="v">' + pct.toFixed(0) + '%</div><div class="l">Score</div></div>';
+  document.getElementById("breakdownLegend").innerHTML = segs.map(function (s) {
+    return '<span><i style="background:' + s.color + '"></i>' + s.label + " · " + Math.round(s.pct) + "%</span>";
+  }).join("");
+
+  /* Subject comparison */
+  var subjects = [
+    { s: "Resuscitation", you: 84, cohort: 71 }, { s: "Cardiology", you: 79, cohort: 68 },
+    { s: "Respiratory", you: 76, cohort: 70 },   { s: "Toxicology", you: 81, cohort: 62 },
+    { s: "Trauma", you: 68, cohort: 66 },        { s: "Paediatric EM", you: 59, cohort: 64 },
+    { s: "Neurology", you: 55, cohort: 65 },     { s: "Musculoskeletal", you: 47, cohort: 61 }
+  ];
+  document.getElementById("subjectCompare").innerHTML =
+    subjects.map(function (r) {
+      var diff = r.you - r.cohort;
+      var tone = r.you >= 75 ? "is-green" : r.you >= 62 ? "is-teal" : r.you >= 55 ? "is-amber" : "is-red";
+      return '<div style="margin-bottom:14px">' +
+        '<div class="row-between text-sm" style="margin-bottom:5px">' +
+          '<span class="fw-600">' + r.s + "</span>" +
+          '<span class="row row-tight"><span class="fw-700">' + r.you + "%</span>" +
+          '<span class="text-xs ' + (diff >= 0 ? "text-success" : "text-danger") + ' fw-700">' +
+          (diff >= 0 ? "+" : "") + diff + " vs cohort</span></span>" +
+        "</div>" +
+        '<div class="progress" style="position:relative">' +
+          '<div class="progress-bar ' + tone + '" data-pct="' + r.you + '" style="width:0%"></div>' +
+          '<span style="position:absolute;top:-2px;bottom:-2px;left:' + r.cohort + '%;width:2px;background:var(--text-subtle);opacity:.7" title="Cohort average ' + r.cohort + '%"></span>' +
+        "</div></div>";
+    }).join("") +
+    '<div class="chart-legend mt-2"><span><i style="background:var(--teal-400)"></i>Your score</span>' +
+    '<span><i style="background:var(--text-subtle);width:2px;height:12px;border-radius:0"></i>Cohort average</span></div>';
+
+  /* Pacing */
+  document.getElementById("pacingChart").innerHTML = EM.lineChart(
+    [48, 52, 55, 58, 54, 61, 67, 72, 64], {
+      labels: ["1-20", "21-40", "41-60", "61-80", "81-100", "101-120", "121-140", "141-160", "161-180"],
+      min: 40, max: 80, height: 180
+    });
+  document.getElementById("pacingStats").innerHTML = [
+    ["Avg per question", "56 s"], ["Fastest block", "48 s (Q1–20)"], ["Slowest block", "72 s (Q141–160)"]
+  ].map(function (s) {
+    return '<div class="panel text-center"><div class="fw-700">' + s[1] + "</div>" +
+      '<div class="text-xs text-subtle">' + s[0] + "</div></div>";
+  }).join("");
+
+  /* Percentile distribution */
+  document.getElementById("percentileChart").innerHTML = EM.barChart([
+    { m: "<50", v: 8 }, { m: "50-59", v: 17 }, { m: "60-64", v: 22 },
+    { m: "65-69", v: 24 }, { m: "70-74", v: 18 }, { m: "75-79", v: 8 }, { m: "80+", v: 3 }
+  ], { suffix: "%" });
+  document.getElementById("cohortStats").innerHTML = [
+    ["Cohort mean", "65.2%"], ["Cohort median", "66.1%"],
+    ["Your rank", "685 of 2,140"], ["Pass mark", "62.0%"]
+  ].map(function (s) {
+    return '<div class="row-between text-sm" style="padding:6px 0;border-bottom:1px solid var(--border)">' +
+      '<span class="text-subtle">' + s[0] + '</span><span class="fw-700">' + s[1] + "</span></div>";
+  }).join("");
+
+  /* Review table */
+  var rows = [
+    [1, "Cardiology", "Acute Coronary Syndromes", "B", "B", "0:42", true, false],
+    [7, "Respiratory", "Pulmonary Embolism", "A, C", "A, C, D", "1:38", false, true],
+    [14, "Trauma", "Chest Trauma", "A", "B", "1:12", false, true],
+    [23, "Toxicology", "Paracetamol Overdose", "A", "A", "0:36", true, false],
+    [38, "Neurology", "Acute Stroke Pathways", "A", "B", "1:44", false, false],
+    [51, "Paediatric EM", "Paediatric Sepsis", "A", "B", "1:22", false, true],
+    [66, "Cardiology", "Valvular Disease", "C", "B", "1:51", false, false],
+    [88, "Musculoskeletal", "Limb Fractures", "—", "D", "—", false, false],
+    [104, "Critical Appraisal", "Diagnostic Accuracy", "B", "D", "2:14", false, true],
+    [129, "Resuscitation", "Cardiac Arrest Rhythms", "C", "C", "0:48", true, false],
+    [155, "Neurology", "Status Epilepticus", "E", "C", "1:33", false, false],
+    [172, "Musculoskeletal", "Pelvic Fractures", "—", "A", "—", false, false]
+  ];
+  document.querySelector("#reviewTable tbody").innerHTML = rows.map(function (r) {
+    var tags = (r[6] ? "correct " : "wrong ") + (r[7] ? "flagged " : "") + (r[5] > "1:30" ? "slow" : "");
+    return '<tr data-tags="' + tags + '"><td class="mono">' + r[0] + "</td>" +
+      "<td>" + r[1] + "</td><td><strong>" + r[2] + "</strong></td>" +
+      '<td><span class="badge badge-' + (r[6] ? "green" : r[3] === "—" ? "amber" : "red") + '">' + r[3] + "</span></td>" +
+      '<td><span class="badge badge-green">' + r[4] + "</span></td>" +
+      '<td class="mono">' + r[5] + "</td>" +
+      '<td class="cell-actions">' + (r[7] ? '<span class="badge badge-amber">Flagged</span> ' : "") +
+      '<a class="btn btn-soft btn-xs" href="result-detail.html">Review</a></td></tr>';
+  }).join("");
+
+  document.querySelectorAll("#reviewFilter .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#reviewFilter .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      var v = chip.getAttribute("data-value");
+      document.querySelectorAll("#reviewTable tbody tr").forEach(function (tr) {
+        tr.style.display = (v === "all" || (tr.getAttribute("data-tags") || "").indexOf(v) > -1) ? "" : "none";
+      });
+    });
+  });
+
+  document.getElementById("nextActions").innerHTML = [
+    ["alert", "icon-tile-red", "Musculoskeletal is costing you 6 marks", "47% on this paper, 14 points below the cohort. A 60-question drill would close most of the gap.", "question-bank.html?subject=Musculoskeletal", "Start drill"],
+    ["brain", "icon-tile-amber", "Neurology is trending down", "55% here versus 61% two mocks ago. Revisit Status Epilepticus and Headache Red Flags.", "learn.html", "Open chapter"],
+    ["monitor", "icon-tile-teal", "Sit Full Mock #9 in 7 days", "Weekly full-length mocks are the strongest single predictor of a first-attempt pass.", "mock-tests.html", "Schedule mock"]
+  ].map(function (a) {
+    return '<div class="panel"><div class="row row-tight mb-1"><span class="icon-tile ' + a[1] + '" style="width:34px;height:34px">' + I(a[0]) + "</span>" +
+      "<div class='fw-700 text-sm'>" + a[2] + "</div></div>" +
+      "<p class='text-sm mb-2'>" + a[3] + "</p>" +
+      '<a class="btn btn-outline btn-xs" href="' + a[4] + '">' + a[5] + "</a></div>";
+  }).join("");
+}
+</script>
+</body>
+</html>

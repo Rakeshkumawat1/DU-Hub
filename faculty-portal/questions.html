@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Question Bank — EM Hub Faculty</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="faculty" data-active="questions" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Question Bank" data-sub="Author, review and retire examination items"></div>
+
+    <main class="app-content" id="main">
+
+      <div class="tabs" data-tabs="#qPanels" role="tablist">
+        <button class="tab is-active" data-tab="browse">Browse questions</button>
+        <button class="tab" data-tab="write">Write a question</button>
+        <button class="tab" data-tab="review">Review queue <span class="badge badge-red" style="margin-left:6px">6</span></button>
+        <button class="tab" data-tab="analytics">Item analytics</button>
+      </div>
+
+      <div id="qPanels">
+
+        <!-- BROWSE -->
+        <div class="tab-panel is-active" data-panel="browse">
+          <section class="grid grid-4 mb-3" id="qStats"></section>
+          <div class="card">
+            <div class="card-head">
+              <div><h3>All questions</h3><div class="text-xs text-subtle"><span id="qCount">8</span> shown of 1,908 authored</div></div>
+              <div class="row row-tight">
+                <div class="row row-tight" data-chip-group="#qTable">
+                  <span class="chip is-active" data-value="">All</span>
+                  <span class="chip" data-value="sba">SBA</span>
+                  <span class="chip" data-value="multi">Multiple correct</span>
+                  <span class="chip" data-value="image">Image</span>
+                  <span class="chip" data-value="audio">Audio</span>
+                  <span class="chip" data-value="video">Video</span>
+                </div>
+                <div class="search-box">
+                  <span data-icon="search"></span>
+                  <input type="search" placeholder="Search stems and topics" data-filter-input="#qTable" data-filter-count="#qCount" aria-label="Search questions">
+                </div>
+              </div>
+            </div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="qTable">
+                <thead><tr><th>ID</th><th>Stem</th><th>Format</th><th>Subject</th><th>Difficulty</th><th>Facility</th><th>Discrimination</th><th>Status</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+            <div class="card-foot row-between">
+              <span class="text-xs text-subtle">Facility = proportion answering correctly. Discrimination = how well the item separates strong from weak candidates.</span>
+              <div class="pagination"><button type="button">Previous</button><button type="button" class="is-active">1</button><button type="button">2</button><button type="button">Next</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WRITE -->
+        <div class="tab-panel" data-panel="write">
+          <div class="grid grid-sidebar">
+            <div class="card">
+              <div class="card-head"><h3>Write a question</h3><span class="badge badge-amber">Draft</span></div>
+              <form class="card-body" data-demo-form="Question saved and sent for clinical review.">
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="wType">Format</label>
+                    <select class="select" id="wType">
+                      <option value="sba" selected>Single Best Answer</option>
+                      <option value="multi">Multiple Correct</option>
+                      <option value="image">Image-Based</option>
+                      <option value="audio">Audio</option>
+                      <option value="video">Video</option>
+                    </select></div>
+                  <div class="field"><label class="label" for="wCourse">Course</label><select class="select" id="wCourse"></select></div>
+                  <div class="field"><label class="label" for="wSubject">Subject</label><select class="select" id="wSubject"></select></div>
+                  <div class="field"><label class="label" for="wDiff">Target difficulty</label>
+                    <select class="select" id="wDiff"><option>Easy</option><option selected>Moderate</option><option>Hard</option></select></div>
+                  <div class="field full"><label class="label" for="wTopic">Topic / curriculum item</label>
+                    <input class="input" id="wTopic" placeholder="e.g. Acute Coronary Syndromes · CAP4"></div>
+                </div>
+
+                <div class="field" id="mediaField" hidden>
+                  <label class="label">Attach media</label>
+                  <div class="dropzone" onclick="EM.toast('File picker is disabled in this prototype.')">
+                    <span data-icon="upload"></span>
+                    <div class="fw-700 text-sm" id="mediaHint">Drop an image or click to browse</div>
+                    <div class="text-xs text-subtle">Anonymised clinical media only — no patient identifiers</div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="wStem">Question stem</label>
+                  <textarea class="textarea" id="wStem" style="min-height:160px"
+                    placeholder="Give the clinical vignette, then the lead-in question on a new line."></textarea>
+                  <span class="hint">Write a full clinical vignette. Avoid negatives such as "which is NOT" — they test reading, not knowledge.</span>
+                </div>
+
+                <div class="field">
+                  <label class="label">Options</label>
+                  <div id="optionRows"></div>
+                  <div class="row row-tight mt-1">
+                    <span class="text-xs text-subtle">Mark the correct option with the radio button on the left.</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="wExplain">Explanation</label>
+                  <textarea class="textarea" id="wExplain" style="min-height:160px"
+                    placeholder="Explain why the correct answer is correct, then why each distractor is wrong."></textarea>
+                  <span class="hint">Every distractor must be addressed. This is the single strongest driver of candidate ratings.</span>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="wTeaching">Exam technique note</label>
+                  <textarea class="textarea" id="wTeaching" style="min-height:90px"
+                    placeholder="The transferable rule this question is testing."></textarea>
+                </div>
+
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="wRef">Guideline reference</label>
+                    <input class="input" id="wRef" placeholder="e.g. NICE NG185, updated Mar 2026"></div>
+                  <div class="field"><label class="label" for="wReviewer">Send to reviewer</label>
+                    <select class="select" id="wReviewer"></select></div>
+                </div>
+
+                <div class="row">
+                  <button class="btn btn-primary" type="submit">Save and send for review</button>
+                  <button class="btn btn-outline" type="button" id="previewQ">Preview as candidate</button>
+                </div>
+              </form>
+            </div>
+
+            <aside class="stack">
+              <div class="card">
+                <div class="card-head"><h3 style="font-size:1rem">Item-writing rules</h3></div>
+                <div class="card-body" id="rules"></div>
+              </div>
+              <div class="card">
+                <div class="card-head"><h3 style="font-size:1rem">Similar existing items</h3></div>
+                <div class="card-body" id="similar"></div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="card mt-3" id="previewCard" hidden>
+            <div class="card-head"><h3>Candidate preview</h3>
+              <button class="btn btn-ghost btn-sm" type="button" id="closePreview">Close</button></div>
+            <div class="card-body" id="previewHost"></div>
+          </div>
+        </div>
+
+        <!-- REVIEW QUEUE -->
+        <div class="tab-panel" data-panel="review">
+          <div class="alert alert-warning mb-3">
+            <span data-icon="alert"></span>
+            <p class="mb-0">Six items need your attention: four flagged by the analytics engine for poor discrimination, and two awaiting your clinical review before publication.</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Review queue</h3></div>
+            <div class="card-body card-flush">
+              <div class="table-wrap"><table class="table" id="reviewQueue">
+                <thead><tr><th>ID</th><th>Item</th><th>Reason</th><th>Author</th><th>Raised</th><th>Priority</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="tab-panel" data-panel="analytics">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Facility distribution</h3><span class="text-xs text-subtle">Proportion answering correctly</span></div>
+              <div class="card-body" id="facilityChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Discrimination distribution</h3><span class="text-xs text-subtle">Point-biserial correlation</span></div>
+              <div class="card-body" id="discChart"></div>
+            </div>
+          </div>
+          <div class="card mt-3">
+            <div class="card-head"><h3>Items needing attention</h3></div>
+            <div class="card-body" id="itemsAttention"></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/questions.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("qStats").innerHTML = [
+    ["flask", "", "1,908", "Questions authored"],
+    ["checkCircle", "icon-tile-green", "1,772", "Live in the bank"],
+    ["clock", "icon-tile-amber", "6", "In review"],
+    ["trash", "icon-tile-red", "132", "Retired this cycle"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div></div>";
+  }).join("");
+
+  document.querySelector("#qTable tbody").innerHTML = D.QUESTIONS.map(function (q, i) {
+    var disc = [0.42, 0.31, 0.28, 0.12, 0.36, 0.47, 0.22, 0.09][i];
+    var status = disc < 0.15 ? "Flagged" : "Live";
+    return '<tr data-tags="' + q.type + '">' +
+      "<td class='mono'>" + q.id + "</td>" +
+      "<td style='max-width:320px'><strong style='display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" +
+        q.stem.split("\n")[0].slice(0, 70) + "…</strong>" +
+        "<span class='text-xs text-subtle'>" + q.topic + "</span></td>" +
+      "<td>" + EMQ.typeBadge(q) + "</td>" +
+      "<td>" + q.subject + "</td>" +
+      '<td><span class="badge badge-' + (q.difficulty === "Hard" ? "red" : q.difficulty === "Easy" ? "green" : "amber") + '">' + q.difficulty + "</span></td>" +
+      "<td>" + q.correctPct + "%</td>" +
+      '<td><span class="' + (disc < 0.15 ? "text-danger" : disc < 0.3 ? "text-warning" : "text-success") + ' fw-700">' + disc.toFixed(2) + "</span></td>" +
+      '<td><span class="badge badge-' + (status === "Live" ? "green" : "red") + ' badge-dot">' + status + "</span></td>" +
+      '<td class="cell-actions"><button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Opened in the editor.\')">Edit</button> ' +
+      '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Item retired from the live bank.\')">Retire</button></td></tr>';
+  }).join("");
+
+  /* Write form */
+  var wc = document.getElementById("wCourse");
+  D.COURSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; wc.appendChild(o); });
+  var ws = document.getElementById("wSubject");
+  ["Cardiology", "Respiratory", "Neurology", "Trauma", "Toxicology", "Paediatric EM", "Resuscitation", "Musculoskeletal", "Critical Appraisal"]
+    .forEach(function (s) { var o = document.createElement("option"); o.textContent = s; ws.appendChild(o); });
+  var wr = document.getElementById("wReviewer");
+  D.FACULTY.forEach(function (f) { var o = document.createElement("option"); o.textContent = f.name + " — " + f.spec; wr.appendChild(o); });
+
+  function renderOptions(multi) {
+    document.getElementById("optionRows").innerHTML = ["A", "B", "C", "D", "E"].map(function (k) {
+      return '<div class="row row-tight row-nowrap" style="margin-bottom:8px">' +
+        '<input type="' + (multi ? "checkbox" : "radio") + '" name="correctOpt" aria-label="Mark ' + k + ' correct" style="accent-color:var(--success);width:18px;height:18px;flex:none">' +
+        '<span class="badge" style="width:28px;justify-content:center">' + k + "</span>" +
+        '<input class="input" placeholder="Option ' + k + '">' +
+        '<button class="btn btn-ghost btn-icon" type="button" aria-label="Remove option ' + k + '">' + I("trash") + "</button>" +
+        "</div>";
+    }).join("");
+  }
+  renderOptions(false);
+
+  document.getElementById("wType").addEventListener("change", function () {
+    var v = this.value;
+    renderOptions(v === "multi");
+    var needsMedia = ["image", "audio", "video"].indexOf(v) > -1;
+    document.getElementById("mediaField").hidden = !needsMedia;
+    if (needsMedia) {
+      document.getElementById("mediaHint").textContent =
+        v === "image" ? "Drop a clinical image or click to browse"
+        : v === "audio" ? "Drop an audio recording or click to browse"
+        : "Drop a video clip or click to browse";
+    }
+  });
+
+  document.getElementById("rules").innerHTML = [
+    "One unambiguously correct answer — no 'most correct'",
+    "All distractors plausible to a borderline candidate",
+    "Options of similar length and grammatical form",
+    "No negatively phrased lead-ins",
+    "No cueing between the stem and the correct option",
+    "Vignette must contain everything needed to answer",
+    "Cite the guideline and its date",
+    "Explain why every distractor is wrong"
+  ].map(function (r) {
+    return "<div class='row' style='gap:9px;align-items:flex-start;padding:6px 0'>" +
+      "<span style='width:16px;height:16px;color:var(--success);flex:none;margin-top:2px'>" + I("check") + "</span>" +
+      "<span class='text-sm'>" + r + "</span></div>";
+  }).join("");
+
+  document.getElementById("similar").innerHTML = D.QUESTIONS.slice(0, 3).map(function (q) {
+    return "<div class='panel' style='margin-bottom:8px'><div class='row-between'>" +
+      "<span class='mono text-xs'>" + q.id + "</span><span class='badge'>" + q.subject + "</span></div>" +
+      "<div class='text-sm' style='margin-top:5px'>" + q.stem.split("\n")[0].slice(0, 90) + "…</div></div>";
+  }).join("") + "<p class='text-xs text-subtle mb-0'>Checked against 1,908 existing items to avoid duplication.</p>";
+
+  /* Preview */
+  document.getElementById("previewQ").addEventListener("click", function () {
+    var card = document.getElementById("previewCard");
+    card.hidden = false;
+    document.getElementById("previewHost").innerHTML = EMQ.render(D.QUESTIONS[0], { index: 1, total: 1 });
+    card.scrollIntoView({ behavior: "smooth" });
+    EM.toast("Showing a sample item — your draft renders the same way.");
+  });
+  document.getElementById("closePreview").addEventListener("click", function () {
+    document.getElementById("previewCard").hidden = true;
+  });
+
+  /* Review queue */
+  document.querySelector("#reviewQueue tbody").innerHTML = [
+    ["Q-1188", "Paracetamol overdose timing", "Discrimination 0.09 — likely ambiguous", "Dr Aisha Rahman", "2 days ago", "High"],
+    ["Q-7730", "Paediatric sepsis bolus volume", "Discrimination 0.12", "Dr Mei-Ling Chen", "3 days ago", "High"],
+    ["Q-5107", "Valvular auscultation", "Audio quality complaints ×7", "Dr Aisha Rahman", "4 days ago", "Medium"],
+    ["Q-2214", "Chest trauma radiograph", "Candidate reports image ambiguity", "Dr Daniel Fischer", "5 days ago", "Medium"],
+    ["Q-8801", "Hyperkalaemia management", "Awaiting clinical review before publication", "Dr James Okonkwo", "1 day ago", "High"],
+    ["Q-8802", "Aortic dissection imaging", "Awaiting clinical review before publication", "Dr Daniel Fischer", "1 day ago", "Medium"]
+  ].map(function (r) {
+    return "<tr><td class='mono'>" + r[0] + "</td><td><strong>" + r[1] + "</strong></td><td>" + r[2] + "</td>" +
+      "<td>" + r[3] + "</td><td>" + r[4] + "</td>" +
+      '<td><span class="badge badge-' + (r[5] === "High" ? "red" : "amber") + '">' + r[5] + "</span></td>" +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-soft btn-xs" type="button" onclick="EM.toast(\'Item approved and published.\')">Approve</button> ' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Item returned to the author with comments.\')">Return</button>' +
+      "</td></tr>";
+  }).join("");
+
+  document.getElementById("facilityChart").innerHTML = EM.barChart([
+    { m: "<30%", v: 4 }, { m: "30-45", v: 11 }, { m: "45-60", v: 24 },
+    { m: "60-75", v: 34 }, { m: "75-90", v: 21 }, { m: ">90%", v: 6 }
+  ], { suffix: "%" }) +
+  '<p class="text-sm text-subtle mt-2 mb-0">Items below 30% or above 90% facility carry little discriminatory value and are candidates for rewriting.</p>';
+
+  document.getElementById("discChart").innerHTML = EM.barChart([
+    { m: "<0.10", v: 3 }, { m: "0.10-0.19", v: 8 }, { m: "0.20-0.29", v: 18 },
+    { m: "0.30-0.39", v: 34 }, { m: "0.40+", v: 37 }
+  ], { teal: true, suffix: "%" }) +
+  '<p class="text-sm text-subtle mt-2 mb-0">Target is 0.30 or above. Anything under 0.15 is automatically flagged for review.</p>';
+
+  document.getElementById("itemsAttention").innerHTML = EM.hbars([
+    { label: "Poor discrimination", pct: 11, tone: "red" },
+    { label: "Too easy (>90% facility)", pct: 6, tone: "amber" },
+    { label: "Too hard (<30% facility)", pct: 4, tone: "amber" },
+    { label: "Guideline superseded", pct: 9, tone: "red" },
+    { label: "Candidate-reported issues", pct: 3, tone: "amber" },
+    { label: "Healthy items", pct: 67, tone: "green" }
+  ]);
+}
+</script>
+</body>
+</html>

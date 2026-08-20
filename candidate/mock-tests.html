@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock Tests — EM Hub</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="candidate" data-active="mock-tests" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Mock Tests" data-sub="Sit a timed paper in the real exam interface"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-4" id="mockStats"></section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><h3>Configure your mock</h3><div class="text-xs text-subtle">Choose a length and a mode, then start when you are ready</div></div>
+          <span class="badge badge-blue">MRCEM SBA</span>
+        </div>
+        <div class="card-body">
+
+          <h4 style="font-size:.86rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-subtle)">1 · Number of questions</h4>
+          <div class="grid grid-4 grid-gap-sm mt-2 mb-4" id="lengthOptions"></div>
+
+          <h4 style="font-size:.86rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-subtle)">2 · Mode</h4>
+          <div class="grid grid-2 grid-gap-sm mt-2 mb-4" id="modeOptions"></div>
+
+          <h4 style="font-size:.86rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-subtle)">3 · Content</h4>
+          <div class="grid grid-3 grid-gap-sm mt-2">
+            <div class="field mb-0">
+              <label class="label" for="mSubject">Subject coverage</label>
+              <select class="select" id="mSubject">
+                <option>Full blueprint (recommended)</option>
+                <option>Weak subjects only</option>
+                <option>Single subject</option>
+              </select>
+            </div>
+            <div class="field mb-0">
+              <label class="label" for="mPool">Question pool</label>
+              <select class="select" id="mPool">
+                <option>Unseen questions preferred</option>
+                <option>All questions</option>
+                <option>Previously incorrect only</option>
+              </select>
+            </div>
+            <div class="field mb-0">
+              <label class="label" for="mTimer">Timing</label>
+              <select class="select" id="mTimer">
+                <option>Exam pace (1 minute per question)</option>
+                <option>Relaxed (1.5 minutes per question)</option>
+                <option>No timer</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="alert alert-info mt-3" id="mockSummary"></div>
+
+          <div class="row mt-3">
+            <a class="btn btn-primary btn-lg" href="mock-test-runner.html" id="startMock">Start mock exam</a>
+            <button class="btn btn-outline btn-lg" type="button" id="saveConfig">Save this configuration</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Previous attempts</h3>
+            <a class="btn btn-ghost btn-sm" href="results.html">All results <span data-icon="chevronRight"></span></a></div>
+          <div class="card-body card-flush">
+            <div class="table-wrap"><table class="table" id="pastTable">
+              <thead><tr><th>Test</th><th>Date</th><th>Mode</th><th>Score</th><th>Time</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Before you start</h3></div>
+          <div class="card-body">
+            <div class="stack-sm" id="tips"></div>
+            <div class="panel mt-3">
+              <div class="fw-700 text-sm mb-1">Cohort benchmark</div>
+              <p class="text-sm mb-2">Candidates who passed at their first attempt had completed an average of <strong>9 full-length mocks</strong> before their sitting. You have completed <strong>3</strong>.</p>
+              <div class="progress"><div class="progress-bar is-amber" data-pct="33" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, C = D.CANDIDATE, I = EM.icon;
+  var chosenLength = 180, chosenMode = "exam";
+
+  document.getElementById("mockStats").innerHTML = [
+    ["monitor", "", "7", "Tests attempted", "3 full-length"],
+    ["chart", "icon-tile-teal", "73.3%", "Latest score", "Full Mock #7"],
+    ["award", "icon-tile-green", "88.3%", "Best score", "Appraisal Final Test"],
+    ["clock", "icon-tile-amber", "2h 48m", "Average full mock", "target: under 3 hours"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  document.getElementById("lengthOptions").innerHTML = D.MOCK_LENGTHS.map(function (m) {
+    return '<button class="card card-pad text-center" type="button" data-length="' + m.n + '" style="cursor:pointer;border-width:1px' +
+      (m.n === 180 ? ";border-color:var(--primary);background:var(--primary-soft)" : "") + '">' +
+      '<div style="font-size:1.8rem;font-weight:800;letter-spacing:-.03em">' + m.n + "</div>" +
+      '<div class="fw-700 text-sm">' + m.label + "</div>" +
+      '<div class="text-xs text-subtle mt-1">' + m.desc + "</div>" +
+      '<div class="badge badge-blue mt-2">' + m.mins + " minutes</div></button>";
+  }).join("");
+
+  document.getElementById("modeOptions").innerHTML = [
+    ["exam", "monitor", "Exam mode", "Nothing is revealed until you submit. Timer runs down, flagging available, results at the end. This is how the real examination behaves.", true],
+    ["practice", "book", "Practice mode", "The answer and full explanation appear immediately after each question. Slower, but far better for learning early in your preparation.", false]
+  ].map(function (m) {
+    return '<button class="card card-pad feature" type="button" data-mode="' + m[0] + '" style="cursor:pointer;text-align:left' +
+      (m[4] ? ";border-color:var(--primary);background:var(--primary-soft)" : "") + '">' +
+      '<span class="icon-tile' + (m[0] === "practice" ? " icon-tile-teal" : "") + '">' + I(m[1]) + "</span>" +
+      "<div><h4>" + m[2] + "</h4><p class='text-sm mb-0'>" + m[3] + "</p></div></button>";
+  }).join("");
+
+  function summarise() {
+    var mins = chosenLength;
+    var h = Math.floor(mins / 60), m = mins % 60;
+    document.getElementById("mockSummary").innerHTML =
+      "<span>" + I("info") + "</span>" +
+      "<p class='mb-0'>You are about to sit a <strong>" + chosenLength + "-question " +
+      (chosenMode === "exam" ? "exam-mode" : "practice-mode") + "</strong> paper with a time limit of <strong>" +
+      (h ? h + " hour" + (h > 1 ? "s" : "") + (m ? " " + m + " minutes" : "") : m + " minutes") +
+      "</strong>. " + (chosenMode === "exam"
+        ? "Explanations are withheld until you submit. Make sure you will not be interrupted."
+        : "Explanations appear as you go, so the timer is advisory only.") + "</p>";
+    document.getElementById("startMock").setAttribute("href",
+      "mock-test-runner.html?n=" + chosenLength + "&mode=" + chosenMode);
+  }
+
+  document.getElementById("lengthOptions").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-length]");
+    if (!b) return;
+    chosenLength = +b.getAttribute("data-length");
+    document.querySelectorAll("#lengthOptions [data-length]").forEach(function (x) { x.style.cssText = "cursor:pointer;border-width:1px"; });
+    b.style.cssText = "cursor:pointer;border-width:1px;border-color:var(--primary);background:var(--primary-soft)";
+    summarise();
+  });
+
+  document.getElementById("modeOptions").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-mode]");
+    if (!b) return;
+    chosenMode = b.getAttribute("data-mode");
+    document.querySelectorAll("#modeOptions [data-mode]").forEach(function (x) { x.style.cssText = "cursor:pointer;text-align:left"; });
+    b.style.cssText = "cursor:pointer;text-align:left;border-color:var(--primary);background:var(--primary-soft)";
+    summarise();
+  });
+
+  summarise();
+
+  document.getElementById("saveConfig").addEventListener("click", function () {
+    EM.toast("Configuration saved as a preset.");
+  });
+
+  document.querySelector("#pastTable tbody").innerHTML = C.testHistory.map(function (t) {
+    var tone = t.pct >= 75 ? "green" : t.pct >= 60 ? "amber" : "red";
+    return "<tr><td><strong>" + t.name + "</strong><div class='text-xs text-subtle'>" + t.qs + " questions</div></td>" +
+      "<td>" + t.date + "</td>" +
+      '<td><span class="badge badge-' + (t.mode === "Exam" ? "blue" : "teal") + '">' + t.mode + "</span></td>" +
+      '<td><span class="badge badge-' + tone + '">' + t.pct + "%</span><div class='text-xs text-subtle'>" + t.score + " / " + t.qs + "</div></td>" +
+      "<td>" + t.time + "</td>" +
+      '<td class="cell-actions"><a class="btn btn-soft btn-xs" href="result-detail.html?id=' + t.id + '">Review</a></td></tr>';
+  }).join("");
+
+  document.getElementById("tips").innerHTML = [
+    ["clock", "Sit it at the time of day your exam runs", "Circadian performance differences of 4 to 6 percentage points are well documented."],
+    ["monitor", "Use the same device you will use on the day", "If you are sitting at a test centre, use a mouse rather than a trackpad."],
+    ["flag", "Flag rather than dwell", "Candidates who pass spend under 65 seconds per question on first pass and return to flagged items."],
+    ["alert", "Do not stop early", "A partial mock tells you nothing about pacing, which is what most candidates actually fail on."]
+  ].map(function (t) {
+    return '<div class="row" style="align-items:flex-start;gap:11px">' +
+      '<span class="icon-tile" style="width:36px;height:36px">' + I(t[0]) + "</span>" +
+      "<div><div class='fw-700 text-sm'>" + t[1] + "</div><div class='text-xs text-muted'>" + t[2] + "</div></div></div>";
+  }).join("");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faculty — EM Hub</title>
+<meta name="description" content="Meet the practising emergency medicine consultants who write and teach every EM Hub course.">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header data-header data-active="faculty" data-prefix=""></header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Faculty</span></nav>
+      <h1>The consultants behind every question</h1>
+      <p>Sixteen practising emergency physicians across the UK, India and the Gulf. Several serve as college examiners. All of them still work clinical shifts, which is why the content sounds like the department rather than a textbook.</p>
+      <div class="row mt-3" id="facultyStats"></div>
+    </div>
+  </section>
+
+  <section class="section-sm" style="border-bottom:1px solid var(--border)">
+    <div class="container">
+      <div class="row-between">
+        <div class="row row-tight" id="facFilters">
+          <span class="chip is-active" data-value="all">All faculty</span>
+          <span class="chip" data-value="MRCEM Primary">MRCEM Primary</span>
+          <span class="chip" data-value="MRCEM SBA">MRCEM SBA</span>
+          <span class="chip" data-value="MRCEM OSCE">MRCEM OSCE</span>
+          <span class="chip" data-value="FRCEM">FRCEM Final</span>
+          <span class="chip" data-value="DNB">DNB EM</span>
+          <span class="chip" data-value="Critical Appraisal">Critical Appraisal</span>
+        </div>
+        <div class="search-box">
+          <span data-icon="search"></span>
+          <input type="search" id="facSearch" placeholder="Search by name or specialism" aria-label="Search faculty">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-2" id="facultyGrid"></div>
+      <p class="text-center text-subtle mt-4" id="facEmpty" hidden>No faculty match that filter.</p>
+    </div>
+  </section>
+
+  <section class="section section-subtle">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Join us</span>
+        <h2>We are recruiting faculty for two programmes</h2>
+        <p>If you are a practising emergency physician with a track record in teaching, we would like to hear from you. Faculty roles are paid, part-time and remote.</p>
+      </div>
+      <div class="grid grid-2" style="max-width:840px;margin-inline:auto">
+        <div class="card card-pad">
+          <span class="badge badge-teal mb-2">Open role</span>
+          <h4>Paediatric EM question author</h4>
+          <p class="text-sm">Author 40 questions per cycle for the MRCEM SBA and FRCEM Final paediatric strands. Dual training welcome but not required.</p>
+          <a class="btn btn-outline btn-sm" href="contact.html">Register interest</a>
+        </div>
+        <div class="card card-pad">
+          <span class="badge badge-teal mb-2">Open role</span>
+          <h4>OSCE circuit examiner</h4>
+          <p class="text-sm">Score live mock circuits and record demonstration stations for the MRCEM and FRCEM OSCE programmes. RCEM examiner experience preferred.</p>
+          <a class="btn btn-outline btn-sm" href="contact.html">Register interest</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-backdrop" id="facModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="facModalName">
+    <div class="card-head">
+      <h3 id="facModalName">Faculty</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <div class="card-body" id="facModalBody"></div>
+  </div>
+</div>
+
+<footer data-footer data-prefix=""></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, I = EM.icon;
+
+  document.getElementById("facultyStats").innerHTML = [
+    ["16", "faculty members"], ["200+", "years combined practice"],
+    ["6", "college examiners"], ["4", "healthcare systems"]
+  ].map(function (s) {
+    return '<div style="margin-right:28px"><div style="font-size:1.5rem;font-weight:800;letter-spacing:-.03em">' + s[0] + "</div>" +
+      '<div class="text-xs text-subtle fw-600">' + s[1] + "</div></div>";
+  }).join("");
+
+  var grid = document.getElementById("facultyGrid");
+
+  function card(f) {
+    return '<article class="card card-pad reveal" data-courses="' + f.courses.join("|") + '" data-name="' +
+      (f.name + " " + f.spec + " " + f.qual).toLowerCase() + '">' +
+      '<div class="row" style="align-items:flex-start;gap:16px">' +
+        '<span class="avatar avatar-xl">' + f.initials + "</span>" +
+        '<div class="grow">' +
+          '<div class="row-between" style="align-items:flex-start">' +
+            "<div><h4 style='margin-bottom:2px'>" + f.name + "</h4>" +
+            "<div class='text-xs text-primary fw-700'>" + f.qual + "</div></div>" +
+            '<span class="badge badge-blue">' + f.role + "</span>" +
+          "</div>" +
+          '<div class="row row-tight text-xs text-subtle" style="margin:10px 0">' +
+            "<span class='row row-tight' style='gap:4px'>" + iconSm("stethoscope") + f.spec + "</span>" +
+            "<span class='row row-tight' style='gap:4px'>" + iconSm("clock") + f.years + " years</span>" +
+            "<span class='row row-tight' style='gap:4px'>" + iconSm("pin") + f.location + "</span>" +
+          "</div>" +
+          "<p class='text-sm'>" + f.bio + "</p>" +
+          '<div class="row row-tight">' +
+            f.courses.map(function (c) { return '<span class="badge badge-teal">' + c + "</span>"; }).join("") +
+            '<button class="btn btn-ghost btn-xs" type="button" data-fac="' + f.id + '">Full profile →</button>' +
+          "</div>" +
+        "</div>" +
+      "</div></article>";
+  }
+
+  function iconSm(n) { return "<span style='display:inline-flex;width:13px;height:13px'>" + I(n) + "</span>"; }
+
+  grid.innerHTML = D.FACULTY.map(card).join("");
+
+  /* Filtering */
+  function applyFilters() {
+    var active = document.querySelector("#facFilters .chip.is-active").getAttribute("data-value");
+    var q = document.getElementById("facSearch").value.toLowerCase().trim();
+    var shown = 0;
+    grid.querySelectorAll("[data-courses]").forEach(function (el) {
+      var okCourse = active === "all" || el.getAttribute("data-courses").indexOf(active) > -1;
+      var okQuery = !q || el.getAttribute("data-name").indexOf(q) > -1;
+      var on = okCourse && okQuery;
+      el.style.display = on ? "" : "none";
+      if (on) shown++;
+    });
+    document.getElementById("facEmpty").hidden = shown > 0;
+  }
+
+  document.querySelectorAll("#facFilters .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      document.querySelectorAll("#facFilters .chip").forEach(function (c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      applyFilters();
+    });
+  });
+  document.getElementById("facSearch").addEventListener("input", applyFilters);
+
+  /* Profile modal */
+  grid.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-fac]");
+    if (!btn) return;
+    var f = D.FACULTY.filter(function (x) { return x.id === btn.getAttribute("data-fac"); })[0];
+    document.getElementById("facModalName").textContent = f.name;
+    document.getElementById("facModalBody").innerHTML =
+      '<div class="row mb-3"><span class="avatar avatar-lg">' + f.initials + "</span>" +
+      "<div><div class='fw-700'>" + f.role + "</div><div class='text-sm text-muted'>" + f.qual + "</div>" +
+      "<div class='text-xs text-subtle'>" + f.location + " · " + f.years + " years in practice</div></div></div>" +
+      "<p>" + f.long + "</p>" +
+      '<div class="panel"><div class="text-xs text-subtle fw-700" style="text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Teaches on</div>' +
+      '<div class="row row-tight">' + f.courses.map(function (c) { return '<span class="badge badge-teal">' + c + "</span>"; }).join("") + "</div></div>" +
+      '<div class="row mt-3"><a class="btn btn-primary btn-sm" href="courses.html">See their courses</a>' +
+      '<a class="btn btn-outline btn-sm" href="contact.html">Ask a question</a></div>';
+    document.getElementById("facModal").classList.add("is-open");
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subscription Management — EM Hub Admin</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>(function(){try{var t=localStorage.getItem("emhub-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="app">
+  <aside data-sidebar data-role="admin" data-active="subscriptions" data-prefix="../"></aside>
+
+  <div class="app-main">
+    <div data-topbar data-title="Subscription Management" data-sub="Course-wise subscriptions, extensions and refunds"></div>
+
+    <main class="app-content" id="main">
+
+      <section class="grid grid-5" id="subKpis"></section>
+
+      <section class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Active subscriptions by course</h3></div>
+          <div class="card-body" id="byCourse"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Expiring in the next 30 days</h3><span class="badge badge-amber">642 subscriptions</span></div>
+          <div class="card-body">
+            <div id="expiryChart"></div>
+            <div class="alert alert-warning mt-3">
+              <span data-icon="alert"></span>
+              <p class="mb-0 text-sm"><strong>184 expire within 14 days.</strong> Renewal reminders are scheduled at 14, 7 and 1 day. Historical renewal rate at this point is 34%.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><h3>All subscriptions</h3><div class="text-xs text-subtle"><span id="sCount">8</span> shown of 4,932 active</div></div>
+          <div class="row row-tight">
+            <div class="row row-tight" data-chip-group="#subsTable">
+              <span class="chip is-active" data-value="">All</span>
+              <span class="chip" data-value="Active">Active</span>
+              <span class="chip" data-value="Expiring">Expiring</span>
+              <span class="chip" data-value="Expired">Expired</span>
+              <span class="chip" data-value="Renewed">Renewed</span>
+            </div>
+            <div class="search-box">
+              <span data-icon="search"></span>
+              <input type="search" placeholder="Search reference or user" data-filter-input="#subsTable" data-filter-count="#sCount" aria-label="Search subscriptions">
+            </div>
+            <button class="btn btn-primary btn-sm" type="button" data-modal-open="#grantModal"><span data-icon="plus"></span> Grant access</button>
+          </div>
+        </div>
+        <div class="card-body card-flush">
+          <div class="table-wrap"><table class="table" id="subsTable">
+            <thead><tr><th>Reference</th><th>User</th><th>Course</th><th>Duration</th><th>Started</th><th>Expires</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+        <div class="card-foot row-between">
+          <span class="text-xs text-subtle">Subscriptions are fixed-duration and never auto-renew.</span>
+          <div class="pagination"><button type="button">Previous</button><button type="button" class="is-active">1</button><button type="button">2</button><button type="button">Next</button></div>
+        </div>
+      </section>
+
+      <section class="grid grid-3">
+        <div class="card">
+          <div class="card-head"><h3>Deferral extensions</h3><span class="badge badge-blue">28 this month</span></div>
+          <div class="card-body" id="deferrals"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Failed payments</h3><span class="badge badge-red">3 in 24 hours</span></div>
+          <div class="card-body" id="failures"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Refunds</h3><span class="badge">0.9% rate</span></div>
+          <div class="card-body" id="refunds"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="modal-backdrop" id="grantModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="grTitle">
+    <div class="card-head">
+      <h3 id="grTitle">Grant access</h3>
+      <button class="btn btn-ghost btn-icon" data-modal-close type="button" aria-label="Close" data-icon="x"></button>
+    </div>
+    <form class="card-body" data-demo-form="Access granted and the candidate has been notified by email.">
+      <div class="field"><label class="label" for="grUser">Candidate email</label><input class="input" id="grUser" type="email" placeholder="candidate@example.com" required></div>
+      <div class="field"><label class="label" for="grCourse">Course</label><select class="select" id="grCourse"></select></div>
+      <div class="field"><label class="label" for="grDuration">Duration</label>
+        <select class="select" id="grDuration"><option>1 Month</option><option>2 Months</option><option selected>3 Months</option><option>4 Months</option><option>6 Months</option></select></div>
+      <div class="field"><label class="label" for="grReason">Reason</label>
+        <select class="select" id="grReason">
+          <option>Complimentary — institutional partner</option>
+          <option>Complimentary — faculty referral</option>
+          <option>Goodwill — service issue</option>
+          <option>Deferral extension</option>
+          <option>Manual payment received</option>
+        </select></div>
+      <div class="field"><label class="label" for="grNote">Internal note</label>
+        <textarea class="textarea" id="grNote" style="min-height:80px" placeholder="Visible to administrators only."></textarea></div>
+      <div class="alert alert-warning"><span data-icon="alert"></span>
+        <p class="mb-0 text-sm">Complimentary grants are logged against your administrator account and appear in the monthly finance reconciliation.</p></div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn btn-outline" data-modal-close type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Grant access</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function pageInit() {
+  var D = window.EMHUB, A = D.ADMIN, I = EM.icon;
+
+  document.getElementById("subKpis").innerHTML = [
+    ["card", "", "4,932", "Active subscriptions", "+6.2% MoM"],
+    ["pound", "icon-tile-green", "£486,240", "Revenue MTD", "+11.4% vs Jul"],
+    ["clock", "icon-tile-amber", "642", "Expiring in 30 days", "184 within 14 days"],
+    ["refresh", "icon-tile-teal", "34%", "Renewal rate", "cohort average 29%"],
+    ["alert", "icon-tile-red", "3", "Failed payments", "in the last 24 hours"]
+  ].map(function (s) {
+    return '<div class="stat-card"><span class="icon-tile ' + s[1] + '">' + I(s[0]) + "</span>" +
+      '<div><div class="stat-value">' + s[2] + '</div><div class="stat-label">' + s[3] + "</div></div>" +
+      '<div class="text-xs text-subtle">' + s[4] + "</div></div>";
+  }).join("");
+
+  var gc = document.getElementById("grCourse");
+  D.COURSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c.title; gc.appendChild(o); });
+
+  document.getElementById("byCourse").innerHTML = EM.hbars([
+    { label: "MRCEM SBA", pct: 30, tone: "green" },
+    { label: "MRCEM Primary", pct: 21, tone: "green" },
+    { label: "FRCEM Final SBA", pct: 19, tone: "teal" },
+    { label: "DNB Emergency Med", pct: 13, tone: "teal" },
+    { label: "MRCEM OSCE", pct: 9, tone: "amber" },
+    { label: "FRCEM Final OSCE", pct: 5, tone: "amber" },
+    { label: "Critical Appraisal", pct: 3, tone: "red" }
+  ]) +
+  '<div class="grid grid-3 grid-gap-sm mt-3">' +
+    [["4,932", "active"], ["£142.60", "avg order"], ["3.2 mo", "avg duration"]].map(function (t) {
+      return '<div class="panel text-center"><div class="fw-700">' + t[0] + "</div>" +
+        '<div class="text-xs text-subtle">' + t[1] + "</div></div>";
+    }).join("") + "</div>";
+
+  document.getElementById("expiryChart").innerHTML = EM.barChart([
+    { m: "0-3d", v: 46 }, { m: "4-7d", v: 62 }, { m: "8-14d", v: 76 },
+    { m: "15-21d", v: 198 }, { m: "22-30d", v: 260 }
+  ], { teal: true });
+
+  document.querySelector("#subsTable tbody").innerHTML = A.subscriptions.map(function (s) {
+    var tone = s.status === "Active" ? "green" : s.status === "Expiring" ? "amber" : s.status === "Renewed" ? "blue" : "red";
+    return '<tr data-tags="' + s.status + '">' +
+      "<td class='mono'>" + s.ref + "</td><td><strong>" + s.user + "</strong></td><td>" + s.course + "</td>" +
+      "<td>" + s.duration + "</td><td>" + s.start + "</td><td>" + s.expiry + "</td>" +
+      "<td><strong>" + s.amount + "</strong></td>" +
+      '<td><span class="badge badge-' + tone + ' badge-dot">' + s.status + "</span></td>" +
+      '<td class="cell-actions">' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Access extended by 30 days.\')">Extend</button> ' +
+        '<button class="btn btn-ghost btn-xs" type="button" onclick="EM.toast(\'Refund requires finance approval.\')">Refund</button>' +
+      "</td></tr>";
+  }).join("");
+
+  document.getElementById("deferrals").innerHTML = [
+    ["Dr Samuel Adeyemi", "FRCEM Final SBA", "Exam postponed by college", "+3 months", "Approved"],
+    ["Dr Ana Silva", "MRCEM OSCE", "Parental leave", "+6 months", "Approved"],
+    ["Dr Yusuf Kaya", "MRCEM Primary", "Visa delay", "+2 months", "Pending"],
+    ["Dr Fatima Al-Sayed", "MRCEM SBA", "Deferred to next sitting", "+4 months", "Approved"]
+  ].map(function (d) {
+    return '<div class="panel" style="margin-bottom:8px"><div class="row-between mb-1">' +
+      "<span class='fw-700 text-sm'>" + d[0] + "</span>" +
+      '<span class="badge badge-' + (d[4] === "Approved" ? "green" : "amber") + '">' + d[4] + "</span></div>" +
+      "<div class='text-xs text-subtle'>" + d[1] + " · " + d[2] + "</div>" +
+      "<div class='text-xs fw-700 text-success' style='margin-top:3px'>" + d[3] + " access</div></div>";
+  }).join("") +
+  '<button class="btn btn-outline btn-sm btn-block" type="button" onclick="EM.toast(\'All pending deferrals approved.\')">Approve all pending</button>';
+
+  document.getElementById("failures").innerHTML = [
+    ["Dr Priya Sharma", "£119.00", "Card declined", "2 hours ago"],
+    ["Dr Michael Osei", "£199.00", "Insufficient funds", "9 hours ago"],
+    ["Dr Lena Fischer", "£149.00", "3-D Secure abandoned", "18 hours ago"]
+  ].map(function (f) {
+    return '<div class="panel" style="margin-bottom:8px"><div class="row-between mb-1">' +
+      "<span class='fw-700 text-sm'>" + f[0] + "</span><span class='fw-700'>" + f[1] + "</span></div>" +
+      "<div class='text-xs text-danger'>" + f[2] + "</div>" +
+      "<div class='text-xs text-subtle'>" + f[3] + "</div>" +
+      '<button class="btn btn-outline btn-xs mt-2" type="button" onclick="EM.toast(\'Retry link emailed to the candidate.\')">Send retry link</button></div>';
+  }).join("") +
+  '<p class="text-xs text-subtle mb-0">Access is preserved for 72 hours after a failed payment before it is suspended.</p>';
+
+  document.getElementById("refunds").innerHTML =
+    '<div class="text-center mb-3"><div style="font-size:2.2rem;font-weight:800;letter-spacing:-.04em">0.9%</div>' +
+    '<div class="text-xs text-subtle">of orders refunded, last 90 days</div></div>' +
+    EM.hbars([
+      { label: "Purchased wrong course", pct: 42, tone: "teal" },
+      { label: "Duplicate purchase", pct: 26, tone: "teal" },
+      { label: "Technical issue", pct: 18, tone: "amber" },
+      { label: "Content not as expected", pct: 9, tone: "red" },
+      { label: "Other", pct: 5, tone: "" }
+    ]) +
+    '<div class="row-between text-sm mt-3" style="padding-top:10px;border-top:1px solid var(--border)">' +
+    '<span class="text-subtle">Refunded this month</span><span class="fw-700">£4,378</span></div>';
+}
+</script>
+</body>
+</html>
